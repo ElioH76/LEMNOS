@@ -90,16 +90,6 @@
     animation: reveal-in 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
-  /* Grille de points discrète — « petit quelque chose » sur les fonds. */
-  .dots-on-light {
-    background-image: radial-gradient(rgb(var(--color-ink) / 0.05) 1px, transparent 1px);
-    background-size: 24px 24px;
-  }
-  .dots-on-dark {
-    background-image: radial-gradient(rgb(255 255 255 / 0.05) 1px, transparent 1px);
-    background-size: 24px 24px;
-  }
-
   /* Soulignement vert qui se déploie de gauche à droite au survol. */
   .link-underline {
     position: relative;

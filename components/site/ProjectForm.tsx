@@ -5,6 +5,7 @@ import { Check, FileText, X } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { promises, structureTypes } from "@/lib/site-content";
 import { Eyebrow, Shell } from "./Shell";
+import { MythPattern } from "./MythPattern";
 import { Reveal } from "./Reveal";
 
 const FIELD =
@@ -51,7 +52,11 @@ export function ProjectForm() {
 
   return (
     <section id="projet" className="relative scroll-mt-24 overflow-hidden bg-ink py-24 text-white md:py-28">
-      <div aria-hidden className="dots-on-dark absolute inset-0 [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_80%,transparent)]" />
+      {/* vague grecque en ton sur ton */}
+      <MythPattern
+        variant="wave"
+        className="text-white/[0.06] [mask-image:linear-gradient(to_bottom,transparent,black_18%,black_82%,transparent)]"
+      />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_60%_at_15%_0%,rgba(30,91,60,0.22),transparent_60%)]"

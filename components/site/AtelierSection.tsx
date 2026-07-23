@@ -1,12 +1,17 @@
 import { features, techniques } from "@/lib/site-content";
 import { Mark } from "@/components/brand/Mark";
 import { Eyebrow, Shell } from "./Shell";
+import { MythPattern } from "./MythPattern";
 import { Reveal } from "./Reveal";
 
 export function AtelierSection() {
   return (
     <section id="atelier" className="relative scroll-mt-24 overflow-hidden bg-white py-24 md:py-28">
-      <div aria-hidden className="dots-on-light absolute inset-0 [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_80%,transparent)]" />
+      {/* colonnade antique en ton sur ton */}
+      <MythPattern
+        variant="columns"
+        className="text-ink/[0.05] [mask-image:linear-gradient(to_bottom,transparent,black_18%,black_82%,transparent)]"
+      />
       <Mark
         aria-hidden
         className="pointer-events-none absolute -left-20 bottom-0 w-[360px] text-ink/[0.03]"

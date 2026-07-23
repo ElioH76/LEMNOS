@@ -1,12 +1,17 @@
 import Image from "next/image";
 import { realisations } from "@/lib/site-content";
 import { Eyebrow, Shell } from "./Shell";
+import { MythPattern } from "./MythPattern";
 import { Reveal } from "./Reveal";
 
 export function RealisationsSection() {
   return (
     <section id="realisations" className="relative scroll-mt-24 overflow-hidden bg-ink py-24 text-white md:py-28">
-      <div aria-hidden className="dots-on-dark absolute inset-0 [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_80%,transparent)]" />
+      {/* écailles antiques en ton sur ton */}
+      <MythPattern
+        variant="scales"
+        className="text-white/[0.06] [mask-image:linear-gradient(to_bottom,transparent,black_18%,black_82%,transparent)]"
+      />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_60%_at_85%_-10%,rgba(30,91,60,0.28),transparent_60%)]"

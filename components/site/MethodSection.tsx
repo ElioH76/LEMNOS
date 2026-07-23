@@ -2,6 +2,7 @@ import { Compass, Factory, PenTool, Shirt, Truck, type LucideIcon } from "lucide
 import { Mark } from "@/components/brand/Mark";
 import { methodSteps } from "@/lib/site-content";
 import { Eyebrow, Shell } from "./Shell";
+import { MythPattern } from "./MythPattern";
 import { Reveal } from "./Reveal";
 
 const ICONS: LucideIcon[] = [Compass, PenTool, Shirt, Factory, Truck];
@@ -9,8 +10,11 @@ const ICONS: LucideIcon[] = [Compass, PenTool, Shirt, Factory, Truck];
 export function MethodSection() {
   return (
     <section id="methode" className="relative scroll-mt-24 overflow-hidden bg-paper py-24 md:py-28">
-      {/* textures de fond discrètes */}
-      <div aria-hidden className="dots-on-light absolute inset-0 [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_80%,transparent)]" />
+      {/* méandre grec en ton sur ton */}
+      <MythPattern
+        variant="meander"
+        className="text-ink/[0.05] [mask-image:linear-gradient(to_bottom,transparent,black_18%,black_82%,transparent)]"
+      />
       <Mark
         aria-hidden
         className="pointer-events-none absolute -right-16 top-10 w-[340px] text-ink/[0.03]"
