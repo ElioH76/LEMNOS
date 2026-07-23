@@ -65,4 +65,58 @@
     background: rgb(var(--color-green));
     color: #fff;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal-in {
+      animation: none;
+    }
+  }
+}
+
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@layer components {
+  /* Entrée fondu + montée, jouée au chargement. */
+  .reveal-in {
+    animation: reveal-in 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* Grille de points discrète — « petit quelque chose » sur les fonds. */
+  .dots-on-light {
+    background-image: radial-gradient(rgb(var(--color-ink) / 0.05) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .dots-on-dark {
+    background-image: radial-gradient(rgb(255 255 255 / 0.05) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  /* Soulignement vert qui se déploie de gauche à droite au survol. */
+  .link-underline {
+    position: relative;
+  }
+  .link-underline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    height: 1.5px;
+    width: 100%;
+    transform: scaleX(0);
+    transform-origin: left;
+    background: rgb(var(--color-green));
+    transition: transform 200ms ease-out;
+  }
+  .link-underline:hover::after {
+    transform: scaleX(1);
+  }
 }

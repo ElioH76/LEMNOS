@@ -5,6 +5,7 @@ import { Check, FileText, X } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { promises, structureTypes } from "@/lib/site-content";
 import { Eyebrow, Shell } from "./Shell";
+import { Reveal } from "./Reveal";
 
 const FIELD =
   "w-full rounded-field border-[1.5px] border-line bg-white px-4 py-3 text-[15px] text-ink outline-none transition-colors placeholder:text-ash focus:border-green";
@@ -49,10 +50,11 @@ export function ProjectForm() {
   };
 
   return (
-    <section id="projet" className="scroll-mt-24 bg-white py-24 md:py-28">
-      <Shell>
+    <section id="projet" className="relative scroll-mt-24 overflow-hidden bg-paper py-24 md:py-28">
+      <div aria-hidden className="dots-on-light absolute inset-0 [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_80%,transparent)]" />
+      <Shell className="relative">
         <div className="grid grid-cols-1 items-start gap-14 lg:grid-cols-2 lg:gap-20">
-          <div>
+          <Reveal>
             <Eyebrow>Démarrer</Eyebrow>
             <h2 className="mt-5 max-w-[15ch] text-balance text-[34px] font-extrabold leading-[1.02] tracking-tight md:text-h1">
               Racontez-nous votre projet.
@@ -74,9 +76,9 @@ export function ProjectForm() {
                 </li>
               ))}
             </ul>
-          </div>
+          </Reveal>
 
-          <div className="rounded-2xl border border-line bg-paper p-6 md:p-9">
+          <Reveal delay={120} className="rounded-2xl border border-line bg-white p-6 md:p-9">
             {sent ? (
               <div className="flex flex-col items-center py-10 text-center">
                 <span className="flex h-14 w-14 items-center justify-center rounded-md bg-green text-white">
@@ -243,7 +245,7 @@ export function ProjectForm() {
                 </p>
               </form>
             )}
-          </div>
+          </Reveal>
         </div>
       </Shell>
     </section>

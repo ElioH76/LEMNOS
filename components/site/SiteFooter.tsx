@@ -3,7 +3,7 @@ import { Mark } from "@/components/brand/Mark";
 import { contactEmail, navLinks } from "@/lib/site-content";
 import { Shell } from "./Shell";
 
-const LINK = "text-[14px] text-fog transition-colors hover:text-white";
+const LINK = "link-underline w-fit text-[14px] text-fog transition-colors hover:text-white";
 
 export function SiteFooter() {
   return (

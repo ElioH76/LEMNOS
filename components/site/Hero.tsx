@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { heroImage } from "@/lib/site-content";
 import { Shell } from "./Shell";
+import { Reveal } from "./Reveal";
 
 export function Hero() {
   return (
@@ -22,28 +23,36 @@ export function Hero() {
       </div>
 
       <Shell className="pb-20 pt-32 md:pb-28">
-        <div className="text-[13px] font-medium uppercase tracking-hero text-green-light">
-          VÊTEMENTS DE SPORT PERSONNALISÉS
-        </div>
+        <Reveal>
+          <div className="text-[13px] font-medium uppercase tracking-hero text-green-light">
+            VÊTEMENTS DE SPORT PERSONNALISÉS
+          </div>
+        </Reveal>
 
-        <h1 className="mt-5 max-w-[15ch] text-balance text-[44px] font-extrabold leading-[0.98] tracking-tight text-white sm:text-[56px] lg:text-display">
-          Vos idées,{" "}
-          <span className="font-serif font-bold tracking-[0.005em]">forgées</span> en équipement.
-        </h1>
+        <Reveal delay={80}>
+          <h1 className="mt-5 max-w-[15ch] text-balance text-[44px] font-extrabold leading-[0.98] tracking-tight text-white sm:text-[56px] lg:text-display">
+            Vos idées,{" "}
+            <span className="font-serif font-bold tracking-[0.005em]">forgées</span> en équipement.
+          </h1>
+        </Reveal>
 
-        <p className="mt-6 max-w-[52ch] text-base leading-[1.6] text-fog md:text-[16.5px]">
-          Un seul interlocuteur, du croquis à la livraison. On dessine, on prototype, on produit —
-          vous validez à chaque étape.
-        </p>
+        <Reveal delay={160}>
+          <p className="mt-6 max-w-[52ch] text-base leading-[1.6] text-fog md:text-[16.5px]">
+            Un seul interlocuteur, du croquis à la livraison. On dessine, on prototype, on produit —
+            vous validez à chaque étape.
+          </p>
+        </Reveal>
 
-        <div className="mt-8 flex flex-wrap gap-3.5">
-          <a href="#projet">
-            <Button variant="primary">Démarrer un projet</Button>
-          </a>
-          <a href="#methode">
-            <Button variant="outline-light">Voir la méthode</Button>
-          </a>
-        </div>
+        <Reveal delay={240}>
+          <div className="mt-8 flex flex-wrap gap-3.5">
+            <a href="#projet">
+              <Button variant="primary">Démarrer un projet</Button>
+            </a>
+            <a href="#methode">
+              <Button variant="outline-light">Voir la méthode</Button>
+            </a>
+          </div>
+        </Reveal>
       </Shell>
     </header>
   );
