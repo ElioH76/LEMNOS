@@ -1,6 +1,7 @@
 import { LogoLockup } from "@/components/brand/LogoLockup";
 import { Mark } from "@/components/brand/Mark";
 import { contactEmail, navLinks } from "@/lib/site-content";
+import { MythPattern } from "./MythPattern";
 import { Shell } from "./Shell";
 
 const LINK = "link-underline w-fit text-[14px] text-fog transition-colors hover:text-white";
@@ -16,8 +17,14 @@ export function SiteFooter() {
         </Shell>
       </div>
 
-      <div className="bg-ink text-white">
-        <Shell className="pb-10 pt-16">
+      <div className="relative overflow-hidden bg-ink text-white">
+        {/* écailles antiques — motif commun à toutes les sections sombres */}
+        <MythPattern
+          variant="scales"
+          id="scales-footer"
+          className="text-white/[0.06] [mask-image:linear-gradient(to_bottom,black,transparent)]"
+        />
+        <Shell className="relative pb-10 pt-16">
           <div className="flex flex-wrap justify-between gap-10 border-b border-line-dark pb-12">
             <div className="max-w-[32ch]">
               <LogoLockup markClassName="w-[28px] text-white" wordmarkClassName="text-[20px]" />

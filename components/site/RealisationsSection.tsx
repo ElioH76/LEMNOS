@@ -7,9 +7,10 @@ import { Reveal } from "./Reveal";
 export function RealisationsSection() {
   return (
     <section id="realisations" className="relative scroll-mt-24 overflow-hidden bg-ink py-24 text-white md:py-28">
-      {/* écailles antiques en ton sur ton */}
+      {/* écailles antiques — motif commun à toutes les sections sombres */}
       <MythPattern
         variant="scales"
+        id="scales-realisations"
         className="text-white/[0.06] [mask-image:linear-gradient(to_bottom,transparent,black_18%,black_82%,transparent)]"
       />
       <div
