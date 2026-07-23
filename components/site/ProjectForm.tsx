@@ -50,16 +50,20 @@ export function ProjectForm() {
   };
 
   return (
-    <section id="projet" className="relative scroll-mt-24 overflow-hidden bg-paper py-24 md:py-28">
-      <div aria-hidden className="dots-on-light absolute inset-0 [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_80%,transparent)]" />
+    <section id="projet" className="relative scroll-mt-24 overflow-hidden bg-ink py-24 text-white md:py-28">
+      <div aria-hidden className="dots-on-dark absolute inset-0 [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_80%,transparent)]" />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_60%_at_15%_0%,rgba(30,91,60,0.22),transparent_60%)]"
+      />
       <Shell className="relative">
         <div className="grid grid-cols-1 items-start gap-14 lg:grid-cols-2 lg:gap-20">
           <Reveal>
-            <Eyebrow>Démarrer</Eyebrow>
+            <Eyebrow tone="dark">Démarrer</Eyebrow>
             <h2 className="mt-5 max-w-[15ch] text-balance text-[34px] font-extrabold leading-[1.02] tracking-tight md:text-h1">
               Racontez-nous votre projet.
             </h2>
-            <p className="mt-6 max-w-[46ch] text-[16px] leading-[1.65] text-slate">
+            <p className="mt-6 max-w-[46ch] text-[16px] leading-[1.65] text-fog">
               Déposez votre design ou décrivez votre idée. On revient vers vous sous 24 h avec une
               première proposition — sans engagement.
             </p>
@@ -68,11 +72,11 @@ export function ProjectForm() {
                 <li key={promise} className="flex items-center gap-3.5">
                   <span
                     aria-hidden
-                    className="flex h-6 w-6 flex-none items-center justify-center rounded-sm bg-green-soft text-green"
+                    className="flex h-6 w-6 flex-none items-center justify-center rounded-sm bg-green text-white"
                   >
                     <Check size={13} strokeWidth={3} />
                   </span>
-                  <span className="text-[15px] text-ink">{promise}</span>
+                  <span className="text-[15px] text-white">{promise}</span>
                 </li>
               ))}
             </ul>
