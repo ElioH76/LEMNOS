@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /**
+   * Nouvelle DA Lemnos — Vert Littoral / Anthracite / Papier.
+   * Tokens stockés en triplets RVB pour que les modificateurs d'opacité
+   * Tailwind (bg-ink/50, text-white/50…) fonctionnent via
+   * `rgb(var(--x) / <alpha-value>)`. En CSS brut : rgb(var(--color-ink)).
+   */
+  :root {
+    /* Vert Littoral — actions, liens, focus, accents. Rare et précieux. */
+    --color-green: 30 91 60; /* #1E5B3C */
+    --color-green-dark: 23 71 47; /* #17472F */
+    --color-green-light: 127 183 154; /* #7FB79A — accent sur fond sombre */
+    --color-green-soft: 231 239 233; /* #E7EFE9 — fill discret */
+
+    /* Anthracite — texte, fonds immersifs, footer */
+    --color-ink: 26 29 31; /* #1A1D1F */
+    --color-ink-deep: 17 20 22; /* #111416 — hero le plus sombre */
+    --color-surface-dark: 36 40 42; /* #24282A — cartes sur fond sombre */
+    --color-line-dark: 49 54 58; /* #31363A — traits sur fond sombre */
+
+    /* Surfaces claires */
+    --color-paper: 244 244 242; /* #F4F4F2 — sections alternées */
+    --color-paper-soft: 240 241 238; /* #F0F1EE */
+    --color-mist: 239 239 236; /* #EFEFEC — remplissage subtil */
+
+    /* Traits */
+    --color-line: 226 228 225; /* #E2E4E1 */
+    --color-line-soft: 233 234 231; /* #E9EAE7 */
+
+    /* Texte sur fond clair */
+    --color-slate: 58 63 60; /* #3A3F3C — secondaire appuyé */
+    --color-stone: 107 114 109; /* #6B726D — muted */
+    --color-ash: 138 146 141; /* #8A928D — légendes */
+
+    /* Texte sur fond sombre */
+    --color-fog: 199 204 201; /* #C7CCC9 — corps sur sombre */
+    --color-haze: 230 232 229; /* #E6E8E5 — liens nav sur hero */
+    --color-mute-ink: 157 164 160; /* #9DA4A0 — muted sur sombre */
+
+    /* Statuts projet — repalettés dans la nouvelle DA */
+    --status-design-bg: 240 241 238; /* paper-soft */
+    --status-design-fg: 107 114 109; /* stone */
+    --status-prototype-bg: 231 239 233; /* green-soft */
+    --status-prototype-fg: 30 91 60; /* green */
+    --status-production-bg: 228 231 230; /* #E4E7E6 */
+    --status-production-fg: 26 29 31; /* ink */
+    --status-livre-bg: 244 244 242; /* paper */
+    --status-livre-fg: 157 164 160; /* mute-ink */
+  }
+
+  html {
+    background: rgb(var(--color-ink));
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-white font-sans text-ink antialiased;
+  }
+
+  ::selection {
+    background: rgb(var(--color-green));
+    color: #fff;
+  }
+}
