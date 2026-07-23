@@ -27,6 +27,42 @@ export interface Feature {
   desc: string;
 }
 
+/** Une pièce d'une collection complète (domicile / extérieur / third). */
+export interface KitPiece {
+  id: string;
+  label: string;
+  image: string;
+  alt: string;
+}
+
+/** Collection mise en avant : les trois tenues d'un même club. */
+export const featuredCollection = {
+  club: "F.C. Littoral",
+  season: "Collection 2026",
+  intro:
+    "Trois tenues, une seule identité : le héron du littoral, décliné du domicile au third.",
+  pieces: [
+    {
+      id: "domicile",
+      label: "Domicile",
+      image: "/images/creations/maillot-domicile-lemnos-littoral.jpeg",
+      alt: "Maillot domicile F.C. Littoral — jaune et vert, blason au héron",
+    },
+    {
+      id: "exterieur",
+      label: "Extérieur",
+      image: "/images/creations/maillot-exterieur-lemnos-littoral.jpeg",
+      alt: "Maillot extérieur F.C. Littoral — vert profond, motif ton sur ton",
+    },
+    {
+      id: "third",
+      label: "Third",
+      image: "/images/creations/maillot-third-lemnos-littoral.jpeg",
+      alt: "Maillot third F.C. Littoral — blanc et violet",
+    },
+  ] satisfies KitPiece[],
+};
+
 export const navLinks: NavLink[] = [
   { label: "Méthode", href: "#methode" },
   { label: "Réalisations", href: "#realisations" },
