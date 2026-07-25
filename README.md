@@ -55,6 +55,32 @@ Les pages sont prérendues en statique et les images servies via
 l'optimisation d'images intégrée de Vercel (`next/image`, fichiers locaux dans
 `public/`). La version de Node est fixée à 18.18+ (`.nvmrc` : 22).
 
+## Espace admin & demandes
+
+Le formulaire « Démarrer un projet » enregistre chaque demande, consultable et
+gérable sur **`/admin`** (liste, filtres par statut, changement de statut,
+suppression). Voir `.env.example` pour les variables.
+
+**1. Mot de passe admin (obligatoire pour accéder à `/admin`)**
+
+```
+ADMIN_PASSWORD=un-mot-de-passe-solide
+```
+
+En local, le mettre dans `.env.local`. Sur Vercel : *Project Settings →
+Environment Variables*.
+
+**2. Base de données (persistance des demandes)**
+
+Sans base, les demandes sont conservées **en mémoire** et perdues au
+redéploiement (un bandeau le signale dans l'admin). Pour activer la
+persistance :
+
+1. Dans le dashboard Vercel, onglet **Storage → Create Database → Postgres**
+   (Neon), et le lier au projet.
+2. Vercel injecte automatiquement `DATABASE_URL` / `POSTGRES_URL`. Le code les
+   détecte et crée la table `demands` au premier appel — rien d'autre à faire.
+
 ## À compléter
 
 - Le contenu de la landing (réalisations, textes, `bonjour@lemnos.fr`) est du

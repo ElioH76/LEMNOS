@@ -3,6 +3,7 @@
 import { useRef, useState, type DragEvent, type FormEvent } from "react";
 import { Check, FileText, X } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { submitDemand } from "@/app/actions/demands";
 import { promises, structureTypes } from "@/lib/site-content";
 import { Eyebrow, Shell } from "./Shell";
 import { MythPattern } from "./MythPattern";
@@ -11,9 +12,11 @@ import { Reveal } from "./Reveal";
 const FIELD =
   "w-full rounded-field border-[1.5px] border-line bg-white px-4 py-3 text-[15px] text-ink outline-none transition-colors placeholder:text-ash focus:border-green";
 const LABEL = "mb-2 block text-[12px] font-semibold text-ink";
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 interface Errors {
   structure?: string;
+  email?: string;
   brief?: string;
 }
 
@@ -22,10 +25,14 @@ export function ProjectForm() {
   const [type, setType] = useState(structureTypes[0]);
   const [sport, setSport] = useState("");
   const [quantity, setQuantity] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [brief, setBrief] = useState("");
   const [files, setFiles] = useState<string[]>([]);
   const [dragging, setDragging] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -40,14 +47,32 @@ export function ProjectForm() {
     addFiles(event.dataTransfer.files);
   };
 
-  /** Validation locale — l'envoi reste à brancher sur l'API. */
-  const onSubmit = (event: FormEvent) => {
+  const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    setFormError(null);
+
     const next: Errors = {};
     if (!structure.trim()) next.structure = "Indiquez le nom de votre structure.";
+    if (!EMAIL_RE.test(email.trim())) next.email = "Une adresse email valide est requise.";
     if (brief.trim().length < 10) next.brief = "Décrivez votre projet en quelques mots.";
     setErrors(next);
-    if (Object.keys(next).length === 0) setSent(true);
+    if (Object.keys(next).length > 0) return;
+
+    setSubmitting(true);
+    const result = await submitDemand({
+      structure,
+      type,
+      sport,
+      quantity,
+      email,
+      phone,
+      brief,
+      files,
+    });
+    setSubmitting(false);
+
+    if (result.ok) setSent(true);
+    else setFormError(result.error ?? "Une erreur est survenue.");
   };
 
   return (
@@ -159,6 +184,42 @@ export function ProjectForm() {
                   </div>
                 </div>
 
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="email" className={LABEL}>
+                      Email
+                    </label>
+                    <input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="contact@club.fr"
+                      aria-invalid={!!errors.email}
+                      aria-describedby={errors.email ? "email-error" : undefined}
+                      className={cn(FIELD, errors.email && "border-green")}
+                    />
+                    {errors.email && (
+                      <p id="email-error" className="mt-2 text-[13px] text-green-dark">
+                        {errors.email}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <label htmlFor="phone" className={LABEL}>
+                      Téléphone <span className="font-normal text-ash">(optionnel)</span>
+                    </label>
+                    <input
+                      id="phone"
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="06 12 34 56 78"
+                      className={FIELD}
+                    />
+                  </div>
+                </div>
+
                 <div>
                   <label htmlFor="sport" className={LABEL}>
                     Sport / discipline
@@ -244,11 +305,18 @@ export function ProjectForm() {
                   </ul>
                 )}
 
+                {formError && (
+                  <p className="rounded-field bg-green-soft px-3.5 py-3 text-[13px] text-green-dark">
+                    {formError}
+                  </p>
+                )}
+
                 <button
                   type="submit"
-                  className="rounded-sharp bg-green py-4 text-[14px] font-semibold uppercase tracking-caps text-white transition-colors duration-150 hover:bg-green-dark"
+                  disabled={submitting}
+                  className="rounded-sharp bg-green py-4 text-[14px] font-semibold uppercase tracking-caps text-white transition-colors duration-150 hover:bg-green-dark disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  Envoyer mon projet
+                  {submitting ? "Envoi…" : "Envoyer mon projet"}
                 </button>
                 <p className="text-center text-[11.5px] text-ash">
                   Réponse sous 24 h · sans engagement
