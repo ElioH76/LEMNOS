@@ -62,6 +62,20 @@ function ensureSchema(): Promise<void> {
   return schemaReady;
 }
 
+/** jsonb peut revenir en tableau déjà parsé ou, selon le driver, en chaîne. */
+function parseFiles(value: unknown): string[] {
+  if (Array.isArray(value)) return value.map(String);
+  if (typeof value === "string") {
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed.map(String) : [];
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function rowToDemand(row: any): Demand {
   return {
@@ -74,7 +88,7 @@ function rowToDemand(row: any): Demand {
     email: row.email,
     phone: row.phone ?? "",
     brief: row.brief,
-    files: Array.isArray(row.files) ? row.files : [],
+    files: parseFiles(row.files),
     status: row.status as DemandStatus,
   };
 }
