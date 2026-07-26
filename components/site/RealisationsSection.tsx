@@ -1,8 +1,8 @@
-import Image from "next/image";
 import { featuredCollection, otherClubs } from "@/lib/site-content";
 import { Eyebrow, Shell } from "./Shell";
 import { MythPattern } from "./MythPattern";
 import { Reveal } from "./Reveal";
+import { ZoomableImage } from "./ZoomableImage";
 
 export function RealisationsSection() {
   return (
@@ -50,19 +50,17 @@ export function RealisationsSection() {
 
         <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {featuredCollection.pieces.map((piece, index) => (
-            <Reveal as="figure" key={piece.id} delay={index * 90} className="group m-0">
-              <div className="relative aspect-[5/4] overflow-hidden rounded-xl border border-line-dark bg-black transition-colors duration-200 group-hover:border-green/50">
-                <Image
-                  src={piece.image}
-                  alt={piece.alt}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                />
+            <Reveal as="figure" key={piece.id} delay={index * 90} className="m-0">
+              <ZoomableImage
+                src={piece.image}
+                alt={piece.alt}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="aspect-[5/4] rounded-xl border border-line-dark bg-black transition-colors duration-200 hover:border-green/50"
+              >
                 <span className="absolute bottom-3 left-4 rounded-pill bg-ink/80 px-3 py-1 text-[12px] font-bold tracking-tight text-white backdrop-blur-sm">
                   {piece.label}
                 </span>
-              </div>
+              </ZoomableImage>
             </Reveal>
           ))}
         </div>
@@ -77,16 +75,13 @@ export function RealisationsSection() {
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {otherClubs.map((club, index) => (
             <Reveal as="article" key={club.id} delay={(index % 3) * 90}>
-              <div className="group h-full overflow-hidden rounded-xl border border-line-dark bg-surface-dark transition-all duration-200 hover:-translate-y-1 hover:border-green/50 hover:shadow-immersive">
-                <div className="relative aspect-[5/4] overflow-hidden bg-black">
-                  <Image
-                    src={club.image}
-                    alt={club.alt}
-                    fill
-                    sizes="(max-width: 640px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                  />
-                </div>
+              <div className="h-full overflow-hidden rounded-xl border border-line-dark bg-surface-dark transition-all duration-200 hover:-translate-y-1 hover:border-green/50 hover:shadow-immersive">
+                <ZoomableImage
+                  src={club.image}
+                  alt={club.alt}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="aspect-[5/4] bg-black"
+                />
                 <div className="flex items-center justify-between gap-3 p-5">
                   <div className="min-w-0">
                     <div className="truncate text-[15px] font-bold">{club.team}</div>
