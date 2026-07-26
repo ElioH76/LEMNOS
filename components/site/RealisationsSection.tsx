@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { featuredCollection, realisations } from "@/lib/site-content";
+import { featuredCollection, otherClubs } from "@/lib/site-content";
 import { Eyebrow, Shell } from "./Shell";
 import { MythPattern } from "./MythPattern";
 import { Reveal } from "./Reveal";
@@ -51,58 +51,47 @@ export function RealisationsSection() {
         <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {featuredCollection.pieces.map((piece, index) => (
             <Reveal as="figure" key={piece.id} delay={index * 90} className="group m-0">
-              <div className="relative aspect-[4/5] overflow-hidden rounded-xl border border-line-dark bg-ink-deep transition-colors duration-200 group-hover:border-green/50">
+              <div className="relative aspect-[5/4] overflow-hidden rounded-xl border border-line-dark bg-black transition-colors duration-200 group-hover:border-green/50">
                 <Image
                   src={piece.image}
                   alt={piece.alt}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                 />
-                <div
-                  aria-hidden
-                  className="absolute inset-x-0 bottom-0 h-1/3 bg-[linear-gradient(180deg,transparent,rgba(17,20,22,0.85))]"
-                />
-                <figcaption className="absolute bottom-4 left-5 text-[15px] font-bold tracking-tight text-white">
+                <span className="absolute bottom-3 left-4 rounded-pill bg-ink/80 px-3 py-1 text-[12px] font-bold tracking-tight text-white backdrop-blur-sm">
                   {piece.label}
-                </figcaption>
+                </span>
               </div>
             </Reveal>
           ))}
         </div>
 
-        {/* Autres réalisations */}
+        {/* Autres clubs équipés par Lemnos */}
         <Reveal className="mt-20">
           <h3 className="text-[11px] font-semibold uppercase tracking-label text-mute-ink">
-            Autres collectifs
+            Autres clubs équipés
           </h3>
         </Reveal>
 
-        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {realisations.map((item, index) => (
-            <Reveal as="article" key={item.id} delay={(index % 3) * 90}>
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {otherClubs.map((club, index) => (
+            <Reveal as="article" key={club.id} delay={index * 90}>
               <div className="group h-full overflow-hidden rounded-xl border border-line-dark bg-surface-dark transition-all duration-200 hover:-translate-y-1 hover:border-green/50 hover:shadow-immersive">
-                <div className="relative aspect-[4/3] overflow-hidden bg-ink-deep">
+                <div className="relative aspect-[5/4] overflow-hidden bg-black">
                   <Image
-                    src={item.image}
-                    alt={`${item.team} — ${item.sport}`}
+                    src={club.image}
+                    alt={club.alt}
                     fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div
-                    aria-hidden
-                    className="absolute inset-0 bg-[linear-gradient(180deg,transparent_45%,rgba(17,20,22,0.55)_100%)]"
+                    sizes="(max-width: 640px) 100vw, 50vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                   />
                 </div>
                 <div className="flex items-center justify-between gap-3 p-5">
                   <div className="min-w-0">
-                    <div className="truncate text-[15px] font-bold">{item.team}</div>
-                    <div className="mt-0.5 text-[12px] text-mute-ink">{item.sport}</div>
+                    <div className="truncate text-[15px] font-bold">{club.team}</div>
+                    <div className="mt-0.5 text-[12px] text-mute-ink">{club.kit}</div>
                   </div>
-                  <span className="flex-none rounded-pill border border-green px-3 py-1 text-[11px] font-semibold tracking-link text-green-light">
-                    {item.technique}
-                  </span>
                 </div>
               </div>
             </Reveal>

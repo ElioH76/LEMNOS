@@ -14,12 +14,13 @@ export interface MethodStep {
   desc: string;
 }
 
-export interface Realisation {
+/** Réalisation pour un autre club : un mockup de tenue complet. */
+export interface ClubShowcase {
   id: string;
   team: string;
-  sport: string;
-  technique: string;
+  kit: string;
   image: string;
+  alt: string;
 }
 
 export interface Feature {
@@ -45,20 +46,20 @@ export const featuredCollection = {
     {
       id: "domicile",
       label: "Domicile",
-      image: "/images/creations/maillot-domicile-lemnos-littoral.jpeg",
-      alt: "Maillot domicile F.C. Littoral — jaune et vert, blason au héron",
+      image: "/images/creations/mockup-fclittoral-domicile-LEMNOS.png",
+      alt: "Tenue domicile F.C. Littoral — jaune et vert, blason au héron, conçue par Lemnos",
     },
     {
       id: "exterieur",
       label: "Extérieur",
-      image: "/images/creations/maillot-exterieur-lemnos-littoral.jpeg",
-      alt: "Maillot extérieur F.C. Littoral — vert profond, motif ton sur ton",
+      image: "/images/creations/mockup-fclittoral-exterieur-LEMNOS.png",
+      alt: "Tenue extérieur F.C. Littoral — vert profond et liseré or, conçue par Lemnos",
     },
     {
       id: "third",
       label: "Third",
-      image: "/images/creations/maillot-third-lemnos-littoral.jpeg",
-      alt: "Maillot third F.C. Littoral — blanc et violet",
+      image: "/images/creations/mockup-fclittoral-third-LEMNOS.png",
+      alt: "Tenue third F.C. Littoral — blanche à liseré violet, héron en filigrane, conçue par Lemnos",
     },
   ] satisfies KitPiece[],
 };
@@ -109,48 +110,21 @@ export const methodSteps: MethodStep[] = [
   },
 ];
 
-export const realisations: Realisation[] = [
+/** Autres clubs équipés par Lemnos. */
+export const otherClubs: ClubShowcase[] = [
   {
-    id: "montcerf",
-    team: "AS Montcerf",
-    sport: "Football",
-    technique: "Sublimation",
-    image: "/images/real-montcerf.jpg",
+    id: "ocfc",
+    team: "Olympia Caux FC",
+    kit: "Domicile · noir & or",
+    image: "/images/creations/mockup-OCFC-LEMNOS.png",
+    alt: "Tenue Olympia Caux Football Club — noire et or, motif phénix, conçue par Lemnos",
   },
   {
-    id: "titans",
-    team: "Titans e-Sport",
-    sport: "Jersey gaming",
-    technique: "Flocage",
-    image: "/images/real-titans.jpg",
-  },
-  {
-    id: "vallon",
-    team: "RC Vallon",
-    sport: "Rugby",
-    technique: "Broderie",
-    image: "/images/real-vallon.jpg",
-  },
-  {
-    id: "ampere",
-    team: "Lycée Ampère",
-    sport: "Athlétisme",
-    technique: "Sublimation",
-    image: "/images/real-ampere.jpg",
-  },
-  {
-    id: "novastudio",
-    team: "Novastudio",
-    sport: "Corporate",
-    technique: "Broderie",
-    image: "/images/real-novastudio.jpg",
-  },
-  {
-    id: "skema",
-    team: "BDE Skema",
-    sport: "Lifestyle",
-    technique: "Flocage",
-    image: "/images/real-skema.jpg",
+    id: "rolleville",
+    team: "FC Rolleville",
+    kit: "Extérieur · blanc, marine & or",
+    image: "/images/creations/mockup-fcrolleville-white-LEMNOS-.png",
+    alt: "Tenue FC Rolleville — blanche, bleu marine et or, conçue par Lemnos",
   },
 ];
 
