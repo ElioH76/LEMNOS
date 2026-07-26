@@ -74,9 +74,9 @@ export function RealisationsSection() {
           </h3>
         </Reveal>
 
-        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {otherClubs.map((club, index) => (
-            <Reveal as="article" key={club.id} delay={index * 90}>
+            <Reveal as="article" key={club.id} delay={(index % 3) * 90}>
               <div className="group h-full overflow-hidden rounded-xl border border-line-dark bg-surface-dark transition-all duration-200 hover:-translate-y-1 hover:border-green/50 hover:shadow-immersive">
                 <div className="relative aspect-[5/4] overflow-hidden bg-black">
                   <Image

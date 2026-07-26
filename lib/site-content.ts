@@ -126,6 +126,13 @@ export const otherClubs: ClubShowcase[] = [
     image: "/images/creations/mockup-fcrolleville-white-LEMNOS-.png",
     alt: "Tenue FC Rolleville — blanche, bleu marine et or, conçue par Lemnos",
   },
+  {
+    id: "epouville",
+    team: "US Épouville",
+    kit: "Extérieur · blanc, bleu & rouge",
+    image: "/images/creations/mockup-usepouville-exterieur-LEMNOS.png",
+    alt: "Tenue extérieur US Épouville — blanche à liserés bleu et rouge, motif gecko, conçue par Lemnos",
+  },
 ];
 
 /** Visuel plein cadre du hero — direction photo cinématographique sombre. */
