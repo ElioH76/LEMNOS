@@ -35,7 +35,7 @@ export default function AdminLoginPage() {
               />
             </div>
 
-            {state?.error && <p className="text-[13px] text-green-light">{state.error}</p>}
+            {state?.error && <p className="text-[13px] font-medium text-danger-light">{state.error}</p>}
 
             <button
               type="submit"

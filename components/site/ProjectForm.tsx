@@ -11,6 +11,9 @@ import { Reveal } from "./Reveal";
 
 const FIELD =
   "w-full rounded-field border-[1.5px] border-line bg-white px-4 py-3 text-[15px] text-ink outline-none transition-colors placeholder:text-ash focus:border-green";
+// Variante d'erreur : bordure rouge, sans border-line pour éviter tout conflit d'ordre CSS.
+const FIELD_ERR =
+  "w-full rounded-field border-[1.5px] border-danger bg-white px-4 py-3 text-[15px] text-ink outline-none transition-colors placeholder:text-ash focus:border-danger";
 const LABEL = "mb-2 block text-[12px] font-semibold text-ink";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -145,10 +148,10 @@ export function ProjectForm() {
                     placeholder="AS Montcerf"
                     aria-invalid={!!errors.structure}
                     aria-describedby={errors.structure ? "structure-error" : undefined}
-                    className={cn(FIELD, errors.structure && "border-green")}
+                    className={errors.structure ? FIELD_ERR : FIELD}
                   />
                   {errors.structure && (
-                    <p id="structure-error" className="mt-2 text-[13px] text-green-dark">
+                    <p id="structure-error" className="mt-2 text-[13px] font-medium text-danger">
                       {errors.structure}
                     </p>
                   )}
@@ -197,10 +200,10 @@ export function ProjectForm() {
                       placeholder="contact@club.fr"
                       aria-invalid={!!errors.email}
                       aria-describedby={errors.email ? "email-error" : undefined}
-                      className={cn(FIELD, errors.email && "border-green")}
+                      className={errors.email ? FIELD_ERR : FIELD}
                     />
                     {errors.email && (
-                      <p id="email-error" className="mt-2 text-[13px] text-green-dark">
+                      <p id="email-error" className="mt-2 text-[13px] font-medium text-danger">
                         {errors.email}
                       </p>
                     )}
@@ -244,10 +247,10 @@ export function ProjectForm() {
                     placeholder="Maillots domicile + extérieur, nos couleurs sont le bordeaux et l'or, blason fourni…"
                     aria-invalid={!!errors.brief}
                     aria-describedby={errors.brief ? "brief-error" : undefined}
-                    className={cn(FIELD, "min-h-24 resize-y", errors.brief && "border-green")}
+                    className={cn(errors.brief ? FIELD_ERR : FIELD, "min-h-24 resize-y")}
                   />
                   {errors.brief && (
-                    <p id="brief-error" className="mt-2 text-[13px] text-green-dark">
+                    <p id="brief-error" className="mt-2 text-[13px] font-medium text-danger">
                       {errors.brief}
                     </p>
                   )}
@@ -306,7 +309,7 @@ export function ProjectForm() {
                 )}
 
                 {formError && (
-                  <p className="rounded-field bg-green-soft px-3.5 py-3 text-[13px] text-green-dark">
+                  <p className="rounded-field border border-danger/30 bg-danger-soft px-3.5 py-3 text-[13px] font-medium text-danger">
                     {formError}
                   </p>
                 )}

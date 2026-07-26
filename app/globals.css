@@ -16,6 +16,11 @@
     --color-green-light: 127 183 154; /* #7FB79A — accent sur fond sombre */
     --color-green-soft: 231 239 233; /* #E7EFE9 — fill discret */
 
+    /* Rouge — erreurs de validation uniquement */
+    --color-danger: 197 42 34; /* #C52A22 */
+    --color-danger-soft: 251 233 231; /* #FBE9E7 */
+    --color-danger-light: 242 166 156; /* #F2A69C — sur fond sombre */
+
     /* Anthracite — texte, fonds immersifs, footer */
     --color-ink: 26 29 31; /* #1A1D1F */
     --color-ink-deep: 17 20 22; /* #111416 — hero le plus sombre */

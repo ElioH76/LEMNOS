@@ -19,6 +19,11 @@ const config: Config = {
           light: rgb("green-light"),
           soft: rgb("green-soft"),
         },
+        danger: {
+          DEFAULT: rgb("danger"),
+          soft: rgb("danger-soft"),
+          light: rgb("danger-light"),
+        },
         ink: {
           DEFAULT: rgb("ink"),
           deep: rgb("ink-deep"),
