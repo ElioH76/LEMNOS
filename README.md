@@ -81,6 +81,25 @@ persistance :
 2. Vercel injecte automatiquement `DATABASE_URL` / `POSTGRES_URL`. Le code les
    détecte et crée la table `demands` au premier appel — rien d'autre à faire.
 
+## Facturation (admin)
+
+Module intégré à l'admin (`/admin/factures`) : liste (recherche, tri, filtres,
+pagination), création/édition (client enregistré ou nouveau, lignes illimitées
+avec calcul temps réel, remises, TVA, livraison, acompte), **PDF premium**
+généré à la volée (`@react-pdf/renderer`), duplication, statuts, et **modèles
+produits** réutilisables.
+
+- Les coordonnées LEMNOS vivent dans `lib/settings/company.ts` (source unique).
+  **À compléter** : `siret`, `tvaIntra`, `iban`, `bic` (laissés vides, omis
+  proprement du PDF tant qu'ils le sont).
+- Persistance : mêmes tables Postgres/Neon que les demandes (`billing_*`),
+  créées automatiquement ; repli mémoire sans base.
+- Architecture pensée pour la suite (devis, avoirs, paiements partiels,
+  relances, export comptable) : `documentType` extensible, calculs isolés dans
+  `lib/billing/calc.ts`, store modulaire.
+- L'envoi par email est préparé (bouton présent) mais désactivé — nécessite un
+  service type Resend, comme le stockage de fichiers.
+
 ## À compléter
 
 - Le contenu de la landing (réalisations, textes, `bonjour@lemnos.fr`) est du

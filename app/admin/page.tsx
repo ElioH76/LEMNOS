@@ -1,7 +1,5 @@
-import { LogOut } from "lucide-react";
-import { LogoLockup } from "@/components/brand/LogoLockup";
+import { AdminHeader } from "@/components/admin/AdminHeader";
 import { DemandsBoard } from "@/components/admin/DemandsBoard";
-import { logout } from "@/app/actions/auth";
 import { listDemands, storageBackend } from "@/lib/demands/store";
 import { DEMAND_STATUSES, STATUS_LABEL } from "@/lib/demands/types";
 
@@ -18,27 +16,9 @@ export default async function AdminPage() {
 
   return (
     <>
-      <header className="sticky top-0 z-10 border-b border-line bg-white/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-4">
-          <div className="flex items-center gap-3">
-            <LogoLockup markClassName="w-[26px] text-green" wordmarkClassName="text-[18px]" />
-            <span className="hidden text-[12px] font-semibold uppercase tracking-caps text-ash sm:inline">
-              · Demandes
-            </span>
-          </div>
-          <form action={logout}>
-            <button
-              type="submit"
-              className="flex items-center gap-1.5 rounded-sharp border border-line px-3.5 py-2 text-[13px] font-semibold text-slate transition-colors hover:border-green hover:text-green"
-            >
-              <LogOut size={15} aria-hidden />
-              Déconnexion
-            </button>
-          </form>
-        </div>
-      </header>
+      <AdminHeader active="demandes" />
 
-      <main className="mx-auto max-w-5xl px-6 py-10">
+      <main className="mx-auto max-w-6xl px-6 py-10">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <div className="text-[11px] font-semibold uppercase tracking-caps text-green">
