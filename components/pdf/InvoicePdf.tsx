@@ -1,7 +1,7 @@
 import { Document, Page, Path, StyleSheet, Svg, Text, View } from "@react-pdf/renderer";
 import { computeTotals, formatEuro, lineHt } from "@/lib/billing/calc";
-import { company, companyAddressLine } from "@/lib/settings/company";
-import { INVOICE_STATUS_LABEL, type Invoice } from "@/lib/billing/types";
+import { company, companyAddressLine, companyLegalMentions } from "@/lib/settings/company";
+import type { Invoice } from "@/lib/billing/types";
 
 const GREEN = "#1E5B3C";
 const INK = "#1A1D1F";
@@ -18,10 +18,10 @@ const MARK_PATHS = [
 const s = StyleSheet.create({
   page: { paddingHorizontal: 42, paddingVertical: 40, fontSize: 9, color: INK, fontFamily: "Helvetica" },
   header: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
-  brandRow: { flexDirection: "row", alignItems: "center", gap: 8 },
-  markBox: { width: 30, height: 30, borderRadius: 6, backgroundColor: GREEN, alignItems: "center", justifyContent: "center" },
-  brandName: { fontSize: 15, fontFamily: "Helvetica-Bold", letterSpacing: 2 },
-  tagline: { fontSize: 7.5, color: ASH, marginTop: 1 },
+  brandRow: { flexDirection: "row", alignItems: "center", gap: 10 },
+  markBox: { width: 40, height: 40, borderRadius: 8, backgroundColor: GREEN, alignItems: "center", justifyContent: "center" },
+  brandName: { fontSize: 20, fontFamily: "Helvetica-Bold", letterSpacing: 3 },
+  tagline: { fontSize: 8, color: ASH, marginTop: 2, letterSpacing: 0.5 },
   docTitle: { fontSize: 20, fontFamily: "Helvetica-Bold", color: GREEN, textAlign: "right" },
   number: { fontSize: 11, fontFamily: "Helvetica-Bold", textAlign: "right", marginTop: 2 },
   metaRight: { fontSize: 8, color: ASH, textAlign: "right", marginTop: 2 },
@@ -42,7 +42,7 @@ const s = StyleSheet.create({
   totalsBox: { width: 220 },
   totalRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 2 },
   totalTtc: { flexDirection: "row", justifyContent: "space-between", borderTopWidth: 1, borderTopColor: INK, paddingTop: 4, marginTop: 3 },
-  remaining: { flexDirection: "row", justifyContent: "space-between", backgroundColor: "#E7EFE9", padding: 5, borderRadius: 3, marginTop: 4 },
+  payBlock: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", backgroundColor: GREEN, borderRadius: 4, paddingVertical: 8, paddingHorizontal: 9, marginTop: 6 },
   section: { marginTop: 18, borderTopWidth: 0.5, borderTopColor: LINE, paddingTop: 12 },
   small: { fontSize: 8.5, color: "#5A5148", marginBottom: 3, lineHeight: 1.5 },
   footer: { position: "absolute", bottom: 28, left: 42, right: 42, borderTopWidth: 0.5, borderTopColor: LINE, paddingTop: 8, fontSize: 7.5, color: ASH, textAlign: "center", lineHeight: 1.5 },
@@ -56,15 +56,6 @@ function frDate(iso: string): string {
 export function InvoicePdf({ invoice }: { invoice: Invoice }) {
   const t = computeTotals(invoice);
   const c = company;
-  const mentions = [
-    `${c.name} — ${companyAddressLine()}`,
-    c.siren && `SIREN ${c.siren}`,
-    c.siret && `SIRET ${c.siret}`,
-    c.rcs && `RCS ${c.rcs}`,
-    c.tvaIntra && `TVA ${c.tvaIntra}`,
-  ]
-    .filter(Boolean)
-    .join(" · ");
 
   return (
     <Document title={`Facture ${invoice.number}`} author="LEMNOS">
@@ -73,7 +64,7 @@ export function InvoicePdf({ invoice }: { invoice: Invoice }) {
         <View style={s.header}>
           <View style={s.brandRow}>
             <View style={s.markBox}>
-              <Svg width={17} height={16} viewBox="0 0 2048 1905">
+              <Svg width={23} height={21} viewBox="0 0 2048 1905">
                 {MARK_PATHS.map((d, i) => (
                   <Path key={i} d={d} fill="#fff" />
                 ))}
@@ -81,13 +72,12 @@ export function InvoicePdf({ invoice }: { invoice: Invoice }) {
             </View>
             <View>
               <Text style={s.brandName}>LEMNOS</Text>
-              <Text style={s.tagline}>Vêtements de sport personnalisés</Text>
+              <Text style={s.tagline}>Forger vos idées</Text>
             </View>
           </View>
           <View>
             <Text style={s.docTitle}>FACTURE</Text>
             <Text style={s.number}>{invoice.number}</Text>
-            <Text style={s.metaRight}>Statut : {INVOICE_STATUS_LABEL[invoice.status]}</Text>
           </View>
         </View>
 
@@ -122,6 +112,12 @@ export function InvoicePdf({ invoice }: { invoice: Invoice }) {
           <Text>Échéance : {frDate(invoice.dueDate)}</Text>
           {invoice.internalRef ? <Text>Réf. : {invoice.internalRef}</Text> : null}
         </View>
+        {invoice.projectRef ? (
+          <Text style={{ marginTop: 8, fontSize: 9.5 }}>
+            <Text style={{ fontFamily: "Helvetica-Bold" }}>Projet : </Text>
+            {invoice.projectRef}
+          </Text>
+        ) : null}
 
         {/* Table */}
         <View style={{ marginTop: 16 }}>
@@ -175,20 +171,22 @@ export function InvoicePdf({ invoice }: { invoice: Invoice }) {
             ))}
             <View style={s.totalTtc}>
               <Text style={{ fontFamily: "Helvetica-Bold" }}>Total TTC</Text>
-              <Text style={{ fontFamily: "Helvetica-Bold", fontSize: 12 }}>{formatEuro(t.totalTtc)}</Text>
+              <Text style={{ fontFamily: "Helvetica-Bold", fontSize: 11 }}>{formatEuro(t.totalTtc)}</Text>
             </View>
             {t.deposit > 0 ? (
-              <>
-                <View style={s.totalRow}>
-                  <Text style={{ color: ASH }}>Acompte payé</Text>
-                  <Text style={{ color: ASH }}>- {formatEuro(t.deposit)}</Text>
-                </View>
-                <View style={s.remaining}>
-                  <Text style={{ fontFamily: "Helvetica-Bold", color: GREEN }}>Reste à payer</Text>
-                  <Text style={{ fontFamily: "Helvetica-Bold", color: GREEN }}>{formatEuro(t.remaining)}</Text>
-                </View>
-              </>
+              <View style={s.totalRow}>
+                <Text style={{ color: ASH }}>Acompte payé</Text>
+                <Text style={{ color: ASH }}>- {formatEuro(t.deposit)}</Text>
+              </View>
             ) : null}
+            <View style={s.payBlock}>
+              <Text style={{ fontFamily: "Helvetica-Bold", color: "#fff", fontSize: 10 }}>
+                TOTAL À PAYER
+              </Text>
+              <Text style={{ fontFamily: "Helvetica-Bold", color: "#fff", fontSize: 15 }}>
+                {formatEuro(t.remaining)}
+              </Text>
+            </View>
           </View>
         </View>
 
@@ -211,9 +209,9 @@ export function InvoicePdf({ invoice }: { invoice: Invoice }) {
           </View>
         ) : null}
 
-        {/* Mentions légales */}
+        {/* Mentions légales — adaptées au statut fiscal */}
         <Text style={s.footer} fixed>
-          {mentions}
+          {companyLegalMentions()}
         </Text>
       </Page>
     </Document>

@@ -6,7 +6,12 @@
  *   optionnel `clientId` vers la fiche enregistrée.
  */
 
-export type DocumentType = "facture"; // extensible : | "devis" | "avoir"
+/**
+ * « facture » aujourd'hui ; « devis » est déjà reconnu par le modèle et le
+ * stockage pour préparer la transformation devis → facture en un clic (la
+ * facture générée pointera vers le devis via `sourceDocumentId`).
+ */
+export type DocumentType = "facture" | "devis"; // extensible : | "avoir"
 
 export type InvoiceStatus = "brouillon" | "envoyee" | "payee" | "annulee";
 
@@ -75,6 +80,8 @@ export interface InvoiceInput {
   clientId: string | null;
   date: string; // yyyy-mm-dd
   dueDate: string; // yyyy-mm-dd
+  /** Libellé de commande, ex. « FC Littoral — Équipement Senior 2026/2027 ». */
+  projectRef: string;
   internalRef: string;
   status: InvoiceStatus;
   lines: InvoiceLine[];
@@ -90,6 +97,8 @@ export interface InvoiceInput {
 export interface Invoice extends InvoiceInput {
   id: string;
   number: string; // LEM-2026-0001
+  /** Renseigné quand la facture est issue d'un devis (conversion en un clic). */
+  sourceDocumentId?: string;
   createdAt: string;
   updatedAt: string;
 }

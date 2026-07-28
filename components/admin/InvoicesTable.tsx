@@ -50,7 +50,7 @@ export function InvoicesTable({ invoices }: { invoices: Invoice[] }) {
       if (from && inv.date < from) return false;
       if (to && inv.date > to) return false;
       if (q) {
-        const hay = `${inv.number} ${inv.client.club} ${inv.internalRef}`.toLowerCase();
+        const hay = `${inv.number} ${inv.client.club} ${inv.internalRef} ${inv.projectRef ?? ""}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
@@ -206,8 +206,10 @@ export function InvoicesTable({ invoices }: { invoices: Invoice[] }) {
                   </td>
                   <td className="px-4 py-3">
                     <div className="font-semibold">{inv.client.club || "—"}</div>
-                    {inv.internalRef && (
-                      <div className="text-[11px] text-ash">réf. {inv.internalRef}</div>
+                    {(inv.projectRef || inv.internalRef) && (
+                      <div className="truncate text-[11px] text-ash" title={inv.projectRef || inv.internalRef}>
+                        {inv.projectRef || `réf. ${inv.internalRef}`}
+                      </div>
                     )}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-slate">{frDate(inv.date)}</td>

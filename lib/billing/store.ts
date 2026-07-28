@@ -156,10 +156,14 @@ export async function nextInvoiceNumber(year = new Date().getFullYear()): Promis
   return `${prefix}${String(max + 1).padStart(4, "0")}`;
 }
 
-export async function createInvoice(input: InvoiceInput): Promise<Invoice> {
+export async function createInvoice(
+  input: InvoiceInput,
+  extra?: { sourceDocumentId?: string },
+): Promise<Invoice> {
   const now = new Date().toISOString();
   const invoice: Invoice = {
     ...input,
+    ...extra,
     id: randomUUID(),
     number: await nextInvoiceNumber(new Date(input.date || now).getFullYear()),
     createdAt: now,
@@ -205,6 +209,25 @@ export async function duplicateInvoice(id: string): Promise<Invoice | null> {
   void _c;
   void _u;
   return createInvoice({ ...input, status: "brouillon" });
+}
+
+/**
+ * Transforme un devis en facture (numéro de facture neuf, statut brouillon,
+ * lien vers le devis d'origine). Prête pour un futur bouton « Convertir ».
+ */
+export async function convertQuoteToInvoice(quoteId: string): Promise<Invoice | null> {
+  const src = await getInvoice(quoteId);
+  if (!src || src.documentType !== "devis") return null;
+  const { id, number, createdAt, updatedAt, sourceDocumentId, ...input } = src;
+  void id;
+  void number;
+  void createdAt;
+  void updatedAt;
+  void sourceDocumentId;
+  return createInvoice(
+    { ...input, documentType: "facture", status: "brouillon" },
+    { sourceDocumentId: quoteId },
+  );
 }
 
 export async function deleteInvoice(id: string): Promise<void> {

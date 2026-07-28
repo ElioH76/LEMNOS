@@ -77,6 +77,7 @@ export function InvoiceForm({
   const [client, setClient] = useState({ ...emptyClient, ...(initial?.client ?? {}) });
   const [date, setDate] = useState(initial?.date ?? today());
   const [dueDate, setDueDate] = useState(initial?.dueDate ?? plusDays(30));
+  const [projectRef, setProjectRef] = useState(initial?.projectRef ?? "");
   const [internalRef, setInternalRef] = useState(initial?.internalRef ?? "");
   const [status, setStatus] = useState(initial?.status ?? "brouillon");
   const [lines, setLines] = useState<InvoiceLine[]>(initial?.lines?.length ? initial.lines : [newLine()]);
@@ -173,6 +174,7 @@ export function InvoiceForm({
       clientId,
       date,
       dueDate,
+      projectRef,
       internalRef,
       status,
       lines: lines.filter((l) => l.label.trim() || l.unitPriceHt),
@@ -392,6 +394,15 @@ export function InvoiceForm({
                 <label className={LABEL}>Échéance</label>
                 <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className={FIELD} />
               </div>
+            </div>
+            <div>
+              <label className={LABEL}>Référence / Projet</label>
+              <input
+                value={projectRef}
+                onChange={(e) => setProjectRef(e.target.value)}
+                placeholder="FC Littoral — Équipement Senior 2026/2027"
+                className={FIELD}
+              />
             </div>
             <Field label="Référence interne" value={internalRef} onChange={setInternalRef} />
             <div>

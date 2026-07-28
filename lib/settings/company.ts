@@ -22,6 +22,13 @@ export interface CompanySettings {
   tvaIntra: string;
   iban: string;
   bic: string;
+  /**
+   * Franchise en base de TVA (art. 293 B du CGI) : quand true, aucune TVA
+   * n'est facturée et la mention légale correspondante s'affiche
+   * automatiquement à la place du numéro de TVA intracommunautaire.
+   */
+  vatExempt: boolean;
+  vatExemptMention: string;
   /** Conditions de paiement par défaut proposées sur une nouvelle facture. */
   defaultPaymentTerms: string;
 }
@@ -41,10 +48,27 @@ export const company: CompanySettings = {
   tvaIntra: "", // à compléter
   iban: "", // à compléter
   bic: "", // à compléter
+  vatExempt: false, // passer à true si LEMNOS est en franchise en base de TVA
+  vatExemptMention: "TVA non applicable, art. 293 B du CGI",
   defaultPaymentTerms: "Paiement à 30 jours à réception de facture.",
 };
 
 /** Adresse compacte sur une ligne, ex. pour un en-tête. */
 export function companyAddressLine(c: CompanySettings = company): string {
   return `${c.address}, ${c.zip} ${c.city}, ${c.country}`;
+}
+
+/**
+ * Mentions légales, adaptées automatiquement au statut fiscal :
+ * - régime normal : numéro de TVA intracommunautaire (si renseigné) ;
+ * - franchise en base : mention « TVA non applicable, art. 293 B du CGI ».
+ */
+export function companyLegalMentions(c: CompanySettings = company): string {
+  const parts = [`${c.name} — ${companyAddressLine(c)}`];
+  if (c.siren) parts.push(`SIREN ${c.siren}`);
+  if (c.siret) parts.push(`SIRET ${c.siret}`);
+  if (c.rcs) parts.push(`RCS ${c.rcs}`);
+  if (c.vatExempt) parts.push(c.vatExemptMention);
+  else if (c.tvaIntra) parts.push(`TVA ${c.tvaIntra}`);
+  return parts.join(" · ");
 }

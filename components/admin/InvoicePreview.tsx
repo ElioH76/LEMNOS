@@ -1,6 +1,6 @@
 import { Mark } from "@/components/brand/Mark";
 import { computeTotals, formatEuro, lineHt } from "@/lib/billing/calc";
-import { company, companyAddressLine } from "@/lib/settings/company";
+import { company, companyAddressLine, companyLegalMentions } from "@/lib/settings/company";
 import { INVOICE_STATUS_LABEL, type Invoice } from "@/lib/billing/types";
 
 function frDate(iso: string): string {
@@ -75,6 +75,12 @@ export function InvoicePreview({ invoice }: { invoice: Invoice }) {
           </span>
         )}
       </div>
+      {invoice.projectRef && (
+        <div className="mt-3 text-[12.5px]">
+          <span className="font-semibold">Projet : </span>
+          {invoice.projectRef}
+        </div>
+      )}
 
       {/* Lignes */}
       <table className="mt-6 w-full border-collapse text-[12.5px]">
@@ -118,17 +124,13 @@ export function InvoicePreview({ invoice }: { invoice: Invoice }) {
           ))}
           <div className="my-1.5 flex items-center justify-between border-t border-ink pt-1.5">
             <span className="font-bold">Total TTC</span>
-            <span className="text-[16px] font-extrabold tabular-nums">{formatEuro(t.totalTtc)}</span>
+            <span className="text-[15px] font-extrabold tabular-nums">{formatEuro(t.totalTtc)}</span>
           </div>
-          {t.deposit > 0 && (
-            <>
-              <TotalRow label="Acompte payé" value={`- ${formatEuro(t.deposit)}`} muted />
-              <div className="flex items-center justify-between rounded-md bg-green-soft px-2 py-1.5">
-                <span className="font-bold text-green">Reste à payer</span>
-                <span className="font-extrabold tabular-nums text-green">{formatEuro(t.remaining)}</span>
-              </div>
-            </>
-          )}
+          {t.deposit > 0 && <TotalRow label="Acompte payé" value={`- ${formatEuro(t.deposit)}`} muted />}
+          <div className="mt-1.5 flex items-center justify-between rounded-md bg-green px-3 py-2.5">
+            <span className="text-[13px] font-bold uppercase tracking-caps text-white">Total à payer</span>
+            <span className="text-[19px] font-extrabold tabular-nums text-white">{formatEuro(t.remaining)}</span>
+          </div>
         </div>
       </div>
 
@@ -151,13 +153,9 @@ export function InvoicePreview({ invoice }: { invoice: Invoice }) {
         </div>
       )}
 
-      {/* Mentions légales */}
+      {/* Mentions légales — adaptées au statut fiscal */}
       <div className="mt-6 border-t border-line pt-4 text-[10.5px] leading-[1.6] text-ash">
-        {c.name} — {companyAddressLine()}
-        {c.siren && ` · SIREN ${c.siren}`}
-        {c.siret && ` · SIRET ${c.siret}`}
-        {c.rcs && ` · RCS ${c.rcs}`}
-        {c.tvaIntra && ` · TVA ${c.tvaIntra}`}
+        {companyLegalMentions()}
       </div>
     </div>
   );
