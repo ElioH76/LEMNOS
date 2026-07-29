@@ -1,7 +1,7 @@
 import { Mark } from "@/components/brand/Mark";
 import { computeTotals, formatEuro, lineHt } from "@/lib/billing/calc";
 import { company, companyAddressLine, companyLegalMentions } from "@/lib/settings/company";
-import { INVOICE_STATUS_LABEL, type Invoice } from "@/lib/billing/types";
+import type { Invoice } from "@/lib/billing/types";
 
 function frDate(iso: string): string {
   if (!iso) return "—";
@@ -19,19 +19,18 @@ export function InvoicePreview({ invoice }: { invoice: Invoice }) {
     <div className="mx-auto max-w-3xl rounded-2xl border border-line bg-white p-8 md:p-12">
       {/* En-tête */}
       <div className="flex items-start justify-between gap-6 border-b border-line pb-6">
-        <div className="flex items-center gap-3">
-          <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-green">
-            <Mark className="w-6 text-white" />
+        <div className="flex items-center gap-3.5">
+          <span className="flex h-14 w-14 items-center justify-center rounded-lg bg-green">
+            <Mark className="w-8 text-white" />
           </span>
           <div>
-            <div className="text-[18px] font-extrabold uppercase tracking-wordmark">LEMNOS</div>
-            <div className="text-[11px] text-ash">Vêtements de sport personnalisés</div>
+            <div className="text-[20px] font-extrabold uppercase tracking-wordmark">LEMNOS</div>
+            <div className="text-[11px] text-ash">Forger vos idées</div>
           </div>
         </div>
         <div className="text-right">
-          <div className="text-[22px] font-extrabold tracking-tight text-green">FACTURE</div>
+          <div className="text-[24px] font-extrabold tracking-tight text-green">FACTURE</div>
           <div className="font-mono text-[14px] font-bold">{invoice.number}</div>
-          <div className="mt-1 text-[12px] text-ash">Statut : {INVOICE_STATUS_LABEL[invoice.status]}</div>
         </div>
       </div>
 
