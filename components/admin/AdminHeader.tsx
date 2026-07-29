@@ -1,12 +1,13 @@
-import { FileText, Inbox, LogOut } from "lucide-react";
+import { FileText, Inbox, LayoutDashboard, LogOut } from "lucide-react";
 import { LogoLockup } from "@/components/brand/LogoLockup";
 import { logout } from "@/app/actions/auth";
 import { cn } from "@/lib/cn";
 
-type Section = "demandes" | "factures";
+type Section = "dashboard" | "demandes" | "factures";
 
 const NAV: { key: Section; label: string; href: string; icon: typeof Inbox }[] = [
-  { key: "demandes", label: "Demandes", href: "/admin", icon: Inbox },
+  { key: "dashboard", label: "Tableau de bord", href: "/admin", icon: LayoutDashboard },
+  { key: "demandes", label: "Demandes", href: "/admin/demandes", icon: Inbox },
   { key: "factures", label: "Factures", href: "/admin/factures", icon: FileText },
 ];
 

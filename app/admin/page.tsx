@@ -1,60 +1,136 @@
+import Link from "next/link";
+import { AlertTriangle, FileClock, FileText, Package, Users } from "lucide-react";
 import { AdminHeader } from "@/components/admin/AdminHeader";
-import { DemandsBoard } from "@/components/admin/DemandsBoard";
-import { listDemands, storageBackend } from "@/lib/demands/store";
-import { DEMAND_STATUSES, STATUS_LABEL } from "@/lib/demands/types";
+import { StatTile } from "@/components/admin/StatTile";
+import { RevenueChart } from "@/components/admin/RevenueChart";
+import { InvoiceStatusBadge } from "@/components/admin/InvoiceStatusBadge";
+import { computeTotals, formatEuro } from "@/lib/billing/calc";
+import { computeBillingStats } from "@/lib/billing/stats";
+import { listClients, listInvoices, storageBackend } from "@/lib/billing/store";
+import { listDemands } from "@/lib/demands/store";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminPage() {
-  const demands = await listDemands();
-  const backend = storageBackend();
-  const counts = DEMAND_STATUSES.map((status) => ({
-    status,
-    label: STATUS_LABEL[status],
-    value: demands.filter((d) => d.status === status).length,
-  }));
+export default async function AdminDashboardPage() {
+  const [invoices, savedClients, demands] = await Promise.all([
+    listInvoices(),
+    listClients(),
+    listDemands(),
+  ]);
+
+  const stats = computeBillingStats(invoices);
+
+  // Clients distincts : carnet + clients figés sur les factures (par nom).
+  const clientNames = new Set<string>();
+  for (const c of savedClients) if (c.club) clientNames.add(c.club.trim().toLowerCase());
+  for (const i of invoices) if (i.client.club) clientNames.add(i.client.club.trim().toLowerCase());
+  const clientCount = clientNames.size;
+
+  const ordersInProgress = demands.filter((d) => d.status === "en_cours").length;
+  const now = new Date();
+  const recent = invoices.slice(0, 5);
 
   return (
     <>
-      <AdminHeader active="demandes" />
-
+      <AdminHeader active="dashboard" />
       <main className="mx-auto max-w-6xl px-6 py-10">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <div className="text-[11px] font-semibold uppercase tracking-caps text-green">
               Espace admin
             </div>
-            <h1 className="mt-1.5 text-[28px] font-extrabold tracking-tight">
-              Demandes de projet
-            </h1>
+            <h1 className="mt-1.5 text-[28px] font-extrabold tracking-tight">Tableau de bord</h1>
           </div>
-          <div className="text-[13px] text-ash">
-            {demands.length} demande{demands.length > 1 ? "s" : ""} au total
+          <div className="text-[13px] capitalize text-ash">
+            {new Intl.DateTimeFormat("fr-FR", { dateStyle: "full" }).format(now)}
           </div>
         </div>
 
-        {backend === "memory" && (
+        {storageBackend() === "memory" && (
           <div className="mt-6 rounded-2xl border border-green/30 bg-green-soft px-5 py-4 text-[13px] leading-[1.6] text-green-dark">
-            <strong className="font-bold">Stockage temporaire actif.</strong> Aucune base de données
-            n&apos;est branchée : les demandes sont conservées en mémoire et seront perdues au prochain
-            redéploiement. Ajoute une base Vercel Postgres et la variable{" "}
-            <code className="rounded bg-white/60 px-1">DATABASE_URL</code> pour activer la persistance.
+            <strong className="font-bold">Stockage temporaire actif.</strong> Sans base de données,
+            les données sont en mémoire et perdues au redéploiement. La base Vercel Postgres active la
+            persistance.
           </div>
         )}
 
-        <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {counts.map((stat) => (
-            <div key={stat.status} className="rounded-2xl border border-line bg-white px-5 py-4">
-              <div className="text-[11px] font-semibold uppercase tracking-caps text-ash">
-                {stat.label}
-              </div>
-              <div className="mt-2 text-[30px] font-extrabold tabular-nums">{stat.value}</div>
-            </div>
-          ))}
+        {/* Indicateurs d'activité */}
+        <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <StatTile label="Clients" value={String(clientCount)} icon={Users} />
+          <StatTile
+            label="Devis en attente"
+            value={String(stats.pendingQuotes)}
+            icon={FileClock}
+            sub="Module devis à venir"
+          />
+          <StatTile
+            label="Factures impayées"
+            value={String(stats.unpaidCount)}
+            sub={stats.unpaidAmount > 0 ? `${formatEuro(stats.unpaidAmount)} à encaisser` : undefined}
+            icon={AlertTriangle}
+            tone={stats.unpaidCount > 0 ? "warn" : "default"}
+            href="/admin/factures"
+          />
+          <StatTile
+            label="Commandes en cours"
+            value={String(ordersInProgress)}
+            icon={Package}
+            sub="D'après les demandes"
+            href="/admin/demandes"
+          />
         </div>
 
-        <div className="mt-10">
-          <DemandsBoard demands={demands} />
+        {/* Chiffre d'affaires */}
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <StatTile label="CA du mois" value={formatEuro(stats.caMonth)} tone="green" />
+          <StatTile label="CA de l'année" value={formatEuro(stats.caYear)} tone="green" />
+          <StatTile label="CA total" value={formatEuro(stats.caTotal)} tone="green" />
+        </div>
+
+        <div className="mt-6">
+          <RevenueChart monthly={stats.monthly} currentMonth={now.getMonth()} />
+        </div>
+
+        {/* Dernières factures */}
+        <div className="mt-6 rounded-2xl border border-line bg-white p-5 md:p-6">
+          <div className="flex items-center justify-between gap-4">
+            <h2 className="flex items-center gap-2 text-[15px] font-bold tracking-tight">
+              <FileText size={16} className="text-green" aria-hidden /> Dernières factures
+            </h2>
+            <Link
+              href="/admin/factures"
+              className="text-[12px] font-semibold uppercase tracking-caps text-ash transition-colors hover:text-green"
+            >
+              Voir tout →
+            </Link>
+          </div>
+
+          {recent.length === 0 ? (
+            <p className="mt-6 text-center text-[14px] text-ash">
+              Aucune facture. <Link href="/admin/factures/nouvelle" className="text-green underline">Créer la première</Link>.
+            </p>
+          ) : (
+            <div className="mt-4 flex flex-col divide-y divide-line-soft">
+              {recent.map((inv) => (
+                <Link
+                  key={inv.id}
+                  href={`/admin/factures/${inv.id}`}
+                  className="flex items-center justify-between gap-3 py-3 transition-colors hover:bg-paper/60"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="font-mono text-[13px] font-semibold">{inv.number}</span>
+                    <span className="text-[13.5px] text-slate">{inv.client.club || "—"}</span>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-[13.5px] font-semibold tabular-nums">
+                      {formatEuro(computeTotals(inv).totalTtc)}
+                    </span>
+                    <InvoiceStatusBadge status={inv.status} />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </main>
     </>

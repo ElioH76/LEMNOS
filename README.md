@@ -81,6 +81,24 @@ persistance :
 2. Vercel injecte automatiquement `DATABASE_URL` / `POSTGRES_URL`. Le code les
    détecte et crée la table `demands` au premier appel — rien d'autre à faire.
 
+## Admin — logiciel de gestion (en construction)
+
+L'administration évolue vers un vrai outil de gestion, par modules successifs,
+sans changer le design.
+
+- **Tableau de bord** (`/admin`) : indicateurs (clients, devis en attente,
+  factures impayées, commandes en cours), chiffre d'affaires mois/année/total,
+  graphique de CA mensuel. Agrégats calculés dans `lib/billing/stats.ts` (pur,
+  réutilisable), tuiles `StatTile` et `RevenueChart` réutilisables.
+- Le logo officiel (`public/images/logo/LEMNOS.svg`) alimente l'emblème
+  `components/brand/Mark.tsx` (currentColor), donc header admin, connexion,
+  sidebar, PDF et favicon.
+
+Modules à venir (architecture prête) : CRM clients, designs + fichiers,
+workflow de commande, médiathèque, historique de versions, fournisseurs,
+statistiques. Le stockage de fichiers (designs, logos clients, médiathèque)
+nécessitera Vercel Blob.
+
 ## Facturation (admin)
 
 Module intégré à l'admin (`/admin/factures`) : liste (recherche, tri, filtres,
