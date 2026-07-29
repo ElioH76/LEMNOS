@@ -1,7 +1,14 @@
 import "server-only";
 import { randomUUID } from "crypto";
 import { neon } from "@neondatabase/serverless";
-import type { Client, ClientInput, Invoice, InvoiceInput, ProductTemplate } from "./types";
+import type {
+  Client,
+  ClientInput,
+  ClientProfileInput,
+  Invoice,
+  InvoiceInput,
+  ProductTemplate,
+} from "./types";
 
 /**
  * Stockage facturation — même double implémentation que lib/demands/store.ts :
@@ -66,17 +73,42 @@ function data<T>(row: any): T {
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 // ── Clients ───────────────────────────────────────────────────────────────
+/** Complète les fiches anciennes (avant les champs CRM) avec des valeurs sûres. */
+function normalizeClient(c: Client): Client {
+  return {
+    ...c,
+    colors: Array.isArray(c.colors) ? c.colors : [],
+    notes: typeof c.notes === "string" ? c.notes : "",
+    logoUrl: typeof c.logoUrl === "string" ? c.logoUrl : "",
+  };
+}
+
 export async function listClients(): Promise<Client[]> {
   if (sql) {
     await ensureSchema();
     const rows = await sql`SELECT data FROM billing_clients ORDER BY created_at DESC`;
-    return (rows as unknown[]).map((r) => data<Client>(r));
+    return (rows as unknown[]).map((r) => normalizeClient(data<Client>(r)));
   }
-  return [...mem.clients];
+  return mem.clients.map(normalizeClient);
 }
 
-export async function createClient(input: ClientInput): Promise<Client> {
-  const client: Client = { ...input, id: randomUUID(), createdAt: new Date().toISOString() };
+export async function getClient(id: string): Promise<Client | null> {
+  if (sql) {
+    await ensureSchema();
+    const rows = await sql`SELECT data FROM billing_clients WHERE id = ${id} LIMIT 1`;
+    const list = rows as unknown[];
+    return list.length ? normalizeClient(data<Client>(list[0])) : null;
+  }
+  const c = mem.clients.find((x) => x.id === id);
+  return c ? normalizeClient(c) : null;
+}
+
+export async function createClient(input: ClientInput & Partial<ClientProfileInput>): Promise<Client> {
+  const client: Client = normalizeClient({
+    ...input,
+    id: randomUUID(),
+    createdAt: new Date().toISOString(),
+  } as Client);
   if (sql) {
     await ensureSchema();
     await sql`INSERT INTO billing_clients (id, data, created_at) VALUES (${client.id}, ${JSON.stringify(client)}::jsonb, ${client.createdAt})`;
@@ -84,6 +116,38 @@ export async function createClient(input: ClientInput): Promise<Client> {
     mem.clients.unshift(client);
   }
   return client;
+}
+
+export async function updateClient(id: string, input: ClientProfileInput): Promise<Client | null> {
+  const existing = await getClient(id);
+  if (!existing) return null;
+  const updated = normalizeClient({ ...existing, ...input, id: existing.id, createdAt: existing.createdAt });
+  if (sql) {
+    await ensureSchema();
+    await sql`UPDATE billing_clients SET data = ${JSON.stringify(updated)}::jsonb WHERE id = ${id}`;
+  } else {
+    const i = mem.clients.findIndex((x) => x.id === id);
+    if (i >= 0) mem.clients[i] = updated;
+  }
+  return updated;
+}
+
+export async function deleteClient(id: string): Promise<void> {
+  if (sql) {
+    await ensureSchema();
+    await sql`DELETE FROM billing_clients WHERE id = ${id}`;
+  } else {
+    mem.clients = mem.clients.filter((x) => x.id !== id);
+  }
+}
+
+/** Factures d'un client : par lien direct (clientId) ou, à défaut, par nom de club. */
+export async function invoicesForClient(client: Client): Promise<Invoice[]> {
+  const all = await listInvoices();
+  const club = client.club.trim().toLowerCase();
+  return all.filter(
+    (i) => i.clientId === client.id || (!i.clientId && i.client.club.trim().toLowerCase() === club),
+  );
 }
 
 // ── Modèles produits ────────────────────────────────────────────────────────

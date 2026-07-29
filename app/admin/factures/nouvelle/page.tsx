@@ -2,12 +2,21 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { InvoiceForm } from "@/components/admin/InvoiceForm";
-import { listClients, listProductTemplates } from "@/lib/billing/store";
+import { getClient, listClients, listProductTemplates } from "@/lib/billing/store";
 
 export const dynamic = "force-dynamic";
 
-export default async function NouvelleFacturePage() {
-  const [clients, templates] = await Promise.all([listClients(), listProductTemplates()]);
+export default async function NouvelleFacturePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ client?: string }>;
+}) {
+  const { client: clientId } = await searchParams;
+  const [clients, templates, preselectClient] = await Promise.all([
+    listClients(),
+    listProductTemplates(),
+    clientId ? getClient(clientId) : Promise.resolve(null),
+  ]);
 
   return (
     <>
@@ -20,7 +29,12 @@ export default async function NouvelleFacturePage() {
           <ArrowLeft size={15} /> Retour aux factures
         </Link>
         <h1 className="mb-8 text-[28px] font-extrabold tracking-tight">Nouvelle facture</h1>
-        <InvoiceForm mode="create" clients={clients} templates={templates} />
+        <InvoiceForm
+          mode="create"
+          clients={clients}
+          templates={templates}
+          preselectClient={preselectClient ?? undefined}
+        />
       </main>
     </>
   );

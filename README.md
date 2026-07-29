@@ -94,10 +94,16 @@ sans changer le design.
   `components/brand/Mark.tsx` (currentColor), donc header admin, connexion,
   sidebar, PDF et favicon.
 
-Modules à venir (architecture prête) : CRM clients, designs + fichiers,
-workflow de commande, médiathèque, historique de versions, fournisseurs,
-statistiques. Le stockage de fichiers (designs, logos clients, médiathèque)
-nécessitera Vercel Blob.
+- **CRM clients** (`/admin/clients`) : fiche par client (coordonnées,
+  couleurs principales, notes internes, logo par URL), historique des factures
+  lié (par `clientId`, ou par nom en repli), liste avec recherche.
+  Créer une facture pour un nouveau client crée sa fiche automatiquement ;
+  le bouton « Nouvelle facture » d'une fiche pré-remplit le client.
+
+Modules à venir (architecture prête) : designs + fichiers, workflow de
+commande, médiathèque, historique de versions, fournisseurs, statistiques.
+Le stockage de fichiers (designs, logos clients, médiathèque) nécessitera
+Vercel Blob.
 
 ## Facturation (admin)
 

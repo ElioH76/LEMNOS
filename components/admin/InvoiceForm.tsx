@@ -63,18 +63,38 @@ export function InvoiceForm({
   initial,
   clients: initialClients,
   templates: initialTemplates,
+  preselectClient,
 }: {
   mode: "create" | "edit";
   initial?: Invoice;
   clients: Client[];
   templates: ProductTemplate[];
+  preselectClient?: Client;
 }) {
   const router = useRouter();
   const [clients, setClients] = useState(initialClients);
   const [templates, setTemplates] = useState(initialTemplates);
 
-  const [clientId, setClientId] = useState<string | null>(initial?.clientId ?? null);
-  const [client, setClient] = useState({ ...emptyClient, ...(initial?.client ?? {}) });
+  const preselectSnapshot = preselectClient
+    ? {
+        club: preselectClient.club,
+        contact: preselectClient.contact,
+        address: preselectClient.address,
+        city: preselectClient.city,
+        zip: preselectClient.zip,
+        country: preselectClient.country,
+        phone: preselectClient.phone,
+        email: preselectClient.email,
+      }
+    : null;
+
+  const [clientId, setClientId] = useState<string | null>(
+    initial?.clientId ?? preselectClient?.id ?? null,
+  );
+  const [client, setClient] = useState({
+    ...emptyClient,
+    ...(initial?.client ?? preselectSnapshot ?? {}),
+  });
   const [date, setDate] = useState(initial?.date ?? today());
   const [dueDate, setDueDate] = useState(initial?.dueDate ?? plusDays(30));
   const [projectRef, setProjectRef] = useState(initial?.projectRef ?? "");
@@ -168,10 +188,22 @@ export function InvoiceForm({
       return;
     }
     setSaving(true);
+
+    // Nouveau client → on crée sa fiche CRM et on relie la facture.
+    let linkedClientId = clientId;
+    if (!linkedClientId && client.club.trim()) {
+      try {
+        const saved = await createClientAction(client);
+        linkedClientId = saved.id;
+      } catch {
+        /* non bloquant : la facture garde le client figé */
+      }
+    }
+
     const input = {
       documentType: "facture" as const,
       client,
-      clientId,
+      clientId: linkedClientId,
       date,
       dueDate,
       projectRef,

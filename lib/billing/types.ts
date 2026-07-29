@@ -50,10 +50,21 @@ export interface ClientInput {
   email: string;
 }
 
-export interface Client extends ClientInput {
+/** Champs CRM additionnels d'une fiche client (au-delà des coordonnées). */
+export interface ClientExtras {
+  /** Couleurs principales du club (codes hex). */
+  colors: string[];
+  notes: string;
+  /** URL du logo (upload via Blob à venir). */
+  logoUrl: string;
+}
+
+export interface Client extends ClientInput, ClientExtras {
   id: string;
   createdAt: string;
 }
+
+export type ClientProfileInput = ClientInput & ClientExtras;
 
 export interface ProductTemplate {
   id: string;
