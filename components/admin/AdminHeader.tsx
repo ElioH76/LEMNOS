@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   LogOut,
   Package,
+  Truck,
   Users,
 } from "lucide-react";
 import { LogoLockup } from "@/components/brand/LogoLockup";
@@ -19,6 +20,7 @@ type Section =
   | "commandes"
   | "factures"
   | "mediatheque"
+  | "fournisseurs"
   | "statistiques";
 
 const NAV: { key: Section; label: string; href: string; icon: typeof Inbox }[] = [
@@ -28,16 +30,19 @@ const NAV: { key: Section; label: string; href: string; icon: typeof Inbox }[] =
   { key: "commandes", label: "Commandes", href: "/admin/commandes", icon: Package },
   { key: "factures", label: "Factures", href: "/admin/factures", icon: FileText },
   { key: "mediatheque", label: "Médiathèque", href: "/admin/mediatheque", icon: ImageIcon },
+  { key: "fournisseurs", label: "Fournisseurs", href: "/admin/fournisseurs", icon: Truck },
   { key: "statistiques", label: "Statistiques", href: "/admin/statistiques", icon: BarChart3 },
 ];
 
 export function AdminHeader({ active }: { active: Section }) {
   return (
     <header className="sticky top-0 z-20 border-b border-line bg-white/90 backdrop-blur-md">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3.5">
-        <div className="flex items-center gap-6">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-6 py-3.5">
+        <div className="flex min-w-0 flex-1 items-center gap-4">
           <LogoLockup markClassName="w-[24px] text-green" wordmarkClassName="text-[17px]" />
-          <nav className="flex items-center gap-1">
+          <nav
+            className="flex items-center gap-1 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
             {NAV.map((item) => {
               const Icon = item.icon;
               const isActive = item.key === active;
@@ -47,7 +52,7 @@ export function AdminHeader({ active }: { active: Section }) {
                   href={item.href}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "flex items-center gap-2 rounded-sharp px-3 py-2 text-[13px] font-semibold transition-colors",
+                    "flex flex-none items-center gap-2 whitespace-nowrap rounded-sharp px-2.5 py-2 text-[13px] font-semibold transition-colors",
                     isActive
                       ? "bg-ink text-white"
                       : "text-slate hover:bg-paper hover:text-ink",
@@ -60,7 +65,7 @@ export function AdminHeader({ active }: { active: Section }) {
             })}
           </nav>
         </div>
-        <form action={logout}>
+        <form action={logout} className="flex-none">
           <button
             type="submit"
             className="flex items-center gap-1.5 rounded-sharp border border-line px-3.5 py-2 text-[13px] font-semibold text-slate transition-colors hover:border-green hover:text-green"
