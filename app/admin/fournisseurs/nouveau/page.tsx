@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { AdminHeader } from "@/components/admin/AdminHeader";
 import { SupplierForm } from "@/components/admin/SupplierForm";
 
 export const dynamic = "force-dynamic";
@@ -8,7 +7,6 @@ export const dynamic = "force-dynamic";
 export default function NouveauFournisseurPage() {
   return (
     <>
-      <AdminHeader active="fournisseurs" />
       <main className="mx-auto max-w-3xl px-6 py-10">
         <Link
           href="/admin/fournisseurs"

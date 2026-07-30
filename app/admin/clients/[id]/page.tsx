@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, FileText, Image as ImageIcon, Mail, MapPin, Package, Phone, ScrollText, User } from "lucide-react";
-import { AdminHeader } from "@/components/admin/AdminHeader";
 import { ClientActionsBar } from "@/components/admin/ClientActionsBar";
 import { ClientAvatar } from "@/components/admin/ClientsTable";
 import { InvoiceStatusBadge } from "@/components/admin/InvoiceStatusBadge";
@@ -40,7 +39,6 @@ export default async function ClientPage({ params }: { params: Promise<{ id: str
 
   return (
     <>
-      <AdminHeader active="clients" />
       <main className="mx-auto max-w-5xl px-6 py-10">
         <Link
           href="/admin/clients"

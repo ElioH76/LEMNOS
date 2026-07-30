@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { AdminHeader } from "@/components/admin/AdminHeader";
 import { ClientForm } from "@/components/admin/ClientForm";
 import { isBlobConfigured } from "@/lib/blob/store";
 
@@ -9,7 +8,6 @@ export const dynamic = "force-dynamic";
 export default function NouveauClientPage() {
   return (
     <>
-      <AdminHeader active="clients" />
       <main className="mx-auto max-w-3xl px-6 py-10">
         <Link
           href="/admin/clients"

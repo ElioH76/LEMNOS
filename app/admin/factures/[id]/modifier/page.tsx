@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { AdminHeader } from "@/components/admin/AdminHeader";
 import { InvoiceForm } from "@/components/admin/InvoiceForm";
 import { getInvoice, listClients, listProductTemplates } from "@/lib/billing/store";
 
@@ -22,7 +21,6 @@ export default async function ModifierFacturePage({
 
   return (
     <>
-      <AdminHeader active="factures" />
       <main className="mx-auto max-w-6xl px-6 py-10">
         <Link
           href={`/admin/factures/${invoice.id}`}

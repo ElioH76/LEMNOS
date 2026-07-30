@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { AdminHeader } from "@/components/admin/AdminHeader";
 import { ClientForm } from "@/components/admin/ClientForm";
 import { getClient } from "@/lib/billing/store";
 import { isBlobConfigured } from "@/lib/blob/store";
@@ -15,7 +14,6 @@ export default async function ModifierClientPage({ params }: { params: Promise<{
 
   return (
     <>
-      <AdminHeader active="clients" />
       <main className="mx-auto max-w-3xl px-6 py-10">
         <Link
           href={`/admin/clients/${client.id}`}

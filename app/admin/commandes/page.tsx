@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { AdminHeader } from "@/components/admin/AdminHeader";
 import { OrdersBoard } from "@/components/admin/OrdersBoard";
 import { listOrders, storageBackend } from "@/lib/orders/store";
 
@@ -15,7 +14,6 @@ export default async function CommandesPage() {
 
   return (
     <>
-      <AdminHeader active="commandes" />
 
       <main className="mx-auto max-w-6xl px-6 py-10">
         <div className="flex flex-wrap items-end justify-between gap-4">

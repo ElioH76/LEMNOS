@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Globe, Mail, MapPin, Package, Phone, ScrollText, User } from "lucide-react";
-import { AdminHeader } from "@/components/admin/AdminHeader";
 import { SupplierActionsBar } from "@/components/admin/SupplierActionsBar";
 import { SupplierCategoryBadge } from "@/components/admin/SupplierCategoryBadge";
 import { cn } from "@/lib/cn";
@@ -22,7 +21,6 @@ export default async function FournisseurPage({ params }: { params: Promise<{ id
 
   return (
     <>
-      <AdminHeader active="fournisseurs" />
       <main className="mx-auto max-w-5xl px-6 py-10">
         <Link
           href="/admin/fournisseurs"

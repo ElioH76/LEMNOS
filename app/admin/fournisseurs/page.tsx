@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { AdminHeader } from "@/components/admin/AdminHeader";
 import { SuppliersTable } from "@/components/admin/SuppliersTable";
 import { listSuppliers, storageBackend } from "@/lib/suppliers/store";
 
@@ -11,7 +10,6 @@ export default async function FournisseursPage() {
 
   return (
     <>
-      <AdminHeader active="fournisseurs" />
       <main className="mx-auto max-w-6xl px-6 py-10">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>

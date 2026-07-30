@@ -1,4 +1,3 @@
-import { AdminHeader } from "@/components/admin/AdminHeader";
 import { MediaGrid } from "@/components/admin/MediaGrid";
 import { MediaUploader, type ClientOption } from "@/components/admin/MediaUploader";
 import { isBlobConfigured } from "@/lib/blob/store";
@@ -18,7 +17,6 @@ export default async function MediathequePage() {
 
   return (
     <>
-      <AdminHeader active="mediatheque" />
       <main className="mx-auto max-w-6xl px-6 py-10">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { AlertTriangle, FileClock, FileText, Package, Users } from "lucide-react";
-import { AdminHeader } from "@/components/admin/AdminHeader";
 import { StatTile } from "@/components/admin/StatTile";
 import { RevenueChart } from "@/components/admin/RevenueChart";
 import { InvoiceStatusBadge } from "@/components/admin/InvoiceStatusBadge";
@@ -32,7 +31,6 @@ export default async function AdminDashboardPage() {
 
   return (
     <>
-      <AdminHeader active="dashboard" />
       <main className="mx-auto max-w-6xl px-6 py-10">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>

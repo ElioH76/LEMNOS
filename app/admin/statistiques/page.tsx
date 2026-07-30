@@ -9,7 +9,6 @@ import {
   Trophy,
   Wallet,
 } from "lucide-react";
-import { AdminHeader } from "@/components/admin/AdminHeader";
 import { BarChart } from "@/components/admin/BarChart";
 import { RevenueChart } from "@/components/admin/RevenueChart";
 import { StatDistribution, type DistributionSegment } from "@/components/admin/StatDistribution";
@@ -71,7 +70,6 @@ export default async function StatistiquesPage() {
 
   return (
     <>
-      <AdminHeader active="statistiques" />
       <main className="mx-auto max-w-6xl px-6 py-10">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>

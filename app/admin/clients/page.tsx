@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { AdminHeader } from "@/components/admin/AdminHeader";
 import { ClientsTable, type ClientRow } from "@/components/admin/ClientsTable";
 import { computeTotals } from "@/lib/billing/calc";
 import { listClients, listInvoices, storageBackend } from "@/lib/billing/store";
@@ -23,7 +22,6 @@ export default async function ClientsPage() {
 
   return (
     <>
-      <AdminHeader active="clients" />
       <main className="mx-auto max-w-6xl px-6 py-10">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>

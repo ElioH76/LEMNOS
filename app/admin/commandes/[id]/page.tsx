@@ -11,7 +11,6 @@ import {
   Shirt,
   User,
 } from "lucide-react";
-import { AdminHeader } from "@/components/admin/AdminHeader";
 import { MediaCard } from "@/components/admin/MediaCard";
 import { MediaUploader } from "@/components/admin/MediaUploader";
 import { OrderActionsBar } from "@/components/admin/OrderActionsBar";
@@ -47,7 +46,6 @@ export default async function CommandePage({ params }: { params: Promise<{ id: s
 
   return (
     <>
-      <AdminHeader active="commandes" />
       <main className="mx-auto max-w-5xl px-6 py-10">
         <Link
           href="/admin/commandes"

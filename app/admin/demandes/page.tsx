@@ -1,4 +1,3 @@
-import { AdminHeader } from "@/components/admin/AdminHeader";
 import { DemandsBoard } from "@/components/admin/DemandsBoard";
 import { listDemands, storageBackend } from "@/lib/demands/store";
 import { DEMAND_STATUSES, STATUS_LABEL } from "@/lib/demands/types";
@@ -16,7 +15,6 @@ export default async function AdminPage() {
 
   return (
     <>
-      <AdminHeader active="demandes" />
 
       <main className="mx-auto max-w-6xl px-6 py-10">
         <div className="flex flex-wrap items-end justify-between gap-4">

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { AdminHeader } from "@/components/admin/AdminHeader";
 import { InvoicesTable } from "@/components/admin/InvoicesTable";
 import { computeTotals, formatEuro } from "@/lib/billing/calc";
 import { listInvoices, storageBackend } from "@/lib/billing/store";
@@ -20,7 +19,6 @@ export default async function FacturesPage() {
 
   return (
     <>
-      <AdminHeader active="factures" />
 
       <main className="mx-auto max-w-6xl px-6 py-10">
         <div className="flex flex-wrap items-end justify-between gap-4">
