@@ -62,17 +62,26 @@ export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <div className="flex h-full flex-col border-r border-line bg-white">
       <div className="flex h-16 flex-none items-center px-5">
-        <Link href="/admin" onClick={onNavigate} aria-label="Espace admin Lemnos">
+        <a
+          href="/"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Ouvrir le site lemnos.fr dans un nouvel onglet"
+          className="transition-opacity hover:opacity-80"
+        >
           <LogoLockup markClassName="w-[24px] text-green" wordmarkClassName="text-[17px]" />
-        </Link>
+        </a>
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 py-2">
         {GROUPS.map((group, i) => (
-          <div key={group.label ?? i} className={cn(i > 0 && "mt-5")}>
+          <div key={group.label ?? i} className={cn(i > 0 && "mt-6")}>
             {group.label && (
-              <div className="px-3 pb-1.5 text-[10.5px] font-semibold uppercase tracking-caps text-ash">
-                {group.label}
+              <div className="mb-2 flex items-center gap-2.5 px-3">
+                <span className="text-[11px] font-bold uppercase tracking-caps text-stone">
+                  {group.label}
+                </span>
+                <span className="h-px flex-1 bg-line" aria-hidden />
               </div>
             )}
             <ul className="flex flex-col gap-0.5">

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { BarChart } from "@/components/admin/BarChart";
 import { RevenueChart } from "@/components/admin/RevenueChart";
+import { SectionHeading } from "@/components/admin/SectionHeading";
 import { StatDistribution, type DistributionSegment } from "@/components/admin/StatDistribution";
 import { StatTile } from "@/components/admin/StatTile";
 import { TopClientsTable } from "@/components/admin/TopClientsTable";
@@ -92,7 +93,7 @@ export default async function StatistiquesPage() {
         )}
 
         {/* Chiffre d'affaires */}
-        <SectionTitle icon={TrendingUp}>Chiffre d&apos;affaires</SectionTitle>
+        <SectionHeading className="mt-10" icon={TrendingUp}>Chiffre d&apos;affaires</SectionHeading>
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           <StatTile label="CA du mois" value={formatEuro(billing.caMonth)} icon={Wallet} tone="green" />
           <StatTile label="CA de l'année" value={formatEuro(billing.caYear)} icon={BadgeEuro} tone="green" />
@@ -110,7 +111,7 @@ export default async function StatistiquesPage() {
         </div>
 
         {/* Facturation */}
-        <SectionTitle icon={FileText}>Facturation</SectionTitle>
+        <SectionHeading className="mt-10" icon={FileText}>Facturation</SectionHeading>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_1fr]">
           <div className="grid grid-cols-2 gap-4 self-start">
             <StatTile label="Factures" value={String(analytics.invoiceCount)} icon={FileText} />
@@ -135,7 +136,7 @@ export default async function StatistiquesPage() {
         </div>
 
         {/* Commandes */}
-        <SectionTitle icon={Package}>Commandes</SectionTitle>
+        <SectionHeading className="mt-10" icon={Package}>Commandes</SectionHeading>
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           <StatTile label="En cours" value={String(orderStats.inProgress)} icon={Package} tone="green" />
           <StatTile label="Livrées (année)" value={String(orderStats.deliveredYear)} icon={Package} />
@@ -164,7 +165,7 @@ export default async function StatistiquesPage() {
         </div>
 
         {/* Top clients */}
-        <SectionTitle icon={Trophy}>Meilleurs clients</SectionTitle>
+        <SectionHeading className="mt-10" icon={Trophy}>Meilleurs clients</SectionHeading>
         <Card title="Classement par CA encaissé">
           <TopClientsTable clients={topClients} />
         </Card>
@@ -172,15 +173,6 @@ export default async function StatistiquesPage() {
         <div className="h-6" />
       </main>
     </>
-  );
-}
-
-function SectionTitle({ icon: Icon, children }: { icon: typeof Package; children: React.ReactNode }) {
-  return (
-    <h2 className="mb-4 mt-10 flex items-center gap-2 text-[13px] font-bold uppercase tracking-caps text-ash">
-      <Icon size={15} className="text-green" aria-hidden />
-      {children}
-    </h2>
   );
 }
 

@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { AlertTriangle, FileClock, FileText, Package, Users } from "lucide-react";
+import { Activity, AlertTriangle, FileClock, FileText, Package, TrendingUp, Users } from "lucide-react";
 import { StatTile } from "@/components/admin/StatTile";
 import { RevenueChart } from "@/components/admin/RevenueChart";
+import { SectionHeading } from "@/components/admin/SectionHeading";
 import { InvoiceStatusBadge } from "@/components/admin/InvoiceStatusBadge";
 import { computeTotals, formatEuro } from "@/lib/billing/calc";
 import { computeBillingStats } from "@/lib/billing/stats";
@@ -53,7 +54,10 @@ export default async function AdminDashboardPage() {
         )}
 
         {/* Indicateurs d'activité */}
-        <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <SectionHeading icon={Activity} className="mt-9">
+          Activité
+        </SectionHeading>
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           <StatTile label="Clients" value={String(clientCount)} icon={Users} />
           <StatTile
             label="Devis en attente"
@@ -79,22 +83,25 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Chiffre d'affaires */}
-        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <SectionHeading icon={TrendingUp} className="mt-10">
+          Chiffre d&apos;affaires
+        </SectionHeading>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <StatTile label="CA du mois" value={formatEuro(stats.caMonth)} tone="green" />
           <StatTile label="CA de l'année" value={formatEuro(stats.caYear)} tone="green" />
           <StatTile label="CA total" value={formatEuro(stats.caTotal)} tone="green" />
         </div>
 
-        <div className="mt-6">
+        <div className="mt-4">
           <RevenueChart monthly={stats.monthly} currentMonth={now.getMonth()} />
         </div>
 
         {/* Dernières factures */}
-        <div className="mt-6 rounded-2xl border border-line bg-white p-5 md:p-6">
-          <div className="flex items-center justify-between gap-4">
-            <h2 className="flex items-center gap-2 text-[15px] font-bold tracking-tight">
-              <FileText size={16} className="text-green" aria-hidden /> Dernières factures
-            </h2>
+        <SectionHeading icon={FileText} className="mt-10">
+          Dernières factures
+        </SectionHeading>
+        <div className="rounded-2xl border border-line bg-white p-5 md:p-6">
+          <div className="flex items-center justify-end gap-4">
             <Link
               href="/admin/factures"
               className="text-[12px] font-semibold uppercase tracking-caps text-ash transition-colors hover:text-green"

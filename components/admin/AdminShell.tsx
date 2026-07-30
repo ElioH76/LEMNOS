@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { LogoLockup } from "@/components/brand/LogoLockup";
 import { AdminSidebar } from "./AdminSidebar";
@@ -34,9 +33,14 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
       {/* Barre supérieure — mobile */}
       <div className="sticky top-0 z-20 flex items-center justify-between border-b border-line bg-white/90 px-4 py-3 backdrop-blur-md md:hidden">
-        <Link href="/admin" aria-label="Espace admin Lemnos">
+        <a
+          href="/"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Ouvrir le site lemnos.fr dans un nouvel onglet"
+        >
           <LogoLockup markClassName="w-[22px] text-green" wordmarkClassName="text-[16px]" />
-        </Link>
+        </a>
         <button
           type="button"
           onClick={() => setOpen(true)}
