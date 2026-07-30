@@ -64,7 +64,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Fermer le menu"
-              className="absolute right-3 top-4 z-10 rounded-md p-1.5 text-slate transition-colors hover:bg-paper hover:text-ink"
+              className="absolute right-3 top-4 z-10 rounded-md p-1.5 text-white/80 transition-colors hover:bg-white/10 hover:text-white"
             >
               <X size={18} />
             </button>

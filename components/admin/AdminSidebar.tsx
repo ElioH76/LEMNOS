@@ -60,7 +60,7 @@ export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
     href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
 
   return (
-    <div className="flex h-full flex-col border-r border-line bg-white">
+    <div className="flex h-full flex-col bg-green text-white">
       <div className="flex h-16 flex-none items-center px-5">
         <a
           href="/"
@@ -69,7 +69,7 @@ export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
           title="Ouvrir le site lemnos.fr dans un nouvel onglet"
           className="transition-opacity hover:opacity-80"
         >
-          <LogoLockup markClassName="w-[24px] text-green" wordmarkClassName="text-[17px]" />
+          <LogoLockup markClassName="w-[24px] text-white" wordmarkClassName="text-[17px] text-white" />
         </a>
       </div>
 
@@ -78,10 +78,10 @@ export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
           <div key={group.label ?? i} className={cn(i > 0 && "mt-6")}>
             {group.label && (
               <div className="mb-2 flex items-center gap-2.5 px-3">
-                <span className="text-[11px] font-bold uppercase tracking-caps text-stone">
+                <span className="text-[11px] font-bold uppercase tracking-caps text-white/65">
                   {group.label}
                 </span>
-                <span className="h-px flex-1 bg-line" aria-hidden />
+                <span className="h-px flex-1 bg-white/20" aria-hidden />
               </div>
             )}
             <ul className="flex flex-col gap-0.5">
@@ -97,8 +97,8 @@ export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
                       className={cn(
                         "flex items-center gap-3 rounded-md px-3 py-2 text-[13.5px] font-semibold transition-colors",
                         active
-                          ? "bg-ink text-white"
-                          : "text-slate hover:bg-paper hover:text-ink",
+                          ? "bg-white text-green shadow-sm"
+                          : "text-white/75 hover:bg-white/10 hover:text-white",
                       )}
                     >
                       <Icon size={16} strokeWidth={2} aria-hidden className="flex-none" />
@@ -112,11 +112,11 @@ export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
         ))}
       </nav>
 
-      <div className="flex-none border-t border-line p-3">
+      <div className="flex-none border-t border-white/15 p-3">
         <form action={logout}>
           <button
             type="submit"
-            className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-[13.5px] font-semibold text-slate transition-colors hover:bg-danger-soft hover:text-danger"
+            className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-[13.5px] font-semibold text-white/75 transition-colors hover:bg-white/10 hover:text-white"
           >
             <LogOut size={16} strokeWidth={2} aria-hidden className="flex-none" />
             Déconnexion
