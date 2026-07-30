@@ -1,9 +1,9 @@
-import { FileText, Inbox, LayoutDashboard, LogOut, Package, Users } from "lucide-react";
+import { BarChart3, FileText, Inbox, LayoutDashboard, LogOut, Package, Users } from "lucide-react";
 import { LogoLockup } from "@/components/brand/LogoLockup";
 import { logout } from "@/app/actions/auth";
 import { cn } from "@/lib/cn";
 
-type Section = "dashboard" | "demandes" | "clients" | "commandes" | "factures";
+type Section = "dashboard" | "demandes" | "clients" | "commandes" | "factures" | "statistiques";
 
 const NAV: { key: Section; label: string; href: string; icon: typeof Inbox }[] = [
   { key: "dashboard", label: "Tableau de bord", href: "/admin", icon: LayoutDashboard },
@@ -11,6 +11,7 @@ const NAV: { key: Section; label: string; href: string; icon: typeof Inbox }[] =
   { key: "clients", label: "Clients", href: "/admin/clients", icon: Users },
   { key: "commandes", label: "Commandes", href: "/admin/commandes", icon: Package },
   { key: "factures", label: "Factures", href: "/admin/factures", icon: FileText },
+  { key: "statistiques", label: "Statistiques", href: "/admin/statistiques", icon: BarChart3 },
 ];
 
 export function AdminHeader({ active }: { active: Section }) {
