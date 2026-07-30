@@ -57,7 +57,7 @@ export default async function CommandesPage() {
 
 function StatCard({ label, value, tone }: { label: string; value: string; tone?: "green" }) {
   return (
-    <div className="rounded-2xl border border-line bg-white px-5 py-4">
+    <div className="rounded-2xl border border-line bg-white px-5 py-4 shadow-card">
       <div className="text-[11px] font-semibold uppercase tracking-caps text-ash">{label}</div>
       <div
         className={`mt-2 text-[26px] font-extrabold tabular-nums ${tone === "green" ? "text-green" : ""}`}

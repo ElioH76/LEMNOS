@@ -60,8 +60,8 @@ export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
     href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
 
   return (
-    <div className="flex h-full flex-col bg-green text-white">
-      <div className="flex h-16 flex-none items-center px-5">
+    <div className="flex h-full flex-col bg-gradient-to-b from-green to-green-dark text-white">
+      <div className="flex h-16 flex-none items-center border-b border-white/10 px-5">
         <a
           href="/"
           target="_blank"
@@ -73,7 +73,7 @@ export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
         </a>
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-3 py-2">
+      <nav className="flex-1 overflow-y-auto px-3 py-3">
         {GROUPS.map((group, i) => (
           <div key={group.label ?? i} className={cn(i > 0 && "mt-6")}>
             {group.label && (

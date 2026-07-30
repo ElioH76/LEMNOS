@@ -21,8 +21,8 @@ export function StatTile({
   const inner = (
     <div
       className={cn(
-        "flex h-full flex-col rounded-2xl border bg-white px-5 py-4 transition-shadow",
-        href && "hover:shadow-card",
+        "flex h-full flex-col rounded-2xl border bg-white px-5 py-4 shadow-card transition-shadow",
+        href && "hover:shadow-card-hover",
         tone === "warn" ? "border-danger/25" : "border-line",
       )}
     >

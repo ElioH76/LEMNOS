@@ -42,7 +42,7 @@ export default async function AdminPage() {
 
         <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
           {counts.map((stat) => (
-            <div key={stat.status} className="rounded-2xl border border-line bg-white px-5 py-4">
+            <div key={stat.status} className="rounded-2xl border border-line bg-white px-5 py-4 shadow-card">
               <div className="text-[11px] font-semibold uppercase tracking-caps text-ash">
                 {stat.label}
               </div>
