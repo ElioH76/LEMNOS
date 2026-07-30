@@ -5,19 +5,24 @@ import {
   CalendarClock,
   FileText,
   History,
+  Image as ImageIcon,
   ListChecks,
   Package,
   Shirt,
   User,
 } from "lucide-react";
 import { AdminHeader } from "@/components/admin/AdminHeader";
+import { MediaCard } from "@/components/admin/MediaCard";
+import { MediaUploader } from "@/components/admin/MediaUploader";
 import { OrderActionsBar } from "@/components/admin/OrderActionsBar";
 import { OrderStatusBadge } from "@/components/admin/OrderStatusBadge";
 import { OrderStatusControls } from "@/components/admin/OrderStatusControls";
 import { OrderStepper } from "@/components/admin/OrderStepper";
 import { OrderTimeline } from "@/components/admin/OrderTimeline";
 import { computeTotals, formatEuro } from "@/lib/billing/calc";
+import { isBlobConfigured } from "@/lib/blob/store";
 import { getClient, getInvoice } from "@/lib/billing/store";
+import { mediaForOrder } from "@/lib/media/store";
 import { getOrder } from "@/lib/orders/store";
 
 export const dynamic = "force-dynamic";
@@ -34,9 +39,10 @@ export default async function CommandePage({ params }: { params: Promise<{ id: s
   const order = await getOrder(id);
   if (!order) notFound();
 
-  const [client, invoice] = await Promise.all([
+  const [client, invoice, media] = await Promise.all([
     order.clientId ? getClient(order.clientId) : Promise.resolve(null),
     order.invoiceId ? getInvoice(order.invoiceId) : Promise.resolve(null),
+    mediaForOrder(order.id),
   ]);
 
   return (
@@ -110,6 +116,28 @@ export default async function CommandePage({ params }: { params: Promise<{ id: s
                     Notes internes
                   </div>
                   <p className="whitespace-pre-wrap text-[13.5px] leading-[1.6] text-slate">{order.notes}</p>
+                </div>
+              )}
+            </Card>
+
+            <Card title="Designs & médias" icon={ImageIcon}>
+              {isBlobConfigured() && (
+                <div className="mb-4">
+                  <MediaUploader
+                    fixedOrderId={order.id}
+                    fixedClientId={order.clientId ?? undefined}
+                    fixedClientName={order.clientName}
+                    defaultKind="design"
+                  />
+                </div>
+              )}
+              {media.length === 0 ? (
+                <p className="py-3 text-center text-[13.5px] text-ash">Aucun média pour cette commande.</p>
+              ) : (
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {media.map((asset) => (
+                    <MediaCard key={asset.id} asset={asset} showClient={false} />
+                  ))}
                 </div>
               )}
             </Card>

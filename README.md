@@ -152,6 +152,23 @@ suivi…).
 - Le tableau de bord branche sa tuile « Commandes en cours » sur les commandes
   non livrées, et la fiche client affiche l'historique réel des commandes.
 
+## Médiathèque & designs (admin)
+
+Module intégré à l'admin (`/admin/mediatheque`) : une seule entité `MediaAsset`
+couvre les **designs** et la **médiathèque** générale (champ `kind` :
+design / logo / photo / document), avec liens optionnels vers un client et/ou une
+commande.
+
+- **Galerie** filtrable (par type, par client, recherche), **téléversement
+  multi-fichiers** (`MediaUploader`), vignettes via le proxy Blob.
+- **Rattachement** : upload depuis la médiathèque (sélecteur client), depuis une
+  **fiche client** (section « Designs & médias ») ou un **détail commande** —
+  client/commande alors figés.
+- Stockage : fichiers dans **Vercel Blob (privé)** (voir la section Blob) ;
+  métadonnées en Postgres/Neon (`media_assets`, jsonb) avec repli mémoire. La
+  suppression d'un média efface aussi le fichier Blob. Store `lib/media/store.ts`,
+  types `lib/media/types.ts`, actions `app/actions/media.ts`.
+
 ## Facturation (admin)
 
 Module intégré à l'admin (`/admin/factures`) : liste (recherche, tri, filtres,

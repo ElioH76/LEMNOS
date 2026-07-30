@@ -1,13 +1,17 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, FileText, Mail, MapPin, Package, Phone, ScrollText, User } from "lucide-react";
+import { ArrowLeft, FileText, Image as ImageIcon, Mail, MapPin, Package, Phone, ScrollText, User } from "lucide-react";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { ClientActionsBar } from "@/components/admin/ClientActionsBar";
 import { ClientAvatar } from "@/components/admin/ClientsTable";
 import { InvoiceStatusBadge } from "@/components/admin/InvoiceStatusBadge";
+import { MediaCard } from "@/components/admin/MediaCard";
+import { MediaUploader } from "@/components/admin/MediaUploader";
 import { OrderStatusBadge } from "@/components/admin/OrderStatusBadge";
 import { computeTotals, formatEuro } from "@/lib/billing/calc";
+import { isBlobConfigured } from "@/lib/blob/store";
 import { getClient, invoicesForClient } from "@/lib/billing/store";
+import { mediaForClient } from "@/lib/media/store";
 import { ordersForClient } from "@/lib/orders/store";
 
 export const dynamic = "force-dynamic";
@@ -23,9 +27,10 @@ export default async function ClientPage({ params }: { params: Promise<{ id: str
   const client = await getClient(id);
   if (!client) notFound();
 
-  const [invoices, orders] = await Promise.all([
+  const [invoices, orders, media] = await Promise.all([
     invoicesForClient(client),
     ordersForClient(client),
+    mediaForClient(client),
   ]);
   const factures = invoices.filter((i) => i.documentType === "facture");
   const devis = invoices.filter((i) => i.documentType === "devis");
@@ -99,6 +104,23 @@ export default async function ClientPage({ params }: { params: Promise<{ id: str
 
           {/* Colonne historique */}
           <div className="flex flex-col gap-6">
+            <HistorySection title="Designs & médias" icon={ImageIcon}>
+              {isBlobConfigured() && (
+                <div className="mb-4">
+                  <MediaUploader fixedClientId={client.id} fixedClientName={client.club} defaultKind="design" />
+                </div>
+              )}
+              {media.length === 0 ? (
+                <Empty>Aucun média pour ce client.</Empty>
+              ) : (
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {media.map((asset) => (
+                    <MediaCard key={asset.id} asset={asset} showClient={false} />
+                  ))}
+                </div>
+              )}
+            </HistorySection>
+
             <HistorySection title="Historique des factures" icon={FileText}>
               {factures.length === 0 ? (
                 <Empty>Aucune facture pour ce client.</Empty>
