@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { upload } from "@vercel/blob/client";
 import { ImageUp, Link2, Loader2, X } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { blobDisplaySrc } from "@/lib/blob/url";
 
 const FIELD =
   "w-full rounded-field border-[1.5px] border-line bg-white px-3 py-2.5 text-[14px] text-ink outline-none transition-colors placeholder:text-ash focus:border-green";
@@ -41,7 +42,7 @@ export function LogoUpload({
     setBusy(true);
     try {
       const blob = await upload(file.name, file, {
-        access: "public",
+        access: "private",
         handleUploadUrl: "/api/blob/upload",
       });
       onChange(blob.url);
@@ -60,13 +61,13 @@ export function LogoUpload({
           <span className="flex h-14 w-14 flex-none items-center justify-center overflow-hidden rounded-field border border-line bg-paper">
             {isImageUrl(value) ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={value} alt="Aperçu du logo" className="h-full w-full object-contain" />
+              <img src={blobDisplaySrc(value)} alt="Aperçu du logo" className="h-full w-full object-contain" />
             ) : (
               <Link2 size={18} className="text-ash" aria-hidden />
             )}
           </span>
           <a
-            href={value}
+            href={blobDisplaySrc(value)}
             target="_blank"
             rel="noopener noreferrer"
             className="min-w-0 flex-1 truncate text-[12.5px] text-green hover:underline"

@@ -91,10 +91,19 @@ venir) plutôt que de coller des URL :
    jeton dans `.env.local`.
 
 Sans jeton, l'app reste pleinement fonctionnelle : les champs image retombent sur
-une **saisie d'URL manuelle**. L'upload se fait en direct navigateur → Blob via
-`app/api/blob/upload/route.ts` (jeton court délivré après contrôle de session
-admin, types et taille restreints) ; helpers serveur dans `lib/blob/store.ts`,
-composant `components/admin/LogoUpload.tsx`.
+une **saisie d'URL manuelle**.
+
+Le store est en **accès privé** (les fichiers ne sont jamais publics — important
+pour des designs clients confidentiels) :
+
+- **Upload** : direct navigateur → Blob via `app/api/blob/upload/route.ts`, qui
+  délivre un jeton court après contrôle de session admin (types + taille 10 Mo).
+  Composant client `components/admin/LogoUpload.tsx` (`access: "private"`).
+- **Lecture** : les URL Blob privées ne sont pas accessibles publiquement (403).
+  L'affichage passe par le proxy authentifié `app/api/blob/file/route.ts` (vérifie
+  la session admin, streame le fichier, restreint aux hôtes Blob Vercel contre le
+  SSRF). Helper d'URL `lib/blob/url.ts` (`blobDisplaySrc`), helpers serveur
+  `lib/blob/store.ts` (`isBlobConfigured`, `deleteBlob`).
 
 ## Admin — logiciel de gestion (en construction)
 

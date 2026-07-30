@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Eye, Mail, Pencil, Phone, Search, Trash2 } from "lucide-react";
 import { deleteClientAction } from "@/app/actions/clients";
 import { formatEuro } from "@/lib/billing/calc";
+import { blobDisplaySrc } from "@/lib/blob/url";
 import type { Client } from "@/lib/billing/types";
 
 export interface ClientRow {
@@ -145,7 +146,7 @@ export function ClientAvatar({ client, size = 34 }: { client: Client; size?: num
     >
       {client.logoUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={client.logoUrl} alt="" className="h-full w-full object-cover" />
+        <img src={blobDisplaySrc(client.logoUrl)} alt="" className="h-full w-full object-cover" />
       ) : (
         initials || "?"
       )}
