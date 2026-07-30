@@ -100,10 +100,33 @@ sans changer le design.
   Créer une facture pour un nouveau client crée sa fiche automatiquement ;
   le bouton « Nouvelle facture » d'une fiche pré-remplit le client.
 
-Modules à venir (architecture prête) : designs + fichiers, workflow de
-commande, médiathèque, historique de versions, fournisseurs, statistiques.
-Le stockage de fichiers (designs, logos clients, médiathèque) nécessitera
-Vercel Blob.
+Modules à venir (architecture prête) : designs + fichiers, médiathèque,
+historique de versions, fournisseurs, statistiques. Le stockage de fichiers
+(designs, logos clients, médiathèque) nécessitera Vercel Blob.
+
+## Workflow de commande (admin)
+
+Module intégré à l'admin (`/admin/commandes`) : chaque commande suit un pipeline
+linéaire de **5 états** — Design → Validation client → Production → Expédition →
+Livré. Chaque changement d'état est horodaté et forme la **timeline** visible sur
+la fiche commande (avec note optionnelle par jalon : maquette envoyée, n° de
+suivi…).
+
+- **Liste** (`/admin/commandes`) : filtres par état (onglets + compteurs), cartes
+  avec frise d'avancement et bouton « étape suivante » en un clic.
+- **Fiche** (`/admin/commandes/[id]`) : frise complète (`OrderStepper`), détails,
+  timeline (`OrderTimeline`), pilotage de l'avancement (`OrderStatusControls` —
+  étape suivante ou saut direct, avec note), liens vers la fiche client et la
+  facture éventuellement liées.
+- **Création / édition** : lien optionnel vers une fiche client (snapshot du nom)
+  et vers une facture ; le bouton « Nouvelle commande » d'une fiche client
+  pré-remplit le client. Numérotation `CMD-AAAA-0001`.
+- Persistance : table Postgres/Neon `orders` (objet complet en `jsonb`), créée
+  automatiquement ; repli mémoire sans base. Store `lib/orders/store.ts`, types
+  et helpers de pipeline dans `lib/orders/types.ts`, actions serveur
+  `app/actions/orders.ts`.
+- Le tableau de bord branche sa tuile « Commandes en cours » sur les commandes
+  non livrées, et la fiche client affiche l'historique réel des commandes.
 
 ## Facturation (admin)
 

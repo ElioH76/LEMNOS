@@ -5,8 +5,10 @@ import { AdminHeader } from "@/components/admin/AdminHeader";
 import { ClientActionsBar } from "@/components/admin/ClientActionsBar";
 import { ClientAvatar } from "@/components/admin/ClientsTable";
 import { InvoiceStatusBadge } from "@/components/admin/InvoiceStatusBadge";
+import { OrderStatusBadge } from "@/components/admin/OrderStatusBadge";
 import { computeTotals, formatEuro } from "@/lib/billing/calc";
 import { getClient, invoicesForClient } from "@/lib/billing/store";
+import { ordersForClient } from "@/lib/orders/store";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +23,10 @@ export default async function ClientPage({ params }: { params: Promise<{ id: str
   const client = await getClient(id);
   if (!client) notFound();
 
-  const invoices = await invoicesForClient(client);
+  const [invoices, orders] = await Promise.all([
+    invoicesForClient(client),
+    ordersForClient(client),
+  ]);
   const factures = invoices.filter((i) => i.documentType === "facture");
   const devis = invoices.filter((i) => i.documentType === "devis");
   const caEncaisse = factures
@@ -136,7 +141,28 @@ export default async function ClientPage({ params }: { params: Promise<{ id: str
             </HistorySection>
 
             <HistorySection title="Historique des commandes" icon={Package}>
-              <Empty>Le module de commandes arrive prochainement.</Empty>
+              {orders.length === 0 ? (
+                <Empty>Aucune commande pour ce client.</Empty>
+              ) : (
+                <div className="flex flex-col divide-y divide-line-soft">
+                  {orders.map((order) => (
+                    <Link
+                      key={order.id}
+                      href={`/admin/commandes/${order.id}`}
+                      className="flex items-center justify-between gap-3 py-3 transition-colors hover:bg-paper/60"
+                    >
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2.5">
+                          <span className="font-mono text-[13px] font-semibold">{order.number}</span>
+                          <span className="text-[12px] text-ash">{frDate(order.createdAt)}</span>
+                        </div>
+                        <div className="truncate text-[12.5px] text-slate">{order.title}</div>
+                      </div>
+                      <OrderStatusBadge status={order.status} />
+                    </Link>
+                  ))}
+                </div>
+              )}
             </HistorySection>
           </div>
         </div>

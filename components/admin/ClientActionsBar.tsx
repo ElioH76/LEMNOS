@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FilePlus, Pencil, Trash2 } from "lucide-react";
+import { FilePlus, PackagePlus, Pencil, Trash2 } from "lucide-react";
 import type { FormEvent } from "react";
 import { deleteClientAction } from "@/app/actions/clients";
 
@@ -16,6 +16,9 @@ export function ClientActionsBar({ id, club }: { id: string; club: string }) {
 
   return (
     <div className="flex flex-wrap items-center gap-2">
+      <Link href={`/admin/commandes/nouvelle?client=${id}`} className={btn}>
+        <PackagePlus size={15} /> Nouvelle commande
+      </Link>
       <Link href={`/admin/factures/nouvelle?client=${id}`} className={btn}>
         <FilePlus size={15} /> Nouvelle facture
       </Link>

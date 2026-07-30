@@ -7,15 +7,15 @@ import { InvoiceStatusBadge } from "@/components/admin/InvoiceStatusBadge";
 import { computeTotals, formatEuro } from "@/lib/billing/calc";
 import { computeBillingStats } from "@/lib/billing/stats";
 import { listClients, listInvoices, storageBackend } from "@/lib/billing/store";
-import { listDemands } from "@/lib/demands/store";
+import { listOrders } from "@/lib/orders/store";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
-  const [invoices, savedClients, demands] = await Promise.all([
+  const [invoices, savedClients, orders] = await Promise.all([
     listInvoices(),
     listClients(),
-    listDemands(),
+    listOrders(),
   ]);
 
   const stats = computeBillingStats(invoices);
@@ -26,7 +26,7 @@ export default async function AdminDashboardPage() {
   for (const i of invoices) if (i.client.club) clientNames.add(i.client.club.trim().toLowerCase());
   const clientCount = clientNames.size;
 
-  const ordersInProgress = demands.filter((d) => d.status === "en_cours").length;
+  const ordersInProgress = orders.filter((o) => o.status !== "livre").length;
   const now = new Date();
   const recent = invoices.slice(0, 5);
 
@@ -75,8 +75,8 @@ export default async function AdminDashboardPage() {
             label="Commandes en cours"
             value={String(ordersInProgress)}
             icon={Package}
-            sub="D'après les demandes"
-            href="/admin/demandes"
+            sub="Non encore livrées"
+            href="/admin/commandes"
           />
         </div>
 
