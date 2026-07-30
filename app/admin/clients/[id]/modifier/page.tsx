@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { ClientForm } from "@/components/admin/ClientForm";
 import { getClient } from "@/lib/billing/store";
+import { isBlobConfigured } from "@/lib/blob/store";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +24,7 @@ export default async function ModifierClientPage({ params }: { params: Promise<{
           <ArrowLeft size={15} /> Retour à la fiche
         </Link>
         <h1 className="mb-8 text-[28px] font-extrabold tracking-tight">Modifier {client.club}</h1>
-        <ClientForm mode="edit" initial={client} />
+        <ClientForm mode="edit" initial={client} blobEnabled={isBlobConfigured()} />
       </main>
     </>
   );

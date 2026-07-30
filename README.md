@@ -81,6 +81,21 @@ persistance :
 2. Vercel injecte automatiquement `DATABASE_URL` / `POSTGRES_URL`. Le code les
    détecte et crée la table `demands` au premier appel — rien d'autre à faire.
 
+**3. Stockage de fichiers (Vercel Blob)**
+
+Pour téléverser des fichiers (logos clients aujourd'hui ; designs et médiathèque à
+venir) plutôt que de coller des URL :
+
+1. Dashboard Vercel → **Storage → Create Database → Blob**, lié au projet.
+2. Vercel injecte automatiquement `BLOB_READ_WRITE_TOKEN`. En local, copier ce
+   jeton dans `.env.local`.
+
+Sans jeton, l'app reste pleinement fonctionnelle : les champs image retombent sur
+une **saisie d'URL manuelle**. L'upload se fait en direct navigateur → Blob via
+`app/api/blob/upload/route.ts` (jeton court délivré après contrôle de session
+admin, types et taille restreints) ; helpers serveur dans `lib/blob/store.ts`,
+composant `components/admin/LogoUpload.tsx`.
+
 ## Admin — logiciel de gestion (en construction)
 
 L'administration évolue vers un vrai outil de gestion, par modules successifs,

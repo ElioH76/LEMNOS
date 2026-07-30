@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { ClientForm } from "@/components/admin/ClientForm";
+import { isBlobConfigured } from "@/lib/blob/store";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +18,7 @@ export default function NouveauClientPage() {
           <ArrowLeft size={15} /> Retour aux clients
         </Link>
         <h1 className="mb-8 text-[28px] font-extrabold tracking-tight">Nouveau client</h1>
-        <ClientForm mode="create" />
+        <ClientForm mode="create" blobEnabled={isBlobConfigured()} />
       </main>
     </>
   );

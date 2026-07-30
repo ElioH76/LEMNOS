@@ -7,6 +7,7 @@ import { Plus, Save, X } from "lucide-react";
 import { createClientProfileAction, updateClientAction } from "@/app/actions/clients";
 import type { Client } from "@/lib/billing/types";
 import { cn } from "@/lib/cn";
+import { LogoUpload } from "./LogoUpload";
 
 const FIELD =
   "w-full rounded-field border-[1.5px] border-line bg-white px-3 py-2.5 text-[14px] text-ink outline-none transition-colors placeholder:text-ash focus:border-green";
@@ -25,7 +26,15 @@ const empty = {
   notes: "",
 };
 
-export function ClientForm({ mode, initial }: { mode: "create" | "edit"; initial?: Client }) {
+export function ClientForm({
+  mode,
+  initial,
+  blobEnabled = false,
+}: {
+  mode: "create" | "edit";
+  initial?: Client;
+  blobEnabled?: boolean;
+}) {
   const router = useRouter();
   const [f, setF] = useState({ ...empty, ...(initial ?? {}) });
   const [colors, setColors] = useState<string[]>(initial?.colors ?? []);
@@ -64,7 +73,14 @@ export function ClientForm({ mode, initial }: { mode: "create" | "edit"; initial
           <Field label="Contact principal" value={f.contact} onChange={(v) => set("contact", v)} />
           <Field label="Email" type="email" value={f.email} onChange={(v) => set("email", v)} />
           <Field label="Téléphone" value={f.phone} onChange={(v) => set("phone", v)} />
-          <Field label="Logo (URL, optionnel)" value={f.logoUrl} onChange={(v) => set("logoUrl", v)} placeholder="https://…" />
+          <div className="sm:col-span-2">
+            <label className={LABEL}>Logo (optionnel)</label>
+            <LogoUpload
+              value={f.logoUrl}
+              onChange={(v) => set("logoUrl", v)}
+              blobEnabled={blobEnabled}
+            />
+          </div>
         </div>
       </Section>
 
