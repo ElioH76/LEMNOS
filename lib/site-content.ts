@@ -140,8 +140,12 @@ export const otherClubs: ClubShowcase[] = [
   },
 ];
 
-/** Visuel plein cadre du hero — direction photo cinématographique sombre. */
-export const heroImage = "/images/hero.jpg";
+/**
+ * Visuel plein cadre du hero — direction photo cinématographique sombre.
+ * (Ancienne photo hero.jpg retirée : les maillots portaient un logo tiers ;
+ * on utilise le packshot neutre du prototype, sans marque concurrente.)
+ */
+export const heroImage = "/images/proto.jpg";
 /** Packshot du prototype mis en avant dans l'espace client. */
 export const protoImage = "/images/proto.jpg";
 
