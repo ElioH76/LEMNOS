@@ -9,27 +9,27 @@ const ICONS: LucideIcon[] = [Compass, PenTool, Shirt, Factory, Truck];
 
 export function MethodSection() {
   return (
-    <section id="methode" className="relative scroll-mt-24 overflow-hidden bg-paper py-24 md:py-28">
+    <section id="methode" className="relative scroll-mt-24 overflow-hidden bg-ink py-24 md:py-28">
       {/* méandre grec en ton sur ton */}
       <MythPattern
         variant="meander"
-        className="text-ink/[0.05] [mask-image:linear-gradient(to_bottom,transparent,black_18%,black_82%,transparent)]"
+        className="text-white/[0.06] [mask-image:linear-gradient(to_bottom,transparent,black_18%,black_82%,transparent)]"
       />
       <Mark
         aria-hidden
-        className="pointer-events-none absolute -right-16 top-10 w-[340px] text-ink/[0.03]"
+        className="pointer-events-none absolute -right-16 top-10 w-[340px] text-white/[0.05]"
       />
 
       <Shell className="relative">
         <Reveal>
           <div className="flex flex-wrap items-end justify-between gap-8">
             <div>
-              <Eyebrow>La méthode</Eyebrow>
-              <h2 className="mt-5 max-w-[16ch] text-balance text-[30px] font-extrabold leading-[1.05] tracking-tight md:text-h2">
+              <Eyebrow tone="dark">La méthode</Eyebrow>
+              <h2 className="mt-5 max-w-[16ch] text-balance text-[30px] font-extrabold leading-[1.05] tracking-tight text-white md:text-h2">
                 Cinq étapes, un seul interlocuteur.
               </h2>
             </div>
-            <p className="max-w-[42ch] text-[15px] leading-[1.6] text-slate">
+            <p className="max-w-[42ch] text-[15px] leading-[1.6] text-haze">
               Du croquis à la livraison, vous validez à chaque étape — nous exécutons le reste, sans
               jamais vous laisser gérer la complexité.
             </p>
