@@ -3,6 +3,8 @@
  * Typé et isolé pour qu'un CMS puisse le remplacer sans toucher aux composants.
  */
 
+import { siteConfig } from "./site-config";
+
 export interface NavLink {
   label: string;
   href: string;
@@ -66,7 +68,10 @@ export const featuredCollection = {
 
 export const navLinks: NavLink[] = [
   { label: "Méthode", href: "#methode" },
-  { label: "Réalisations", href: "#realisations" },
+  // Masquée tant que `siteConfig.showRealisations` est false (nav + footer).
+  ...(siteConfig.showRealisations
+    ? [{ label: "Réalisations", href: "#realisations" }]
+    : []),
   { label: "Atelier", href: "#atelier" },
 ];
 

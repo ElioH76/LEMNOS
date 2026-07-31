@@ -7,6 +7,7 @@ import { ProjectForm } from "@/components/site/ProjectForm";
 import { RealisationsSection } from "@/components/site/RealisationsSection";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteNav } from "@/components/site/SiteNav";
+import { siteConfig } from "@/lib/site-config";
 
 /**
  * En production, `COMING_SOON=true` (variable d'environnement Vercel) affiche la
@@ -27,7 +28,7 @@ export default function HomePage() {
       <SiteNav />
       <Hero />
       <MethodSection />
-      <RealisationsSection />
+      {siteConfig.showRealisations && <RealisationsSection />}
       <AtelierSection />
       <ProjectForm />
       <SiteFooter />
