@@ -1,6 +1,6 @@
 import { LogoLockup } from "@/components/brand/LogoLockup";
 import { Mark } from "@/components/brand/Mark";
-import { contactEmail, navLinks } from "@/lib/site-content";
+import { contactEmail, instagramUrl, navLinks } from "@/lib/site-content";
 import { MythPattern } from "./MythPattern";
 import { Shell } from "./Shell";
 
@@ -53,11 +53,13 @@ export function SiteFooter() {
                 <a href={`mailto:${contactEmail}`} className={LINK}>
                   {contactEmail}
                 </a>
-                <a href="#projet" className={LINK}>
+                <a
+                  href={instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={LINK}
+                >
                   Instagram
-                </a>
-                <a href="#projet" className={LINK}>
-                  LinkedIn
                 </a>
               </div>
             </div>

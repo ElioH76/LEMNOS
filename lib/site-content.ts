@@ -177,4 +177,8 @@ export const structureTypes = [
   "Association / collectivité",
 ];
 
-export const contactEmail = "bonjour@lemnos.fr";
+export const contactEmail = "contact@lemnos-sportswear.fr";
+
+/** Lien Instagram (footer + page d'attente), configurable via l'env Vercel. */
+export const instagramUrl =
+  process.env.NEXT_PUBLIC_INSTAGRAM_URL || "https://www.instagram.com/";

@@ -1,16 +1,15 @@
 import { Instagram } from "lucide-react";
 import { Mark } from "@/components/brand/Mark";
+import { instagramUrl } from "@/lib/site-content";
 
 /**
  * Page d'attente publique (« bientôt en ligne »). Sobre, premium, responsive.
  * Affichée à la racine quand la variable d'environnement `COMING_SOON=true`
  * (production), sinon le site complet est rendu (développement).
  *
- * Le lien Instagram est configurable via `NEXT_PUBLIC_INSTAGRAM_URL` (Vercel),
- * sans toucher au code.
+ * Le lien Instagram (`instagramUrl`) est configurable via `NEXT_PUBLIC_INSTAGRAM_URL`
+ * (Vercel), sans toucher au code.
  */
-const INSTAGRAM_URL = process.env.NEXT_PUBLIC_INSTAGRAM_URL || "https://www.instagram.com/";
-
 export function ComingSoon() {
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-ink px-6 py-16 text-center">
@@ -40,7 +39,7 @@ export function ComingSoon() {
         </p>
 
         <a
-          href={INSTAGRAM_URL}
+          href={instagramUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="mt-11 inline-flex items-center gap-2.5 rounded-full border border-white/15 px-5 py-2.5 text-[13px] font-semibold text-white/80 transition-colors hover:border-green-light hover:text-white"

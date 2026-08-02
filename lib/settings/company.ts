@@ -40,7 +40,7 @@ export const company: CompanySettings = {
   zip: "76600",
   city: "Le Havre",
   country: "France",
-  email: "contact@lemnos-sportwear.fr",
+  email: "contact@lemnos-sportswear.fr",
   phone: "06 79 98 72 86",
   siren: "108 058 249",
   siret: "", // à compléter
