@@ -65,9 +65,21 @@ export function SiteFooter() {
             </div>
           </div>
 
-          <div className="flex flex-wrap justify-between gap-3.5 pt-8">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 pt-8">
             <span className="text-[12px] text-stone">© 2026 Lemnos — Forger vos idées.</span>
-            <span className="text-[12px] text-stone">Mentions légales · Confidentialité</span>
+            <nav className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-stone">
+              <a href="/mentions-legales" className="transition-colors hover:text-white">
+                Mentions légales
+              </a>
+              <span aria-hidden>·</span>
+              <a href="/confidentialite" className="transition-colors hover:text-white">
+                Confidentialité
+              </a>
+              <span aria-hidden>·</span>
+              <a href="/cgv" className="transition-colors hover:text-white">
+                CGV
+              </a>
+            </nav>
           </div>
         </Shell>
       </div>

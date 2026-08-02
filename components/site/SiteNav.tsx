@@ -41,7 +41,7 @@ export function SiteNav() {
             </a>
           ))}
           <a
-            href="#projet"
+            href="/#projet"
             className="rounded-sharp bg-green px-5 py-[11px] text-[12.5px] font-semibold uppercase tracking-caps text-white transition-colors hover:bg-green-dark hover:text-white"
           >
             Démarrer
@@ -76,7 +76,7 @@ export function SiteNav() {
             </a>
           ))}
           <a
-            href="#projet"
+            href="/#projet"
             onClick={() => setOpen(false)}
             className="mt-2 rounded-sharp bg-green px-5 py-3 text-center text-[13px] font-semibold uppercase tracking-caps text-white"
           >

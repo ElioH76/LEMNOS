@@ -66,13 +66,15 @@ export const featuredCollection = {
   ] satisfies KitPiece[],
 };
 
+// Ancres absolues (`/#…`) pour que la nav et le footer fonctionnent aussi
+// depuis les pages légales, pas seulement depuis l'accueil.
 export const navLinks: NavLink[] = [
-  { label: "Méthode", href: "#methode" },
+  { label: "Méthode", href: "/#methode" },
   // Masquée tant que `siteConfig.showRealisations` est false (nav + footer).
   ...(siteConfig.showRealisations
-    ? [{ label: "Réalisations", href: "#realisations" }]
+    ? [{ label: "Réalisations", href: "/#realisations" }]
     : []),
-  { label: "Atelier", href: "#atelier" },
+  { label: "Atelier", href: "/#atelier" },
 ];
 
 /** Techniques de personnalisation proposées à l'atelier. */
