@@ -26,7 +26,7 @@ export function SiteNav() {
       )}
     >
       <Shell className="flex items-center justify-between py-6">
-        <a href="#top" aria-label="Lemnos — accueil" className="text-white hover:text-white">
+        <a href="/" aria-label="Lemnos — accueil" className="text-white hover:text-white">
           <LogoLockup markClassName="w-[30px] text-white" wordmarkClassName="text-[19px]" />
         </a>
 
