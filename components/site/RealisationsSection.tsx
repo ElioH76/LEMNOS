@@ -44,12 +44,14 @@ export function RealisationsSection() {
             <div className="flex flex-wrap items-center gap-x-8 gap-y-5">
               <div className="flex items-center gap-4">
                 {partnerClub.crest ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={partnerClub.crest}
-                    alt={`Blason ${partnerClub.name}`}
-                    className="h-14 w-14 shrink-0 object-contain"
-                  />
+                  <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-white p-1.5 shadow-immersive">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={partnerClub.crest}
+                      alt={`Blason ${partnerClub.name}`}
+                      className="h-full w-full object-contain"
+                    />
+                  </span>
                 ) : null}
                 <div>
                   <div className="text-[11px] font-semibold uppercase tracking-label text-green-light">

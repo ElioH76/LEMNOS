@@ -52,10 +52,10 @@ export const partnerClub = {
   partnership:
     "Lemnos équipe le F.C. Littoral : maillots dessinés, prototypés et produits sur-mesure, portés sur le terrain toute la saison.",
   /**
-   * Blason du club (PNG/SVG à fond transparent). Déposer le fichier à ce chemin
-   * pour afficher le blason dans le bandeau partenaire ; laisser `null` sinon.
+   * Blason du club, affiché sur une pastille blanche dans le bandeau partenaire.
+   * Mettre à `null` pour masquer l'écusson.
    */
-  crest: null as string | null,
+  crest: "/images/creations/fc-littoral/blason-fc-littoral.png" as string | null,
 };
 
 /** Les tenues du F.C. Littoral — le cœur de la vitrine, en packshots. */
