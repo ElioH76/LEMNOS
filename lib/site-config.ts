@@ -9,5 +9,5 @@ export const siteConfig = {
    * préfère une marque premium centrée sur la méthode et l'atelier plutôt
    * qu'une galerie vide. Repasser à `true` dès qu'il y a du contenu.
    */
-  showRealisations: false,
+  showRealisations: true,
 };

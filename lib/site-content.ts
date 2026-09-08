@@ -16,55 +16,139 @@ export interface MethodStep {
   desc: string;
 }
 
-/** Réalisation pour un autre club : un mockup de tenue complet. */
-export interface ClubShowcase {
-  id: string;
-  team: string;
-  kit: string;
-  image: string;
-  alt: string;
-}
-
 export interface Feature {
   title: string;
   desc: string;
 }
 
-/** Une pièce d'une collection complète (domicile / extérieur / third). */
-export interface KitPiece {
+/** Une vue d'une tenue photographiée (face ou dos). */
+export interface KitView {
   id: string;
   label: string;
   image: string;
   alt: string;
 }
 
-/** Collection mise en avant : les trois tenues d'un même club. */
-export const featuredCollection = {
-  club: "F.C. Littoral",
-  season: "Collection 2026",
+/** Une tenue du club partenaire, présentée en packshots face + dos. */
+export interface Kit {
+  id: string;
+  name: string;
+  role: string;
+  blurb: string;
+  views: KitView[];
+}
+
+/**
+ * Club partenaire mis en avant dans les réalisations. Lemnos équipe le club
+ * (tenues offertes contre visibilité) : c'est notre première vitrine réelle.
+ */
+export const partnerClub = {
+  name: "F.C. Littoral",
+  since: "2002",
+  role: "Équipementier officiel",
+  season: "Collection 2026 · Domicile",
   intro:
-    "Trois tenues, une seule identité : le héron du littoral, décliné du domicile au third.",
-  pieces: [
-    {
-      id: "domicile",
-      label: "Domicile",
-      image: "/images/creations/mockup-fclittoral-domicile-LEMNOS.png",
-      alt: "Tenue domicile F.C. Littoral — jaune et vert, blason au héron, conçue par Lemnos",
-    },
-    {
-      id: "exterieur",
-      label: "Extérieur",
-      image: "/images/creations/mockup-fclittoral-exterieur-LEMNOS.png",
-      alt: "Tenue extérieur F.C. Littoral — vert profond et liseré or, conçue par Lemnos",
-    },
-    {
-      id: "third",
-      label: "Third",
-      image: "/images/creations/mockup-fclittoral-third-LEMNOS.png",
-      alt: "Tenue third F.C. Littoral — blanche à liseré violet, héron en filigrane, conçue par Lemnos",
-    },
-  ] satisfies KitPiece[],
+    "Notre premier club partenaire. Lemnos signe l'intégralité de ses tenues 2026 — du maillot joueur au maillot gardien.",
+  partnership:
+    "Lemnos équipe le F.C. Littoral : maillots dessinés, prototypés et produits sur-mesure, portés sur le terrain toute la saison.",
+  /**
+   * Blason du club (PNG/SVG à fond transparent). Déposer le fichier à ce chemin
+   * pour afficher le blason dans le bandeau partenaire ; laisser `null` sinon.
+   */
+  crest: null as string | null,
 };
+
+/** Les tenues du F.C. Littoral — le cœur de la vitrine, en packshots. */
+export const littoralKits: Kit[] = [
+  {
+    id: "domicile",
+    name: "Maillot domicile",
+    role: "Joueur",
+    blurb:
+      "Jaune héron, col et coutures vert bouteille. Emblème Lemnos au cœur, blason du club en poitrine, flocage ton sur ton.",
+    views: [
+      {
+        id: "face",
+        label: "Face",
+        image: "/images/creations/fc-littoral/domicile-face.jpg",
+        alt: "Maillot domicile joueur du F.C. Littoral par Lemnos — jaune à liserés verts, emblème Lemnos et blason du club, vue de face",
+      },
+      {
+        id: "dos",
+        label: "Dos",
+        image: "/images/creations/fc-littoral/domicile-dos.jpg",
+        alt: "Dos du maillot domicile F.C. Littoral par Lemnos — flocage « FC LITTORAL » et numéro 10 vert",
+      },
+    ],
+  },
+  {
+    id: "gardien",
+    name: "Maillot gardien",
+    role: "Gardien",
+    blurb:
+      "Camouflage violet, manches longues. Même signature Lemnos, contraste total avec la tenue joueur pour se démarquer sur le terrain.",
+    views: [
+      {
+        id: "face",
+        label: "Face",
+        image: "/images/creations/fc-littoral/gardien-face.jpg",
+        alt: "Maillot gardien du F.C. Littoral par Lemnos — camouflage violet, emblème Lemnos et blason du club, vue de face",
+      },
+      {
+        id: "dos",
+        label: "Dos",
+        image: "/images/creations/fc-littoral/gardien-dos.jpg",
+        alt: "Dos du maillot gardien F.C. Littoral par Lemnos — camouflage violet, « FC LITTORAL » et numéro 1 blancs",
+      },
+    ],
+  },
+];
+
+/**
+ * Réalisation « secondaire » : un club équipé par Lemnos — un *client* (pas
+ * forcément partenaire), présenté en carte compacte (1 visuel + nom + tenue).
+ * Le bloc « Ils nous ont fait confiance » n'apparaît sur le site que si la
+ * liste contient au moins une entrée → pas de galerie vide au lancement.
+ * Ajouter un club = une entrée + une image dans public/images/creations/.
+ */
+export interface Realisation {
+  id: string;
+  club: string;
+  kit: string;
+  image: string;
+  alt: string;
+  /** true = badge « Partenaire » (réservé aux clubs partenaires, ex. FC Littoral). */
+  partner?: boolean;
+}
+
+export const otherRealisations: Realisation[] = [
+  // Ajouter ici les futurs clubs équipés (clients, pas forcément partenaires).
+  // Tant que la liste est vide, le bloc « Ils nous ont fait confiance » est masqué.
+];
+
+/** Le partenariat en conditions réelles — galerie secondaire. */
+export const littoralGallery: { id: string; image: string; alt: string }[] = [
+  {
+    id: "equipe",
+    image: "/images/creations/fc-littoral/equipe.jpg",
+    alt: "L'équipe du F.C. Littoral en tenue Lemnos, devant les buts",
+  },
+  {
+    id: "signature",
+    image: "/images/creations/fc-littoral/signature-dos.jpg",
+    alt: "Signature Lemnos au bas du dos des maillots F.C. Littoral",
+  },
+  {
+    id: "detail",
+    image: "/images/creations/fc-littoral/porte-detail.jpg",
+    alt: "Détail du maillot domicile F.C. Littoral porté — blason du club et emblème Lemnos",
+  },
+  {
+    id: "soleil",
+    image: "/images/creations/fc-littoral/porte-soleil.jpg",
+    alt: "Dos d'un maillot F.C. Littoral porté à contre-jour — flocage numéro 4",
+  },
+];
 
 // Ancres absolues (`/#…`) pour que la nav et le footer fonctionnent aussi
 // depuis les pages légales, pas seulement depuis l'accueil.
@@ -114,31 +198,6 @@ export const methodSteps: MethodStep[] = [
     n: "05",
     title: "Livraison",
     desc: "Vos équipements arrivent prêts à porter, dans les délais.",
-  },
-];
-
-/** Autres clubs équipés par Lemnos. */
-export const otherClubs: ClubShowcase[] = [
-  {
-    id: "ocfc",
-    team: "Olympia Caux FC",
-    kit: "Domicile · noir & or",
-    image: "/images/creations/mockup-OCFC-LEMNOS.png",
-    alt: "Tenue Olympia Caux Football Club — noire et or, motif phénix, conçue par Lemnos",
-  },
-  {
-    id: "rolleville",
-    team: "FC Rolleville",
-    kit: "Extérieur · blanc, marine & or",
-    image: "/images/creations/mockup-fcrolleville-white-LEMNOS-.png",
-    alt: "Tenue FC Rolleville — blanche, bleu marine et or, conçue par Lemnos",
-  },
-  {
-    id: "epouville",
-    team: "US Épouville",
-    kit: "Extérieur · blanc, bleu & rouge",
-    image: "/images/creations/mockup-usepouville-exterieur-LEMNOS.png",
-    alt: "Tenue extérieur US Épouville — blanche à liserés bleu et rouge, motif gecko, conçue par Lemnos",
   },
 ];
 
