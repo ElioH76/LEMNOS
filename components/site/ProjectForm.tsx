@@ -98,7 +98,7 @@ export function ProjectForm() {
               Racontez-nous votre projet.
             </h2>
             <p className="mt-6 max-w-[46ch] text-[16px] leading-[1.65] text-fog">
-              Déposez votre design ou décrivez votre idée. On revient vers vous sous 24 h avec une
+              Déposez votre design ou décrivez votre idée. On revient vers vous sous 48 h avec une
               première proposition — sans engagement.
             </p>
             <ul className="mt-10 flex flex-col gap-4">
@@ -124,7 +124,7 @@ export function ProjectForm() {
                 </span>
                 <h3 className="mt-6 text-[22px] font-bold tracking-tight">Projet bien reçu</h3>
                 <p className="mt-3 max-w-[34ch] text-[14px] leading-[1.6] text-stone">
-                  Merci {structure.trim()} — nous revenons vers vous sous 24 h avec une première
+                  Merci {structure.trim()} — nous revenons vers vous sous 48 h avec une première
                   proposition.
                 </p>
                 <button
@@ -322,7 +322,7 @@ export function ProjectForm() {
                   {submitting ? "Envoi…" : "Envoyer mon projet"}
                 </button>
                 <p className="text-center text-[11.5px] text-ash">
-                  Réponse sous 24 h · sans engagement
+                  Réponse sous 48 h · sans engagement
                 </p>
               </form>
             )}

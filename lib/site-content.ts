@@ -225,7 +225,7 @@ export const features: Feature[] = [
 ];
 
 export const promises = [
-  "Réponse sous 24 h",
+  "Réponse sous 48 h",
   "Devis clair, sans surprise",
   "Prototype avant production",
 ];
