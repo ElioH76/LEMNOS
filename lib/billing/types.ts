@@ -213,6 +213,22 @@ export interface Deduction {
   label: string;
 }
 
+/**
+ * Visuel (design de maillot…) joint à un document, choisi dans la médiathèque.
+ * À la « congélation » du document (devis envoyé, facture émise), le fichier
+ * est copié dans le stockage du document (`frozen`) : supprimer le média de
+ * la médiathèque ne fait alors plus disparaître le visuel du document.
+ */
+export interface DocumentVisual {
+  id: string;
+  /** Média d'origine dans la médiathèque. */
+  mediaId: string | null;
+  url: string;
+  title: string;
+  contentType: string;
+  frozen: boolean;
+}
+
 export interface HistoryEvent {
   id: string;
   at: string; // ISO
@@ -311,6 +327,11 @@ export interface DocumentInput {
   paymentMethod: PaymentMethod;
   /** Montant d'une facture d'acompte. */
   depositAmount: number;
+
+  /** Visuels joints (annexe « Visuels du projet » du PDF). */
+  visuals: DocumentVisual[];
+  /** Afficher l'annexe des visuels sur ce document. */
+  showVisuals: boolean;
 }
 
 export interface CommercialDocument extends DocumentInput {

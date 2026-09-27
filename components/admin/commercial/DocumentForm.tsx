@@ -28,6 +28,7 @@ import {
 } from "@/lib/billing/types";
 import { cn } from "@/lib/cn";
 import { QuickClientDialog } from "./QuickClientDialog";
+import { VisualsPicker, type MediaOption, type VisualChoice } from "./VisualsPicker";
 import { BTN, BTN_PRIMARY, ErrorNote, FIELD, Field, LABEL, NumberInput, Section, TextArea, WarnNote } from "./ui";
 
 export interface FormDefaults {
@@ -70,6 +71,8 @@ export function DocumentForm({
   templates: initialTemplates,
   defaults,
   preselectClientId,
+  media: initialMedia = [],
+  blobEnabled = false,
 }: {
   type: "devis" | "facture";
   initial?: CommercialDocument;
@@ -77,6 +80,8 @@ export function DocumentForm({
   templates: ProductTemplate[];
   defaults: FormDefaults;
   preselectClientId?: string;
+  media?: MediaOption[];
+  blobEnabled?: boolean;
 }) {
   const router = useRouter();
   const isQuote = type === "devis";
@@ -116,6 +121,11 @@ export function DocumentForm({
   const [paymentTerms, setPaymentTerms] = useState(initial?.paymentTerms ?? defaults.paymentTermsText);
   const [notes, setNotes] = useState(initial?.notes ?? "");
   const [internalComments, setInternalComments] = useState(initial?.internalComments ?? "");
+  const [media, setMedia] = useState<MediaOption[]>(initialMedia);
+  const [visuals, setVisuals] = useState<VisualChoice[]>(
+    (initial?.visuals ?? []).map((v) => ({ id: v.id, mediaId: v.mediaId, url: v.url, title: v.title })),
+  );
+  const [showVisuals, setShowVisuals] = useState(initial?.showVisuals ?? true);
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -145,6 +155,9 @@ export function DocumentForm({
     deliveryDate,
     paymentMethod,
     depositAmount,
+    // Le serveur ne garde que les références (id de visuel existant / mediaId).
+    visuals: visuals.map((v) => ({ id: v.id ?? "", mediaId: v.mediaId, url: "", title: v.title, contentType: "", frozen: false })),
+    showVisuals,
   };
 
   const amounts = useMemo(
@@ -439,6 +452,19 @@ export function DocumentForm({
             </>
           )}
         </Section>
+
+        <VisualsPicker
+          media={media}
+          setMedia={setMedia}
+          clientId={clientId}
+          clientName={client?.club ?? initial?.client.club ?? ""}
+          value={visuals}
+          onChange={setVisuals}
+          show={showVisuals}
+          onShowChange={setShowVisuals}
+          locked={linesLocked}
+          blobEnabled={blobEnabled}
+        />
 
         {/* ACOMPTE & LIVRAISON (devis) */}
         {isQuote && (

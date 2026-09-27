@@ -429,6 +429,19 @@ export function normalizeDocument(raw: any): CommercialDocument {
     deliveryDate: str(raw.deliveryDate),
     paymentMethod: raw.paymentMethod ?? "virement",
     depositAmount: num(raw.depositAmount),
+    visuals: Array.isArray(raw.visuals)
+      ? raw.visuals
+          .filter((v: any) => v && typeof v.url === "string")
+          .map((v: any) => ({
+            id: str(v.id) || randomUUID(),
+            mediaId: v.mediaId ?? null,
+            url: v.url,
+            title: str(v.title),
+            contentType: str(v.contentType, "image/png"),
+            frozen: v.frozen === true,
+          }))
+      : [],
+    showVisuals: raw.showVisuals !== false,
     quoteId: raw.quoteId ?? (legacy ? (raw.sourceDocumentId ?? null) : null),
     invoiceId: raw.invoiceId ?? null,
     correctsId: raw.correctsId ?? null,

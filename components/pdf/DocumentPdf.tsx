@@ -39,6 +39,8 @@ export interface PdfContext {
   slogan: string;
   /** Logo personnalisé (octets), sinon l'emblème LEMNOS. */
   logo: { data: Buffer; format: "png" | "jpg" } | null;
+  /** Visuels de l'annexe (déjà convertis en PNG / JPEG). */
+  visuals: { title: string; image: { data: Buffer; format: "png" | "jpg" } }[];
   /** Numéros des documents liés, pour les références. */
   quoteNumber: string | null;
   originalInvoice: { number: string | null; date: string } | null;
@@ -209,11 +211,47 @@ function makeStyles(green: string) {
       fontSize: 6.4,
       color: ASH,
     },
+    annexHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "flex-end",
+      paddingBottom: 4 * MM,
+      marginBottom: 4 * MM,
+      borderBottomWidth: 1.4,
+      borderBottomColor: green,
+    },
+    annexTitle: { fontWeight: 300, fontSize: 17, letterSpacing: 3.2, color: green, lineHeight: 1 },
+    annexGrid: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" },
+    annexCell: { marginBottom: 5 * MM },
+    annexFrame: {
+      flex: 1,
+      borderWidth: 0.7,
+      borderColor: LINE,
+      borderRadius: 2 * MM,
+      padding: 4 * MM,
+      backgroundColor: "#FFFFFF",
+    },
+    annexCaption: { marginTop: 2 * MM, fontSize: 8, fontWeight: 600, textAlign: "center" },
     forge: { fontFamily: "Cinzel", fontWeight: 500, letterSpacing: 1.3, color: green, fontSize: 6.8, marginLeft: 6 * MM },
   });
 }
 
 type Styles = ReturnType<typeof makeStyles>;
+
+function chunk<T>(items: T[], size: number): T[][] {
+  const out: T[][] = [];
+  for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size));
+  return out;
+}
+
+function Footer({ s, text, slogan }: { s: Styles; text: string; slogan: string }) {
+  return (
+    <View style={s.footer} fixed>
+      <Text style={{ flex: 1 }}>{text}</Text>
+      {slogan ? <Text style={s.forge}>{slogan.toUpperCase()}</Text> : null}
+    </View>
+  );
+}
 
 function TotalRow({ s, label, value, color, bold, sep }: { s: Styles; label: string; value: string; color?: string; bold?: boolean; sep?: boolean }) {
   const style = { color, fontWeight: bold ? 600 : undefined };
@@ -430,6 +468,11 @@ export function DocumentPdf({ doc, ctx }: { doc: CommercialDocument; ctx: PdfCon
         })}
 
         {doc.notes ? <Text style={s.notes}>{doc.notes}</Text> : null}
+        {ctx.visuals.length > 0 ? (
+          <Text style={[s.notes, { color: green, fontWeight: 600, marginTop: doc.notes ? 1.5 * MM : 4 * MM }]}>
+            {ctx.visuals.length > 1 ? `Visuels du projet (${ctx.visuals.length}) en annexe.` : "Visuel du projet en annexe."}
+          </Text>
+        ) : null}
 
         {/* Totaux */}
         <View style={s.bottom} wrap={false}>
@@ -587,11 +630,41 @@ export function DocumentPdf({ doc, ctx }: { doc: CommercialDocument; ctx: PdfCon
 
         {isQuote && legalText ? <Text style={s.terms}>{legalText}</Text> : null}
 
-        <View style={s.footer} fixed>
-          <Text style={{ flex: 1 }}>{legalFooter}</Text>
-          {ctx.slogan ? <Text style={s.forge}>{ctx.slogan.toUpperCase()}</Text> : null}
-        </View>
+        <Footer s={s} text={legalFooter} slogan={ctx.slogan} />
       </Page>
+
+      {/* Annexe : visuels du projet (4 par page au maximum) */}
+      {chunk(ctx.visuals, 4).map((group, pageIndex, pages) => (
+        <Page key={pageIndex} size="A4" style={s.page}>
+          <View style={s.topbar} fixed />
+          <View style={s.annexHeader}>
+            <View>
+              <Text style={s.label}>Annexe{pages.length > 1 ? ` ${pageIndex + 1}/${pages.length}` : ""}</Text>
+              <Text style={s.annexTitle}>VISUELS DU PROJET</Text>
+            </View>
+            <View style={{ alignItems: "flex-end" }}>
+              <Text style={s.label}>{documentTitle(doc)}</Text>
+              <Text style={s.metaValue}>{doc.number ?? "Brouillon"}</Text>
+            </View>
+          </View>
+          {doc.subject ? <Text style={[s.small, { marginBottom: 4 * MM }]}>{doc.subject}</Text> : null}
+          <View style={s.annexGrid}>
+            {group.map((v, i) => (
+              <View
+                key={i}
+                style={[s.annexCell, group.length === 1 ? { width: "100%", height: 205 * MM } : group.length === 2 ? { width: "100%", height: 100 * MM } : { width: "48.5%", height: 100 * MM }]}
+                wrap={false}
+              >
+                <View style={s.annexFrame}>
+                  <Image src={v.image} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                </View>
+                {v.title ? <Text style={s.annexCaption}>{v.title}</Text> : null}
+              </View>
+            ))}
+          </View>
+          <Footer s={s} text={legalFooter} slogan={ctx.slogan} />
+        </Page>
+      ))}
     </Document>
   );
 }

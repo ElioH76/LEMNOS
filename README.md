@@ -232,3 +232,10 @@ réelle) → facture finale (acompte déduit automatiquement) → paiements.
 - **Franchise en base de TVA** : activée par défaut (Paramètres → Entreprise),
   mention « TVA non applicable – art. 293 B du CGI » automatique ; le régime est
   figé sur chaque document.
+- **Visuels du projet** : chaque devis / facture peut joindre jusqu'à 8 visuels
+  (designs de maillots) choisis dans la médiathèque du client ou téléversés depuis
+  le formulaire. Ils forment une page d'annexe à la fin du PDF (case « Afficher
+  sur le PDF »), sont repris sur les factures issues du devis, et sont **copiés**
+  dans `documents/visuels/` du Blob quand le document est figé (devis envoyé,
+  facture émise) : supprimer le média de la médiathèque ne les efface plus.
+  Conversion PNG/JPEG via `sharp` (`lib/pdf/images.ts`).

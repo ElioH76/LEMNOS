@@ -4,6 +4,7 @@ import { documentAmounts, formatEuro, frDate, frDateTime, isEditable, lineHt } f
 import { linkedDocuments } from "@/lib/billing/service";
 import { getSettings, listInvoices } from "@/lib/billing/store";
 import { displayNumber, documentTitle, type CommercialDocument } from "@/lib/billing/types";
+import { blobDisplaySrc } from "@/lib/blob/url";
 import { nextInvoiceStep, quoteWorkflow } from "@/lib/billing/workflow";
 import { DocumentActions } from "./DocumentActions";
 import { FulfillmentPanel, HistoryList, LinkedDocumentsList, PaymentsPanel, WorkflowStepper } from "./Panels";
@@ -137,6 +138,26 @@ export async function DocumentDetail({ doc }: { doc: CommercialDocument }) {
               {(doc.deductions.length > 0 || doc.kind === "acompte") && <Line label="Net à payer" value={formatEuro(a.amountDue)} strong />}
             </div>
           </section>
+
+          {doc.visuals.length > 0 && (
+            <section className="rounded-2xl border border-line bg-white p-5 md:p-6">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <h2 className="text-[14px] font-bold">Visuels du projet</h2>
+                <span className={`text-[12px] font-semibold ${doc.showVisuals ? "text-green" : "text-ash"}`}>
+                  {doc.showVisuals ? "En annexe du PDF" : "Masqués sur le PDF"}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {doc.visuals.map((v) => (
+                  <figure key={v.id} className="overflow-hidden rounded-xl border border-line bg-white">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={blobDisplaySrc(v.url)} alt={v.title} className="aspect-square w-full object-contain p-2" loading="lazy" />
+                    <figcaption className="truncate border-t border-line-soft px-2 py-1.5 text-[11.5px] text-slate">{v.title}</figcaption>
+                  </figure>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Aperçu PDF */}
           <section className="overflow-hidden rounded-2xl border border-line bg-white">

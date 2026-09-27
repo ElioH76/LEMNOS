@@ -1,5 +1,9 @@
 import "server-only";
 import { randomBytes, randomUUID } from "crypto";
+import { copy as copyBlob } from "@vercel/blob";
+import { isBlobConfigured } from "@/lib/blob/store";
+import { isVercelBlobUrl } from "@/lib/blob/url";
+import { getMedia } from "@/lib/media/store";
 import { addDays, documentAmounts, formatEuro, isEditable, quoteStatus, round2, todayIso } from "./calc";
 import { sellerSnapshot, termsSnapshot } from "./settings";
 import {
@@ -23,6 +27,7 @@ import {
   type DocumentInput,
   type DocumentLine,
   type DocumentType,
+  type DocumentVisual,
   type Payment,
   type QuoteAcceptance,
 } from "./types";
@@ -97,7 +102,61 @@ export function cleanInput(raw: Partial<DocumentInput>): DocumentInput {
     deliveryDate: date(raw.deliveryDate),
     paymentMethod: PAYMENT_METHODS.includes(raw.paymentMethod as never) ? raw.paymentMethod! : "virement",
     depositAmount: money(raw.depositAmount),
+    // Résolus côté serveur par resolveVisuals (jamais d'URL venant du navigateur).
+    visuals: [],
+    showVisuals: raw.showVisuals !== false,
   };
+}
+
+const MAX_VISUALS = 8;
+
+/**
+ * Visuels choisis dans le formulaire → visuels validés : chaque entrée doit
+ * désigner un média IMAGE de la médiathèque, ou un visuel déjà présent sur le
+ * document (copie figée). Les URL ne viennent jamais du navigateur.
+ */
+async function resolveVisuals(raw: unknown, existing: DocumentVisual[]): Promise<DocumentVisual[]> {
+  if (!Array.isArray(raw)) return [];
+  const out: DocumentVisual[] = [];
+  for (const item of raw.slice(0, MAX_VISUALS)) {
+    const kept = existing.find((v) => v.id === item?.id);
+    if (kept) {
+      out.push({ ...kept, title: text(item?.title, 120) || kept.title });
+      continue;
+    }
+    if (typeof item?.mediaId !== "string") continue;
+    const media = await getMedia(item.mediaId);
+    if (!media || !media.contentType.startsWith("image/")) continue;
+    out.push({
+      id: randomUUID(),
+      mediaId: media.id,
+      url: media.url,
+      title: text(item?.title, 120) || media.title,
+      contentType: media.contentType,
+      frozen: false,
+    });
+  }
+  return out;
+}
+
+/** Copie les visuels dans le stockage du document (indépendants de la médiathèque). */
+async function freezeVisuals(doc: CommercialDocument) {
+  if (!isBlobConfigured()) return;
+  for (const v of doc.visuals) {
+    if (v.frozen || !isVercelBlobUrl(v.url)) continue;
+    try {
+      const name = (v.url.split("/").pop() ?? "visuel").split("?")[0];
+      const res = await copyBlob(v.url, `documents/visuels/${doc.id}/${v.id}-${name}`, {
+        access: "private",
+        contentType: v.contentType,
+        addRandomSuffix: true,
+      });
+      v.url = res.url;
+      v.frozen = true;
+    } catch (err) {
+      console.error("[visuels] copie impossible, lien médiathèque conservé :", err);
+    }
+  }
 }
 
 async function snapshotFor(clientId: string | null): Promise<ClientSnapshot> {
@@ -172,14 +231,19 @@ async function freeze(doc: CommercialDocument) {
     const client = await getClient(doc.clientId);
     if (client) doc.client = clientSnapshot(client);
   }
+  await freezeVisuals(doc);
 }
 
 // ── Devis ──────────────────────────────────────────────────────────────────
 
-export async function createQuote(raw: Partial<DocumentInput>, opts: { revisionOf?: string } = {}) {
+export async function createQuote(
+  raw: Partial<DocumentInput>,
+  opts: { revisionOf?: string; existingVisuals?: DocumentVisual[] } = {},
+) {
   const input = cleanInput(raw);
   validateContent(input);
   const settings = await getSettings();
+  input.visuals = await resolveVisuals(raw.visuals, opts.existingVisuals ?? []);
   const doc = blankDocument("devis", input, await snapshotFor(input.clientId), settings.company.vatExempt);
   if (!doc.validUntil) doc.validUntil = addDays(doc.date, settings.terms.quoteValidityDays);
   doc.number = await allocateNumber("devis", doc.date);
@@ -194,6 +258,7 @@ export async function updateQuote(id: string, raw: Partial<DocumentInput>) {
   if (!isEditable(doc)) fail("Ce devis n'est plus modifiable. Créez une nouvelle version pour le corriger.");
   const input = cleanInput(raw);
   validateContent(input);
+  input.visuals = await resolveVisuals(raw.visuals, doc.visuals);
   Object.assign(doc, input, { client: await snapshotFor(input.clientId) });
   doc.history.push(event("Devis modifié"));
   return writeDocument(doc);
@@ -280,7 +345,7 @@ export async function reviseQuote(id: string) {
   if (doc.quoteStatus === "brouillon") fail("Un brouillon se modifie directement.");
   const linked = (await listInvoices()).filter((d) => d.quoteId === id && d.lifecycle === "emise");
   if (linked.length) fail("Des factures émises sont liées à ce devis : une nouvelle version n'est plus possible.");
-  const copy = await createQuote(copyInput(doc, { keepDates: false }), { revisionOf: id });
+  const copy = await createQuote(copyInput(doc, { keepDates: false }), { revisionOf: id, existingVisuals: doc.visuals });
   doc.quoteStatus = "annule";
   doc.replacedBy = copy.id;
   doc.history.push(event("Remplacé par une nouvelle version", copy.number ?? undefined));
@@ -328,6 +393,8 @@ function copyInput(doc: CommercialDocument, opts: { keepDates: boolean }): Docum
     deliveryDate: opts.keepDates ? doc.deliveryDate : "",
     paymentMethod: doc.paymentMethod,
     depositAmount: doc.depositAmount,
+    visuals: doc.visuals.map((v) => ({ ...v })),
+    showVisuals: doc.showVisuals,
   };
 }
 
@@ -338,10 +405,11 @@ async function defaultsForInvoice(input: DocumentInput) {
   return settings;
 }
 
-export async function createInvoice(raw: Partial<DocumentInput>) {
+export async function createInvoice(raw: Partial<DocumentInput>, opts: { existingVisuals?: DocumentVisual[] } = {}) {
   const input = cleanInput(raw);
   validateContent(input);
   const settings = await defaultsForInvoice(input);
+  input.visuals = await resolveVisuals(raw.visuals, opts.existingVisuals ?? []);
   const doc = blankDocument("facture", input, await snapshotFor(input.clientId), settings.company.vatExempt);
   doc.history.push(event("Facture créée (brouillon)"));
   return insertDocument(doc);
@@ -360,6 +428,9 @@ export async function updateInvoiceDraft(id: string, raw: Partial<DocumentInput>
     input.globalDiscountLabel = doc.globalDiscountLabel;
     input.shipping = doc.shipping;
     input.clientId = doc.clientId;
+    input.visuals = doc.visuals;
+  } else {
+    input.visuals = await resolveVisuals(raw.visuals, doc.visuals);
   }
   validateContent(input);
   if (doc.kind !== "acompte") input.depositAmount = 0;
@@ -609,14 +680,14 @@ export async function duplicateDocument(id: string) {
   const source = await load(id);
   const input = copyInput(source, { keepDates: false });
   if (source.type === "devis") {
-    const copy = await createQuote(input);
+    const copy = await createQuote(input, { existingVisuals: source.visuals });
     copy.history.push(event("Dupliqué depuis", source.number ?? undefined));
     return writeDocument(copy);
   }
   if (source.type === "avoir") fail("Un avoir ne se duplique pas.");
   // Copie autonome : sans lien devis, montant complet.
   input.depositAmount = 0;
-  const copy = await createInvoice(input);
+  const copy = await createInvoice(input, { existingVisuals: source.visuals });
   copy.history.push(event("Dupliquée depuis", displayNumber(source)));
   return writeDocument(copy);
 }

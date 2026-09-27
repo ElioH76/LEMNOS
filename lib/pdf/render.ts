@@ -2,13 +2,11 @@ import "server-only";
 import path from "path";
 import { createElement, type ReactElement } from "react";
 import { Font, renderToBuffer, type DocumentProps } from "@react-pdf/renderer";
-import { get } from "@vercel/blob";
 import { DocumentPdf, type PdfContext } from "@/components/pdf/DocumentPdf";
-import { isBlobConfigured } from "@/lib/blob/store";
-import { isVercelBlobUrl } from "@/lib/blob/url";
 import { sellerSnapshot, termsSnapshot } from "@/lib/billing/settings";
 import { getDocument, getSettings } from "@/lib/billing/store";
 import { documentTitle, type CommercialDocument } from "@/lib/billing/types";
+import { loadPdfImage } from "./images";
 
 /**
  * Point d'entrée unique de génération PDF (admin, lien client, email,
@@ -33,31 +31,6 @@ function registerFonts() {
   fontsReady = true;
 }
 
-async function loadLogo(url: string): Promise<PdfContext["logo"]> {
-  if (!url) return null;
-  try {
-    let bytes: ArrayBuffer;
-    let type = "";
-    if (isVercelBlobUrl(url)) {
-      if (!isBlobConfigured()) return null;
-      const res = await get(url, { access: "private" });
-      if (!res || res.statusCode !== 200) return null;
-      bytes = await new Response(res.stream).arrayBuffer();
-      type = res.blob.contentType ?? "";
-    } else {
-      const res = await fetch(url);
-      if (!res.ok) return null;
-      bytes = await res.arrayBuffer();
-      type = res.headers.get("content-type") ?? "";
-    }
-    const format = type.includes("png") ? "png" : type.includes("jpeg") || type.includes("jpg") ? "jpg" : null;
-    return format ? { data: Buffer.from(bytes), format } : null;
-  } catch (err) {
-    console.error("[pdf] logo illisible, emblème par défaut :", err);
-    return null;
-  }
-}
-
 export async function buildPdfContext(doc: CommercialDocument): Promise<PdfContext> {
   const settings = await getSettings();
   const frozen = doc.type === "devis" ? doc.quoteStatus !== "brouillon" : doc.lifecycle !== "brouillon";
@@ -71,7 +44,14 @@ export async function buildPdfContext(doc: CommercialDocument): Promise<PdfConte
     bank: frozen && doc.bank ? doc.bank : { ...settings.bank },
     terms: frozen && doc.terms ? doc.terms : termsSnapshot(settings),
     slogan: settings.company.slogan,
-    logo: await loadLogo(seller.logoUrl),
+    logo: await loadPdfImage(seller.logoUrl, 600),
+    visuals: doc.showVisuals
+      ? (
+          await Promise.all(
+            doc.visuals.map(async (v) => ({ title: v.title, image: await loadPdfImage(v.url) })),
+          )
+        ).filter((v): v is { title: string; image: NonNullable<typeof v.image> } => v.image !== null)
+      : [],
     quoteNumber: quote?.number ?? null,
     originalInvoice: original ? { number: original.number, date: original.date } : null,
   };

@@ -121,6 +121,21 @@ export default async function PublicQuotePage({ params }: { params: Promise<{ to
           {doc.notes && <p className="mt-2 whitespace-pre-wrap text-[13px] text-slate">{doc.notes}</p>}
         </section>
 
+        {doc.showVisuals && doc.visuals.length > 0 && (
+          <section className="mt-6 rounded-2xl border border-line bg-white p-5 sm:p-8">
+            <h2 className="text-[11px] font-semibold uppercase tracking-caps text-green">Visuels du projet</h2>
+            <div className={`mt-4 grid gap-4 ${doc.visuals.length > 1 ? "sm:grid-cols-2" : ""}`}>
+              {doc.visuals.map((v, i) => (
+                <figure key={v.id} className="overflow-hidden rounded-xl border border-line">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={`/devis/${token}/visuel/${i}`} alt={v.title} className="w-full bg-white object-contain p-3" loading="lazy" />
+                  {v.title && <figcaption className="border-t border-line-soft px-3 py-2 text-center text-[13px] font-semibold">{v.title}</figcaption>}
+                </figure>
+              ))}
+            </div>
+          </section>
+        )}
+
         <section className="mt-6 rounded-2xl border border-line bg-white p-5 sm:p-8">
           {status === "accepte" && doc.acceptance ? (
             <div className="text-center">

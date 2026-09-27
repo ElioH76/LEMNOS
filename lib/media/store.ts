@@ -124,3 +124,19 @@ export async function mediaForOrder(orderId: string): Promise<MediaAsset[]> {
   const all = await listMedia();
   return all.filter((m) => m.orderId === orderId);
 }
+
+/** Images de la médiathèque, au format attendu par le choix de visuels des devis / factures. */
+export async function listImageMediaOptions() {
+  const all = await listMedia();
+  return all
+    .filter((m) => m.contentType.startsWith("image/"))
+    .map((m) => ({
+      id: m.id,
+      url: m.url,
+      title: m.title,
+      contentType: m.contentType,
+      kind: m.kind,
+      clientId: m.clientId,
+      clientName: m.clientName,
+    }));
+}
