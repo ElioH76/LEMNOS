@@ -19,6 +19,7 @@ import {
   Pencil,
   Printer,
   RotateCcw,
+  Undo2,
   Send,
   Stamp,
   Trash2,
@@ -58,12 +59,15 @@ export function DocumentActions({
   hasIssuedInvoices,
   issueWarnings,
   hasCorrective,
+  hasLinkedInvoices,
 }: {
   doc: CommercialDocument;
   next: "acompte" | "finale" | null;
   hasIssuedInvoices: boolean;
   issueWarnings: string[];
   hasCorrective: boolean;
+  /** Au moins une facture (même brouillon) liée au devis. */
+  hasLinkedInvoices: boolean;
 }) {
   const router = useRouter();
   const [dialog, setDialog] = useState<Dialog>(null);
@@ -183,6 +187,21 @@ export function DocumentActions({
 
       {/* Actions secondaires */}
       <div className="flex flex-wrap items-center gap-1">
+        {isQuote && qs !== "brouillon" && !hasLinkedInvoices && !doc.replacedBy && (
+          <button
+            type="button"
+            disabled={busy}
+            className={BTN_DANGER}
+            onClick={() =>
+              act(() => setQuoteStatusAction(doc.id, "brouillon"), {
+                confirm:
+                  "Repasser ce devis en brouillon pour le modifier ? Il garde son numéro ; l'acceptation éventuelle et le lien d'acceptation en ligne seront retirés. À ne faire que si le client n'a pas reçu ce devis.",
+              })
+            }
+          >
+            <Undo2 size={15} /> Repasser en brouillon
+          </button>
+        )}
         {isQuote && (qs === "envoye" || qs === "expire") && (
           <button type="button" disabled={busy} className={BTN_DANGER} onClick={() => act(() => setQuoteStatusAction(doc.id, "refuse"), { confirm: "Marquer ce devis comme refusé ?" })}>
             <XCircle size={15} /> Refusé

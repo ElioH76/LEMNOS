@@ -18,6 +18,7 @@ import {
 } from "./store";
 import {
   PAYMENT_METHODS,
+  QUOTE_STATUS_LABEL,
   clientSnapshot,
   displayNumber,
   documentTitle,
@@ -332,6 +333,20 @@ export async function setQuoteStatus(id: string, status: "refuse" | "annule" | "
     if (linked.length) fail("Des factures émises sont liées à ce devis : annulez-les d'abord par un avoir.");
     doc.quoteStatus = "annule";
     doc.history.push(event("Devis annulé"));
+  } else if (status === "brouillon") {
+    // Retour en brouillon : seulement tant qu'aucune facture (même brouillon)
+    // n'existe et que le devis n'a pas été remplacé. Le numéro est conservé,
+    // l'acceptation et le lien public sont retirés, et tout est tracé.
+    if (current === "brouillon") return doc;
+    if (doc.replacedBy) fail("Ce devis a été remplacé par une nouvelle version.");
+    const linked = (await listInvoices()).filter((d) => d.quoteId === id && d.type === "facture");
+    if (linked.length) fail("Une facture est déjà liée à ce devis : il ne peut plus repasser en brouillon.");
+    doc.quoteStatus = "brouillon";
+    doc.acceptance = null;
+    doc.publicToken = null;
+    doc.sentAt = null;
+    doc.fulfillment = { productionAt: null, deliveredAt: null };
+    doc.history.push(event("Repassé en brouillon", `Statut précédent : ${QUOTE_STATUS_LABEL[current]}`));
   } else {
     fail("Transition non autorisée.");
   }

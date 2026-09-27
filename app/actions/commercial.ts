@@ -94,7 +94,7 @@ export async function acceptQuoteAction(
   );
 }
 
-export async function setQuoteStatusAction(id: string, status: "refuse" | "annule") {
+export async function setQuoteStatusAction(id: string, status: "refuse" | "annule" | "brouillon") {
   return run(async () => void (await service.setQuoteStatus(id, status)));
 }
 
