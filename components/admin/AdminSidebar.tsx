@@ -4,12 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BarChart3,
+  FileSignature,
   FileText,
   Image as ImageIcon,
   Inbox,
   LayoutDashboard,
   LogOut,
   Package,
+  Settings,
   Truck,
   Users,
   type LucideIcon,
@@ -33,12 +35,19 @@ const GROUPS: NavGroup[] = [
     items: [{ label: "Tableau de bord", href: "/admin", icon: LayoutDashboard }],
   },
   {
-    label: "Commercial",
+    label: "Gestion commerciale",
+    items: [
+      { label: "Devis", href: "/admin/devis", icon: FileSignature },
+      { label: "Factures", href: "/admin/factures", icon: FileText },
+      { label: "Clients", href: "/admin/clients", icon: Users },
+      { label: "Paramètres", href: "/admin/parametres", icon: Settings },
+    ],
+  },
+  {
+    label: "Suivi",
     items: [
       { label: "Demandes", href: "/admin/demandes", icon: Inbox },
-      { label: "Clients", href: "/admin/clients", icon: Users },
       { label: "Commandes", href: "/admin/commandes", icon: Package },
-      { label: "Factures", href: "/admin/factures", icon: FileText },
     ],
   },
   {

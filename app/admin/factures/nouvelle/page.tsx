@@ -1,39 +1,16 @@
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import { InvoiceForm } from "@/components/admin/InvoiceForm";
-import { getClient, listClients, listProductTemplates } from "@/lib/billing/store";
+import { DocumentForm } from "@/components/admin/commercial/DocumentForm";
+import { FormPage } from "@/components/admin/commercial/FormPage";
+import { formDefaults } from "@/lib/billing/settings";
+import { getSettings, listClients, listProductTemplates } from "@/lib/billing/store";
 
 export const dynamic = "force-dynamic";
 
-export default async function NouvelleFacturePage({
-  searchParams,
-}: {
-  searchParams: Promise<{ client?: string }>;
-}) {
-  const { client: clientId } = await searchParams;
-  const [clients, templates, preselectClient] = await Promise.all([
-    listClients(),
-    listProductTemplates(),
-    clientId ? getClient(clientId) : Promise.resolve(null),
-  ]);
-
+export default async function NouvelleFacturePage({ searchParams }: { searchParams: Promise<{ client?: string }> }) {
+  const { client } = await searchParams;
+  const [clients, templates, settings] = await Promise.all([listClients(), listProductTemplates(), getSettings()]);
   return (
-    <>
-      <main className="mx-auto max-w-6xl px-6 py-10">
-        <Link
-          href="/admin/factures"
-          className="mb-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-ash transition-colors hover:text-green"
-        >
-          <ArrowLeft size={15} /> Retour aux factures
-        </Link>
-        <h1 className="mb-8 text-[28px] font-extrabold tracking-tight">Nouvelle facture</h1>
-        <InvoiceForm
-          mode="create"
-          clients={clients}
-          templates={templates}
-          preselectClient={preselectClient ?? undefined}
-        />
-      </main>
-    </>
+    <FormPage back="/admin/factures" backLabel="Retour aux factures" title="Nouvelle facture">
+      <DocumentForm type="facture" clients={clients} templates={templates} defaults={formDefaults(settings)} preselectClientId={client} />
+    </FormPage>
   );
 }

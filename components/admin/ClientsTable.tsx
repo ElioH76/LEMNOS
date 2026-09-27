@@ -1,12 +1,12 @@
 "use client";
 
-import { useMemo, useState, type FormEvent } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Eye, Mail, Pencil, Phone, Search, Trash2 } from "lucide-react";
-import { deleteClientAction } from "@/app/actions/clients";
+import { Archive, ArchiveRestore, Eye, Mail, Pencil, Phone, Search } from "lucide-react";
+import { archiveClientAction } from "@/app/actions/clients";
 import { formatEuro } from "@/lib/billing/calc";
 import { blobDisplaySrc } from "@/lib/blob/url";
-import type { Client } from "@/lib/billing/types";
+import { CLIENT_TYPE_LABEL, type Client } from "@/lib/billing/types";
 
 export interface ClientRow {
   client: Client;
@@ -16,23 +16,23 @@ export interface ClientRow {
 
 export function ClientsTable({ rows }: { rows: ClientRow[] }) {
   const [search, setSearch] = useState("");
+  const [showArchived, setShowArchived] = useState(false);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return rows;
-    return rows.filter(({ client }) =>
-      `${client.club} ${client.contact} ${client.email} ${client.city}`.toLowerCase().includes(q),
-    );
-  }, [rows, search]);
+    return rows.filter(({ client }) => {
+      if (client.archived !== showArchived) return false;
+      if (!q) return true;
+      return `${client.club} ${client.contact} ${client.email} ${client.city} ${client.siret} ${client.rna}`.toLowerCase().includes(q);
+    });
+  }, [rows, search, showArchived]);
+  const archivedCount = rows.filter((r) => r.client.archived).length;
 
-  const confirmDelete = (club: string) => (e: FormEvent<HTMLFormElement>) => {
-    if (!window.confirm(`Supprimer la fiche client « ${club} » ? Les factures ne sont pas supprimées.`))
-      e.preventDefault();
-  };
 
   return (
     <div>
-      <label className="flex max-w-md items-center gap-2.5 rounded-field border-[1.5px] border-line bg-white px-3.5 py-2.5 transition-colors focus-within:border-green">
+      <div className="flex flex-wrap items-center gap-3">
+      <label className="flex min-w-[220px] max-w-md flex-1 items-center gap-2.5 rounded-field border-[1.5px] border-line bg-white px-3.5 py-2.5 transition-colors focus-within:border-green">
         <Search size={16} className="flex-none text-ash" aria-hidden />
         <input
           value={search}
@@ -41,6 +41,14 @@ export function ClientsTable({ rows }: { rows: ClientRow[] }) {
           className="w-full bg-transparent text-[14px] outline-none placeholder:text-ash"
         />
       </label>
+      <button
+        type="button"
+        onClick={() => setShowArchived((v) => !v)}
+        className={`inline-flex items-center gap-2 rounded-field border-[1.5px] px-3 py-2.5 text-[13px] font-semibold transition-colors ${showArchived ? "border-green bg-green-soft text-green" : "border-line bg-white text-slate hover:border-green"}`}
+      >
+        <Archive size={15} /> Archivés{archivedCount ? ` (${archivedCount})` : ""}
+      </button>
+      </div>
 
       <div className="mt-6 overflow-x-auto rounded-2xl border border-line bg-white">
         <table className="w-full min-w-[720px] border-collapse text-[13.5px]">
@@ -48,7 +56,7 @@ export function ClientsTable({ rows }: { rows: ClientRow[] }) {
             <tr>
               <th className="px-4 py-3 text-left font-semibold">Client</th>
               <th className="px-4 py-3 text-left font-semibold">Contact</th>
-              <th className="px-4 py-3 text-right font-semibold">Factures</th>
+              <th className="px-4 py-3 text-right font-semibold">Documents</th>
               <th className="px-4 py-3 text-right font-semibold">CA encaissé</th>
               <th className="px-4 py-3 text-right font-semibold">Actions</th>
             </tr>
@@ -57,7 +65,7 @@ export function ClientsTable({ rows }: { rows: ClientRow[] }) {
             {filtered.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-4 py-12 text-center text-[14px] text-ash">
-                  Aucun client.
+                  {showArchived ? "Aucun client archivé." : "Aucun client."}
                 </td>
               </tr>
             ) : (
@@ -73,11 +81,9 @@ export function ClientsTable({ rows }: { rows: ClientRow[] }) {
                         >
                           {client.club}
                         </Link>
-                        {(client.city || client.country) && (
-                          <div className="text-[11px] text-ash">
-                            {[client.city, client.country].filter(Boolean).join(", ")}
-                          </div>
-                        )}
+                        <div className="text-[11px] text-ash">
+                          {[CLIENT_TYPE_LABEL[client.type], client.city].filter(Boolean).join(" · ")}
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -106,14 +112,15 @@ export function ClientsTable({ rows }: { rows: ClientRow[] }) {
                       <IconLink href={`/admin/clients/${client.id}/modifier`} title="Modifier">
                         <Pencil size={15} />
                       </IconLink>
-                      <form action={deleteClientAction} onSubmit={confirmDelete(client.club)}>
+                      <form action={archiveClientAction}>
                         <input type="hidden" name="id" value={client.id} />
+                        <input type="hidden" name="archived" value={client.archived ? "false" : "true"} />
                         <button
                           type="submit"
-                          title="Supprimer"
-                          className="flex h-8 w-8 items-center justify-center rounded-sharp text-ash transition-colors hover:bg-danger-soft hover:text-danger"
+                          title={client.archived ? "Désarchiver" : "Archiver"}
+                          className="flex h-8 w-8 items-center justify-center rounded-sharp text-ash transition-colors hover:bg-paper hover:text-ink"
                         >
-                          <Trash2 size={15} />
+                          {client.archived ? <ArchiveRestore size={15} /> : <Archive size={15} />}
                         </button>
                       </form>
                     </div>

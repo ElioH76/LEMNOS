@@ -18,7 +18,7 @@ import { OrderStatusBadge } from "@/components/admin/OrderStatusBadge";
 import { OrderStatusControls } from "@/components/admin/OrderStatusControls";
 import { OrderStepper } from "@/components/admin/OrderStepper";
 import { OrderTimeline } from "@/components/admin/OrderTimeline";
-import { computeTotals, formatEuro } from "@/lib/billing/calc";
+import { documentAmounts, formatEuro } from "@/lib/billing/calc";
 import { isBlobConfigured } from "@/lib/blob/store";
 import { getClient, getInvoice } from "@/lib/billing/store";
 import { mediaForOrder } from "@/lib/media/store";
@@ -100,7 +100,7 @@ export default async function CommandePage({ params }: { params: Promise<{ id: s
                 <Row icon={FileText} label="Facture liée">
                   {invoice ? (
                     <Link href={`/admin/factures/${invoice.id}`} className="text-green hover:underline">
-                      {invoice.number} · {formatEuro(computeTotals(invoice).totalTtc)}
+                      {invoice.number ?? "Brouillon"} · {formatEuro(documentAmounts(invoice).amountDue)}
                     </Link>
                   ) : (
                     "—"

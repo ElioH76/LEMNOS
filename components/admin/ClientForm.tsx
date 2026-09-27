@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Plus, Save, X } from "lucide-react";
 import { createClientProfileAction, updateClientAction } from "@/app/actions/clients";
-import type { Client } from "@/lib/billing/types";
+import { CLIENT_TYPES, CLIENT_TYPE_LABEL, type Client, type ClientType } from "@/lib/billing/types";
 import { cn } from "@/lib/cn";
 import { LogoUpload } from "./LogoUpload";
 
@@ -14,8 +14,13 @@ const FIELD =
 const LABEL = "mb-1.5 block text-[12px] font-semibold text-ink";
 
 const empty = {
+  type: "association" as ClientType,
   club: "",
   contact: "",
+  contactRole: "",
+  siren: "",
+  siret: "",
+  rna: "",
   address: "",
   city: "",
   zip: "",
@@ -55,7 +60,9 @@ export function ClientForm({
       return;
     }
     setSaving(true);
-    const input = { ...f, colors };
+    const { id: _i, createdAt: _cr, archived: _ar, ...fields } = f as typeof f & { id?: string; createdAt?: string; archived?: boolean };
+    void _i; void _cr; void _ar;
+    const input = { ...fields, colors };
     const result =
       mode === "edit" && initial
         ? await updateClientAction(initial.id, input)
@@ -69,8 +76,19 @@ export function ClientForm({
     <div className="flex flex-col gap-6">
       <Section title="Identité">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Nom du club / entreprise" value={f.club} onChange={(v) => set("club", v)} className="sm:col-span-2" />
-          <Field label="Contact principal" value={f.contact} onChange={(v) => set("contact", v)} />
+          <div>
+            <label className={LABEL}>Type</label>
+            <select value={f.type} onChange={(e) => set("type", e.target.value)} className={FIELD}>
+              {CLIENT_TYPES.map((t) => (
+                <option key={t} value={t}>
+                  {CLIENT_TYPE_LABEL[t]}
+                </option>
+              ))}
+            </select>
+          </div>
+          <Field label="Nom / raison sociale" value={f.club} onChange={(v) => set("club", v)} />
+          <Field label="Nom du contact" value={f.contact} onChange={(v) => set("contact", v)} />
+          <Field label="Fonction du contact" value={f.contactRole} onChange={(v) => set("contactRole", v)} placeholder="Président, trésorier…" />
           <Field label="Email" type="email" value={f.email} onChange={(v) => set("email", v)} />
           <Field label="Téléphone" value={f.phone} onChange={(v) => set("phone", v)} />
           <div className="sm:col-span-2">
@@ -92,6 +110,16 @@ export function ClientForm({
           <Field label="Pays" value={f.country} onChange={(v) => set("country", v)} />
         </div>
       </Section>
+
+      {f.type !== "particulier" && (
+        <Section title="Identifiants légaux">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <Field label="SIREN" value={f.siren} onChange={(v) => set("siren", v)} />
+            <Field label="SIRET" value={f.siret} onChange={(v) => set("siret", v)} />
+            {f.type === "association" && <Field label="N° RNA" value={f.rna} onChange={(v) => set("rna", v)} placeholder="W761234567" />}
+          </div>
+        </Section>
+      )}
 
       <Section title="Couleurs principales">
         <div className="flex flex-wrap items-center gap-2">

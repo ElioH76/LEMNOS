@@ -32,9 +32,11 @@ export const dynamic = "force-dynamic";
 
 const INVOICE_SEGMENT_COLOR: Record<InvoiceStatus, string> = {
   payee: "bg-green",
-  envoyee: "bg-green/40",
+  partielle: "bg-green/60",
+  non_payee: "bg-green/30",
+  en_retard: "bg-danger",
   brouillon: "bg-line-dark",
-  annulee: "bg-danger/50",
+  annulee: "bg-danger/30",
 };
 
 const ORDER_SEGMENT_COLOR: Record<OrderStatus, string> = {
@@ -54,9 +56,7 @@ export default async function StatistiquesPage() {
   const orderStats = computeOrderStats(orders, now);
   const topClients = topClientsByRevenue(invoices);
 
-  const invoiceSegments: DistributionSegment[] = (
-    ["payee", "envoyee", "brouillon", "annulee"] as InvoiceStatus[]
-  ).map((s) => ({
+  const invoiceSegments: DistributionSegment[] = (["payee", "partielle", "non_payee", "en_retard", "brouillon", "annulee"] as InvoiceStatus[]).map((s) => ({
     label: INVOICE_STATUS_LABEL[s],
     value: analytics.countByStatus[s],
     colorClass: INVOICE_SEGMENT_COLOR[s],
@@ -95,9 +95,9 @@ export default async function StatistiquesPage() {
         {/* Chiffre d'affaires */}
         <SectionHeading className="mt-10" icon={TrendingUp}>Chiffre d&apos;affaires</SectionHeading>
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          <StatTile label="CA du mois" value={formatEuro(billing.caMonth)} icon={Wallet} tone="green" />
-          <StatTile label="CA de l'année" value={formatEuro(billing.caYear)} icon={BadgeEuro} tone="green" />
-          <StatTile label="CA total" value={formatEuro(billing.caTotal)} icon={TrendingUp} tone="green" />
+          <StatTile label="CA facturé (année)" value={formatEuro(billing.invoicedYear)} icon={BadgeEuro} tone="green" sub="Net des avoirs" />
+          <StatTile label="Encaissé (année)" value={formatEuro(billing.collectedYear)} icon={Wallet} tone="green" sub={`${formatEuro(billing.collectedMonth)} ce mois-ci`} />
+          <StatTile label="Encaissé (total)" value={formatEuro(billing.collectedTotal)} icon={TrendingUp} tone="green" />
           <StatTile
             label="Panier moyen"
             value={formatEuro(analytics.avgPaidInvoice)}
@@ -119,7 +119,7 @@ export default async function StatistiquesPage() {
               label="Taux de règlement"
               value={`${analytics.collectionRate}%`}
               icon={Percent}
-              sub="Payées / (payées + envoyées)"
+              sub="Payées / factures émises actives"
             />
             <StatTile
               label="Impayées"

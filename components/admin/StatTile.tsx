@@ -42,7 +42,7 @@ export function StatTile({
       </div>
       <div
         className={cn(
-          "mt-2 text-[26px] font-extrabold tabular-nums",
+          "mt-2 text-[21px] font-extrabold tabular-nums sm:text-[26px]",
           tone === "green" && "text-green",
           tone === "warn" && "text-danger",
         )}

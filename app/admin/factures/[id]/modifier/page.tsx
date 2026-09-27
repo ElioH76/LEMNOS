@@ -1,38 +1,22 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
-import { InvoiceForm } from "@/components/admin/InvoiceForm";
-import { getInvoice, listClients, listProductTemplates } from "@/lib/billing/store";
+import { notFound, redirect } from "next/navigation";
+import { DocumentForm } from "@/components/admin/commercial/DocumentForm";
+import { FormPage } from "@/components/admin/commercial/FormPage";
+import { isEditable } from "@/lib/billing/calc";
+import { formDefaults } from "@/lib/billing/settings";
+import { getDocument, getSettings, listClients, listProductTemplates } from "@/lib/billing/store";
+import { documentTitle } from "@/lib/billing/types";
 
 export const dynamic = "force-dynamic";
 
-export default async function ModifierFacturePage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function ModifierFacturePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [invoice, clients, templates] = await Promise.all([
-    getInvoice(id),
-    listClients(),
-    listProductTemplates(),
-  ]);
-  if (!invoice) notFound();
-
+  const [doc, clients, templates, settings] = await Promise.all([getDocument(id), listClients({ includeArchived: true }), listProductTemplates(), getSettings()]);
+  if (!doc || doc.type === "devis") notFound();
+  // Verrou : une facture émise ne se modifie jamais (avoir + rectificative).
+  if (!isEditable(doc)) redirect(`/admin/factures/${id}`);
   return (
-    <>
-      <main className="mx-auto max-w-6xl px-6 py-10">
-        <Link
-          href={`/admin/factures/${invoice.id}`}
-          className="mb-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-ash transition-colors hover:text-green"
-        >
-          <ArrowLeft size={15} /> Retour à la facture
-        </Link>
-        <h1 className="mb-8 text-[28px] font-extrabold tracking-tight">
-          Modifier {invoice.number}
-        </h1>
-        <InvoiceForm mode="edit" initial={invoice} clients={clients} templates={templates} />
-      </main>
-    </>
+    <FormPage back={`/admin/factures/${id}`} backLabel="Retour au document" title={`Modifier — ${documentTitle(doc)} (brouillon)`}>
+      <DocumentForm type="facture" initial={doc} clients={clients} templates={templates} defaults={formDefaults(settings)} />
+    </FormPage>
   );
 }

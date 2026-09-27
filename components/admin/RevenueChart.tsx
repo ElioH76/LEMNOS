@@ -12,11 +12,11 @@ export function RevenueChart({ monthly, currentMonth }: { monthly: number[]; cur
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
           <div className="text-[11px] font-semibold uppercase tracking-caps text-ash">
-            Chiffre d&apos;affaires {new Date().getFullYear()}
+            Encaissé en {new Date().getFullYear()}
           </div>
           <div className="mt-1 text-[22px] font-extrabold tabular-nums">{formatEuro(total)}</div>
         </div>
-        <div className="text-[12px] text-ash">Factures payées, par mois</div>
+        <div className="text-[12px] text-ash">Paiements reçus, par mois</div>
       </div>
 
       <div className="mt-6 flex h-40 items-end gap-1.5 sm:gap-2.5">

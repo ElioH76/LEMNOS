@@ -1,22 +1,23 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { ClientsTable, type ClientRow } from "@/components/admin/ClientsTable";
-import { computeTotals } from "@/lib/billing/calc";
+import { documentAmounts } from "@/lib/billing/calc";
 import { listClients, listInvoices, storageBackend } from "@/lib/billing/store";
 
 export const dynamic = "force-dynamic";
 
 export default async function ClientsPage() {
-  const [clients, invoices] = await Promise.all([listClients(), listInvoices()]);
+  const [clients, invoices] = await Promise.all([listClients({ includeArchived: true }), listInvoices()]);
 
   const rows: ClientRow[] = clients.map((client) => {
     const club = client.club.trim().toLowerCase();
     const linked = invoices.filter(
       (i) => i.clientId === client.id || (!i.clientId && i.client.club.trim().toLowerCase() === club),
     );
+    // CA encaissé = paiements reçus sur les factures du client.
     const ca = linked
-      .filter((i) => i.status === "payee")
-      .reduce((sum, i) => sum + computeTotals(i).totalTtc, 0);
+      .filter((i) => i.type === "facture")
+      .reduce((sum, i) => sum + documentAmounts(i).paid, 0);
     return { client, invoiceCount: linked.length, ca };
   });
 

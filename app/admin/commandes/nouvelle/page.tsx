@@ -14,11 +14,10 @@ export default async function NouvelleCommandePage({
   const [clients, invoices] = await Promise.all([listClients(), listInvoices()]);
 
   const clientOptions: ClientOption[] = clients.map((c) => ({ id: c.id, club: c.club }));
-  const invoiceOptions: InvoiceOption[] = invoices.map((i) => ({
-    id: i.id,
-    number: i.number,
-    clientName: i.client.club,
-  }));
+  // Seules les factures émises (numérotées) peuvent être rattachées à une commande.
+  const invoiceOptions: InvoiceOption[] = invoices
+    .filter((i) => i.type === "facture" && i.number)
+    .map((i) => ({ id: i.id, number: i.number!, clientName: i.client.club }));
 
   return (
     <>

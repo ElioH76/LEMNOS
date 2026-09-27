@@ -1,164 +1,188 @@
-import { computeTotals, round2 } from "./calc";
-import type { Invoice, InvoiceStatus } from "./types";
-
-export interface BillingStats {
-  /** CA encaissé (factures payées) sur le mois en cours. */
-  caMonth: number;
-  /** CA encaissé sur l'année en cours. */
-  caYear: number;
-  /** CA encaissé total. */
-  caTotal: number;
-  /** CA payé mois par mois pour l'année en cours (12 valeurs, jan→déc). */
-  monthly: number[];
-  /** Factures envoyées non réglées : nombre et reste à payer cumulé. */
-  unpaidCount: number;
-  unpaidAmount: number;
-  /** Devis en attente (brouillon ou envoyé). */
-  pendingQuotes: number;
-}
+import { documentAmounts, invoiceStatus, quoteStatus, round2, todayIso } from "./calc";
+import { INVOICE_STATUSES, type CommercialDocument, type InvoiceStatus } from "./types";
 
 const MONTH_LABELS = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"];
 export { MONTH_LABELS };
 
-/** Agrège les indicateurs de facturation. Pur → réutilisable (dashboard + stats). */
-export function computeBillingStats(invoices: Invoice[], now = new Date()): BillingStats {
+/**
+ * Indicateurs de la gestion commerciale. Fonctions pures (dashboard + page
+ * Statistiques).
+ *
+ * - CA facturé : factures émises (y compris celles annulées depuis) moins les
+ *   avoirs émis → une facture annulée par avoir s'annule d'elle-même. Acompte
+ *   + solde s'additionnent sans double compte (le solde est net des acomptes).
+ * - CA encaissé : somme des paiements, à leur date.
+ */
+export interface BillingStats {
+  /** CA facturé (net d'avoirs). */
+  invoicedTotal: number;
+  invoicedYear: number;
+  /** Encaissements. */
+  collectedTotal: number;
+  collectedYear: number;
+  collectedMonth: number;
+  /** Encaissements mois par mois de l'année en cours (12 valeurs). */
+  monthly: number[];
+  /** Factures émises non soldées. */
+  unpaidCount: number;
+  unpaidAmount: number;
+  lateCount: number;
+  lateAmount: number;
+  /** Factures d'acompte émises restant à encaisser. */
+  depositsDueCount: number;
+  depositsDueAmount: number;
+  /** Devis envoyés en attente de réponse (non expirés). */
+  pendingQuotes: number;
+  /** Devis acceptés dont la facturation n'est pas terminée. */
+  acceptedQuotes: number;
+  /** Montant TTC des devis en cours (brouillons + envoyés). */
+  openQuotesAmount: number;
+  /** Rétrocompatibilité (anciennes tuiles). */
+  caMonth: number;
+  caYear: number;
+  caTotal: number;
+}
+
+export function computeBillingStats(docs: CommercialDocument[], now = new Date()): BillingStats {
+  const today = todayIso(now);
   const year = now.getFullYear();
   const month = now.getMonth();
   const monthly = new Array(12).fill(0);
+  const s = {
+    invoicedTotal: 0,
+    invoicedYear: 0,
+    collectedTotal: 0,
+    collectedYear: 0,
+    collectedMonth: 0,
+    unpaidCount: 0,
+    unpaidAmount: 0,
+    lateCount: 0,
+    lateAmount: 0,
+    depositsDueCount: 0,
+    depositsDueAmount: 0,
+    pendingQuotes: 0,
+    acceptedQuotes: 0,
+    openQuotesAmount: 0,
+  };
 
-  let caTotal = 0;
-  let caYear = 0;
-  let caMonth = 0;
-  let unpaidCount = 0;
-  let unpaidAmount = 0;
-  let pendingQuotes = 0;
+  const finalInvoicedQuotes = new Set(
+    docs
+      .filter((d) => d.type === "facture" && d.quoteId && d.kind !== "acompte" && d.lifecycle === "emise")
+      .map((d) => d.quoteId),
+  );
 
-  for (const inv of invoices) {
-    const totals = computeTotals(inv);
+  for (const doc of docs) {
+    const a = documentAmounts(doc);
 
-    if (inv.documentType === "devis") {
-      if (inv.status === "brouillon" || inv.status === "envoyee") pendingQuotes += 1;
+    if (doc.type === "devis") {
+      const st = quoteStatus(doc, today);
+      if (st === "envoye") s.pendingQuotes += 1;
+      if (st === "brouillon" || st === "envoye") s.openQuotesAmount += a.totalTtc;
+      if (st === "accepte" && !finalInvoicedQuotes.has(doc.id)) s.acceptedQuotes += 1;
       continue;
     }
+    if (doc.lifecycle === "brouillon") continue;
 
-    if (inv.status === "envoyee") {
-      unpaidCount += 1;
-      unpaidAmount += totals.remaining;
+    const sign = doc.type === "avoir" ? -1 : 1;
+    s.invoicedTotal += sign * a.amountDue;
+    if (doc.date.startsWith(String(year))) s.invoicedYear += sign * a.amountDue;
+
+    if (doc.type !== "facture") continue;
+    for (const p of doc.payments) {
+      s.collectedTotal += p.amount;
+      const [py, pm] = p.date.split("-").map(Number);
+      if (py === year) {
+        s.collectedYear += p.amount;
+        monthly[pm - 1] += p.amount;
+        if (pm - 1 === month) s.collectedMonth += p.amount;
+      }
     }
 
-    if (inv.status === "payee") {
-      const d = new Date(inv.date);
-      caTotal += totals.totalTtc;
-      if (d.getFullYear() === year) {
-        caYear += totals.totalTtc;
-        monthly[d.getMonth()] += totals.totalTtc;
-        if (d.getMonth() === month) caMonth += totals.totalTtc;
+    const st = invoiceStatus(doc, today);
+    if (st === "non_payee" || st === "partielle" || st === "en_retard") {
+      s.unpaidCount += 1;
+      s.unpaidAmount += a.outstanding;
+      if (st === "en_retard") {
+        s.lateCount += 1;
+        s.lateAmount += a.outstanding;
+      }
+      if (doc.kind === "acompte") {
+        s.depositsDueCount += 1;
+        s.depositsDueAmount += a.outstanding;
       }
     }
   }
 
+  const r = Object.fromEntries(Object.entries(s).map(([k, v]) => [k, round2(v)])) as typeof s;
   return {
-    caMonth: round2(caMonth),
-    caYear: round2(caYear),
-    caTotal: round2(caTotal),
+    ...r,
     monthly: monthly.map(round2),
-    unpaidCount,
-    unpaidAmount: round2(unpaidAmount),
-    pendingQuotes,
+    caMonth: r.collectedMonth,
+    caYear: r.collectedYear,
+    caTotal: r.collectedTotal,
   };
 }
 
 export interface InvoiceAnalytics {
-  /** Nombre de factures (hors devis). */
+  /** Nombre de factures (hors devis et avoirs). */
   invoiceCount: number;
-  /** Répartition des factures par statut (nombre). */
   countByStatus: Record<InvoiceStatus, number>;
-  /** Montant TTC cumulé par statut (payées = encaissé, envoyées = reste dû). */
+  /** Montant par statut : encaissé pour « payée », reste dû sinon. */
   amountByStatus: Record<InvoiceStatus, number>;
-  /** Panier moyen d'une facture payée. */
   avgPaidInvoice: number;
-  /** Taux de règlement = payées / (payées + envoyées), en % (0 si aucune). */
+  /** Factures payées / factures émises actives, en %. */
   collectionRate: number;
 }
 
-const EMPTY_STATUS_MAP = (): Record<InvoiceStatus, number> => ({
-  brouillon: 0,
-  envoyee: 0,
-  payee: 0,
-  annulee: 0,
-});
-
-/**
- * Analyse détaillée des factures (répartition par statut, panier moyen, taux de
- * règlement). Complète `computeBillingStats` sans la modifier. Pur → réutilisable.
- */
-export function computeInvoiceAnalytics(invoices: Invoice[]): InvoiceAnalytics {
-  const countByStatus = EMPTY_STATUS_MAP();
-  const amountByStatus = EMPTY_STATUS_MAP();
+export function computeInvoiceAnalytics(docs: CommercialDocument[]): InvoiceAnalytics {
+  const countByStatus = Object.fromEntries(INVOICE_STATUSES.map((k) => [k, 0])) as Record<InvoiceStatus, number>;
+  const amountByStatus = { ...countByStatus };
   let invoiceCount = 0;
   let paidTotal = 0;
 
-  for (const inv of invoices) {
-    if (inv.documentType === "devis") continue;
+  for (const doc of docs) {
+    if (doc.type !== "facture") continue;
     invoiceCount += 1;
-    const totals = computeTotals(inv);
-    countByStatus[inv.status] += 1;
-    amountByStatus[inv.status] +=
-      inv.status === "payee"
-        ? totals.totalTtc
-        : inv.status === "envoyee"
-          ? totals.remaining
-          : totals.totalTtc;
-    if (inv.status === "payee") paidTotal += totals.totalTtc;
+    const st = invoiceStatus(doc);
+    const a = documentAmounts(doc);
+    countByStatus[st] += 1;
+    amountByStatus[st] += st === "payee" ? a.paid : st === "annulee" || st === "brouillon" ? a.amountDue : a.outstanding;
+    if (st === "payee") paidTotal += a.amountDue;
   }
-
-  for (const k of Object.keys(amountByStatus) as InvoiceStatus[]) {
-    amountByStatus[k] = round2(amountByStatus[k]);
-  }
+  for (const k of INVOICE_STATUSES) amountByStatus[k] = round2(amountByStatus[k]);
 
   const paid = countByStatus.payee;
-  const settleable = paid + countByStatus.envoyee;
-
+  const active = paid + countByStatus.non_payee + countByStatus.partielle + countByStatus.en_retard;
   return {
     invoiceCount,
     countByStatus,
     amountByStatus,
     avgPaidInvoice: paid > 0 ? round2(paidTotal / paid) : 0,
-    collectionRate: settleable > 0 ? Math.round((paid / settleable) * 100) : 0,
+    collectionRate: active > 0 ? Math.round((paid / active) * 100) : 0,
   };
 }
 
 export interface ClientRevenue {
-  /** Clé de regroupement (clientId si présent, sinon nom normalisé). */
   key: string;
-  /** Fiche client liée, si la facture pointe vers une (pour un lien direct). */
   clientId: string | null;
   name: string;
-  /** CA encaissé (factures payées). */
+  /** CA encaissé. */
   caPaid: number;
-  /** Nombre de factures (hors devis). */
+  /** Nombre de factures émises. */
   invoiceCount: number;
 }
 
-/**
- * Classe les clients par CA encaissé décroissant. Regroupe par `clientId` quand
- * il existe, sinon par nom de club (repli, comme le reste du CRM).
- */
-export function topClientsByRevenue(invoices: Invoice[], limit = 8): ClientRevenue[] {
+export function topClientsByRevenue(docs: CommercialDocument[], limit = 8): ClientRevenue[] {
   const map = new Map<string, ClientRevenue>();
-
-  for (const inv of invoices) {
-    if (inv.documentType === "devis") continue;
-    const name = inv.client.club?.trim() || "—";
-    const key = inv.clientId || name.toLowerCase();
-    const entry = map.get(key) ?? { key, clientId: inv.clientId ?? null, name, caPaid: 0, invoiceCount: 0 };
-    entry.name = name || entry.name;
-    if (!entry.clientId && inv.clientId) entry.clientId = inv.clientId;
+  for (const doc of docs) {
+    if (doc.type !== "facture" || doc.lifecycle === "brouillon") continue;
+    const name = doc.client.club?.trim() || "—";
+    const key = doc.clientId || name.toLowerCase();
+    const entry = map.get(key) ?? { key, clientId: doc.clientId ?? null, name, caPaid: 0, invoiceCount: 0 };
     entry.invoiceCount += 1;
-    if (inv.status === "payee") entry.caPaid += computeTotals(inv).totalTtc;
+    entry.caPaid += documentAmounts(doc).paid;
     map.set(key, entry);
   }
-
   return [...map.values()]
     .map((c) => ({ ...c, caPaid: round2(c.caPaid) }))
     .sort((a, b) => b.caPaid - a.caPaid || b.invoiceCount - a.invoiceCount)

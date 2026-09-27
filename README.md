@@ -195,3 +195,40 @@ produits** réutilisables.
 - Les données de l'espace client sont mockées dans `lib/mock-data.ts`, typées
   pour brancher une API : remplacer les imports par des `fetch` dans les Server
   Components.
+
+## Gestion commerciale (devis, factures, avoirs, paiements)
+
+Tout se pilote depuis l'admin, sans toucher au code : **Admin → Gestion
+commerciale** (Devis, Factures, Clients, Paramètres).
+
+Parcours : client → devis (DEV-2026-001) → envoi (email ou lien d'acceptation
+en ligne) → acceptation → facture d'acompte → production → livraison (date
+réelle) → facture finale (acompte déduit automatiquement) → paiements.
+
+- **Données** (`lib/billing/`) : un seul modèle `CommercialDocument` pour devis,
+  factures (standard / acompte / solde) et avoirs, stocké en jsonb dans
+  `billing_invoices` avec ses lignes, paiements et historique. Tables
+  `billing_counters` (numérotation) et `billing_settings` (paramètres) créées
+  automatiquement. Calculs : `calc.ts` (partagé formulaire / serveur / PDF) ;
+  règles métier : `service.ts` ; statistiques : `stats.ts`.
+- **Numérotation** : préfixes et prochain numéro réglables (Paramètres →
+  Numérotation). Compteur atomique en base, jamais réutilisé. Un devis est
+  numéroté à sa création ; une facture / un avoir **à l'émission** seulement
+  (les brouillons ne consomment pas de numéro → séquence continue).
+- **Verrouillage** : un devis envoyé / accepté ne se modifie plus (nouvelle
+  version) ; une facture émise est figée (émetteur, client, banque, mentions
+  copiés dans le document) et ne se supprime pas — correction par **avoir** puis
+  **facture rectificative**. Règles appliquées côté serveur.
+- **PDF** (`components/pdf/DocumentPdf.tsx`, `lib/pdf/`) : A4, DA LEMNOS
+  (Montserrat + Cinzel embarquées dans `lib/pdf/fonts`). À l'émission, le PDF est
+  archivé dans le Blob **privé** (s'il est configuré) et c'est cette archive qui
+  est ensuite servie. Routes protégées : `/admin/documents/[id]/pdf`.
+- **Acceptation en ligne** : `/devis/[jeton]` (lien secret, non indexé) —
+  case « Bon pour accord » obligatoire, signature dessinée facultative (preuve
+  d'accord, pas une signature électronique qualifiée). Aucune donnée bancaire
+  ni interne n'y est exposée.
+- **Emails** : `RESEND_API_KEY` + `EMAIL_FROM` (voir `.env.example`). Sans eux,
+  repli sur la messagerie locale.
+- **Franchise en base de TVA** : activée par défaut (Paramètres → Entreprise),
+  mention « TVA non applicable – art. 293 B du CGI » automatique ; le régime est
+  figé sur chaque document.

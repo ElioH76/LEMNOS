@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, FileText, Image as ImageIcon, Mail, MapPin, Package, Phone, ScrollText, User } from "lucide-react";
+import { ArrowLeft, BadgeCheck, FileText, Image as ImageIcon, Mail, MapPin, Package, Phone, ScrollText, User } from "lucide-react";
 import { ClientActionsBar } from "@/components/admin/ClientActionsBar";
 import { ClientAvatar } from "@/components/admin/ClientsTable";
-import { InvoiceStatusBadge } from "@/components/admin/InvoiceStatusBadge";
+import { DocKindBadge, DocStatusBadge } from "@/components/admin/commercial/StatusBadge";
 import { MediaCard } from "@/components/admin/MediaCard";
 import { MediaUploader } from "@/components/admin/MediaUploader";
 import { OrderStatusBadge } from "@/components/admin/OrderStatusBadge";
-import { computeTotals, formatEuro } from "@/lib/billing/calc";
+import { documentAmounts, formatEuro } from "@/lib/billing/calc";
+import { CLIENT_TYPE_LABEL, displayNumber } from "@/lib/billing/types";
 import { isBlobConfigured } from "@/lib/blob/store";
 import { getClient, invoicesForClient } from "@/lib/billing/store";
 import { mediaForClient } from "@/lib/media/store";
@@ -31,11 +32,11 @@ export default async function ClientPage({ params }: { params: Promise<{ id: str
     ordersForClient(client),
     mediaForClient(client),
   ]);
-  const factures = invoices.filter((i) => i.documentType === "facture");
-  const devis = invoices.filter((i) => i.documentType === "devis");
+  const factures = invoices.filter((i) => i.type !== "devis");
+  const devis = invoices.filter((i) => i.type === "devis");
   const caEncaisse = factures
-    .filter((i) => i.status === "payee")
-    .reduce((s, i) => s + computeTotals(i).totalTtc, 0);
+    .filter((i) => i.type === "facture")
+    .reduce((s, i) => s + documentAmounts(i).paid, 0);
 
   return (
     <>
@@ -52,10 +53,15 @@ export default async function ClientPage({ params }: { params: Promise<{ id: str
             <ClientAvatar client={client} size={52} />
             <div>
               <h1 className="text-[24px] font-extrabold tracking-tight">{client.club}</h1>
-              {client.contact && <div className="text-[13px] text-ash">{client.contact}</div>}
+              <div className="text-[13px] text-ash">
+                {[CLIENT_TYPE_LABEL[client.type], client.contact && `${client.contact}${client.contactRole ? ` (${client.contactRole})` : ""}`]
+                  .filter(Boolean)
+                  .join(" · ")}
+                {client.archived && <span className="ml-2 rounded-pill bg-paper px-2 py-0.5 text-[11px] font-semibold">Archivé</span>}
+              </div>
             </div>
           </div>
-          <ClientActionsBar id={client.id} club={client.club} />
+          <ClientActionsBar id={client.id} club={client.club} archived={client.archived} documentCount={invoices.length} />
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[300px_1fr]">
@@ -66,6 +72,12 @@ export default async function ClientPage({ params }: { params: Promise<{ id: str
                 <InfoRow icon={User} value={client.contact} />
                 <InfoRow icon={Mail} value={client.email} href={client.email ? `mailto:${client.email}` : undefined} />
                 <InfoRow icon={Phone} value={client.phone} href={client.phone ? `tel:${client.phone.replace(/\s+/g, "")}` : undefined} />
+                <InfoRow
+                  icon={BadgeCheck}
+                  value={[client.siret && `SIRET ${client.siret}`, !client.siret && client.siren && `SIREN ${client.siren}`, client.rna && `RNA ${client.rna}`]
+                    .filter(Boolean)
+                    .join(" · ")}
+                />
                 <InfoRow
                   icon={MapPin}
                   value={[client.address, [client.zip, client.city].filter(Boolean).join(" "), client.country]
@@ -89,7 +101,7 @@ export default async function ClientPage({ params }: { params: Promise<{ id: str
             )}
 
             <div className="grid grid-cols-2 gap-3">
-              <MiniStat label="Factures" value={String(factures.length)} />
+              <MiniStat label="Documents" value={String(invoices.length)} />
               <MiniStat label="CA encaissé" value={formatEuro(caEncaisse)} green />
             </div>
 
@@ -119,45 +131,16 @@ export default async function ClientPage({ params }: { params: Promise<{ id: str
               )}
             </HistorySection>
 
-            <HistorySection title="Historique des factures" icon={FileText}>
-              {factures.length === 0 ? (
-                <Empty>Aucune facture pour ce client.</Empty>
+            <HistorySection title="Devis" icon={ScrollText}>
+              {devis.length === 0 ? (
+                <Empty>Aucun devis pour ce client.</Empty>
               ) : (
-                <div className="flex flex-col divide-y divide-line-soft">
-                  {factures.map((inv) => (
-                    <Link
-                      key={inv.id}
-                      href={`/admin/factures/${inv.id}`}
-                      className="flex items-center justify-between gap-3 py-3 transition-colors hover:bg-paper/60"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="font-mono text-[13px] font-semibold">{inv.number}</span>
-                        <span className="text-[12px] text-ash">{frDate(inv.date)}</span>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <span className="text-[13.5px] font-semibold tabular-nums">
-                          {formatEuro(computeTotals(inv).totalTtc)}
-                        </span>
-                        <InvoiceStatusBadge status={inv.status} />
-                      </div>
-                    </Link>
-                  ))}
-                </div>
+                <DocList docs={devis} />
               )}
             </HistorySection>
 
-            <HistorySection title="Historique des devis" icon={ScrollText}>
-              {devis.length === 0 ? (
-                <Empty>Aucun devis. Le module devis arrive prochainement.</Empty>
-              ) : (
-                <div className="flex flex-col divide-y divide-line-soft">
-                  {devis.map((d) => (
-                    <div key={d.id} className="py-3 text-[13.5px]">
-                      {d.number}
-                    </div>
-                  ))}
-                </div>
-              )}
+            <HistorySection title="Factures & avoirs" icon={FileText}>
+              {factures.length === 0 ? <Empty>Aucune facture pour ce client.</Empty> : <DocList docs={factures} />}
             </HistorySection>
 
             <HistorySection title="Historique des commandes" icon={Package}>
@@ -188,6 +171,30 @@ export default async function ClientPage({ params }: { params: Promise<{ id: str
         </div>
       </main>
     </>
+  );
+}
+
+function DocList({ docs }: { docs: Awaited<ReturnType<typeof invoicesForClient>> }) {
+  return (
+    <div className="flex flex-col divide-y divide-line-soft">
+      {docs.map((d) => (
+        <Link
+          key={d.id}
+          href={`/admin/${d.type === "devis" ? "devis" : "factures"}/${d.id}`}
+          className="flex flex-wrap items-center justify-between gap-3 py-3 transition-colors hover:bg-paper/60"
+        >
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="font-mono text-[13px] font-semibold">{displayNumber(d)}</span>
+            {d.type !== "devis" && <DocKindBadge doc={d} />}
+            <span className="text-[12px] text-ash">{frDate(d.date)}</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="text-[13.5px] font-semibold tabular-nums">{formatEuro(documentAmounts(d).amountDue)}</span>
+            <DocStatusBadge doc={d} />
+          </div>
+        </Link>
+      ))}
+    </div>
   );
 }
 
