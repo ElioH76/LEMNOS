@@ -120,14 +120,14 @@ function makeStyles(green: string) {
       color: ASH,
       marginBottom: 4.5,
     },
-    parties: { flexDirection: "row", marginTop: 8 * MM },
+    parties: { flexDirection: "row", marginTop: 7 * MM },
     party: { flex: 1 },
     partyClient: { flex: 1, marginLeft: 12 * MM, borderLeftWidth: 1.7, borderLeftColor: green, paddingLeft: 5 * MM },
     name: { fontWeight: 700, fontSize: 10.2, marginBottom: 2 },
     body: { color: BODY },
     meta: {
       flexDirection: "row",
-      marginTop: 6.5 * MM,
+      marginTop: 5.5 * MM,
       backgroundColor: greenSoft,
       borderRadius: 2 * MM,
       paddingVertical: 4.2 * MM,
@@ -136,7 +136,7 @@ function makeStyles(green: string) {
     metaCell: { flex: 1 },
     metaCellSep: { flex: 1, borderLeftWidth: 0.7, borderLeftColor: soften(green, 0.72), paddingLeft: 4.5 * MM },
     metaValue: { fontWeight: 600, fontSize: 8.8 },
-    object: { flexDirection: "row", alignItems: "baseline", marginTop: 6 * MM },
+    object: { flexDirection: "row", alignItems: "baseline", marginTop: 5 * MM },
     objectText: { fontWeight: 600, fontSize: 9, flex: 1 },
     tableHead: {
       flexDirection: "row",
@@ -146,7 +146,7 @@ function makeStyles(green: string) {
       borderBottomColor: green,
     },
     th: { fontSize: 6.3, fontWeight: 600, letterSpacing: 1, textTransform: "uppercase", color: green },
-    row: { flexDirection: "row", paddingVertical: 3.2 * MM, borderBottomWidth: 0.7, borderBottomColor: LINE },
+    row: { flexDirection: "row", paddingVertical: 2.8 * MM, borderBottomWidth: 0.7, borderBottomColor: LINE },
     cDesc: { flex: 1, paddingRight: 8 },
     cQty: { width: 16 * MM, textAlign: "right" },
     cPu: { width: 28 * MM, textAlign: "right" },
@@ -154,8 +154,8 @@ function makeStyles(green: string) {
     lineTitle: { fontWeight: 600, fontSize: 9 },
     lineDesc: { color: ASH, fontSize: 7.5, marginTop: 1.5, lineHeight: 1.45 },
     num: { fontSize: 8.8 },
-    notes: { marginTop: 4 * MM, color: BODY, fontSize: 8 },
-    bottom: { flexDirection: "row", marginTop: 6 * MM, alignItems: "flex-start" },
+    notes: { marginTop: 3 * MM, color: BODY, fontSize: 8 },
+    bottom: { flexDirection: "row", marginTop: 5 * MM, alignItems: "flex-start" },
     words: { flex: 1, paddingRight: 10 * MM, color: BODY, fontSize: 8 },
     totals: { width: 88 * MM },
     tRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 3.1 },
@@ -176,8 +176,8 @@ function makeStyles(green: string) {
     after: { marginTop: 2 * MM, fontSize: 7.5, color: ASH, textAlign: "right" },
     section: {
       flexDirection: "row",
-      marginTop: 5.5 * MM,
-      paddingTop: 4.5 * MM,
+      marginTop: 5 * MM,
+      paddingTop: 4 * MM,
       borderTopWidth: 0.7,
       borderTopColor: LINE,
     },
@@ -611,19 +611,13 @@ export function DocumentPdf({ doc, ctx }: { doc: CommercialDocument; ctx: PdfCon
         ) : null}
 
         {/* Devis : conditions */}
-        {isQuote ? (
+        {/* Acompte, solde et validité figurent déjà dans la bande de dates et sous
+            le total : on n'affiche ici que le texte saisi, sans doublon. */}
+        {isQuote && doc.paymentTerms ? (
           <View style={s.section} wrap={false}>
             <View style={s.col}>
               <Text style={s.label}>Conditions</Text>
-              <Text style={s.small}>
-                {[
-                  doc.paymentTerms,
-                  a.deposit > 0 ? `Acompte de ${formatEuro(a.deposit)} demandé à la validation du devis.` : "",
-                  `Devis valable jusqu'au ${frDate(doc.validUntil)}.`,
-                ]
-                  .filter(Boolean)
-                  .join(" ")}
-              </Text>
+              <Text style={s.small}>{doc.paymentTerms}</Text>
             </View>
           </View>
         ) : null}
