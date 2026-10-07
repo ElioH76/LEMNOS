@@ -521,9 +521,19 @@ export async function generateFinalInvoice(quoteId: string) {
   doc.deductions = depositDeductions(linked);
   doc.kind = doc.deductions.length ? "solde" : "standard";
   doc.quoteId = quoteId;
-  doc.history.push(event("Facture finale créée depuis le devis", quote.number ?? undefined));
+  // Acompte prévu au devis mais aucune facture d'acompte : le client règle la totalité.
+  const fullPayment = documentAmounts(quote).deposit > 0 && !linked.some((d) => d.kind === "acompte" && d.lifecycle !== "annulee");
+  doc.history.push(
+    event(
+      fullPayment ? "Facture totale créée depuis le devis (sans acompte)" : "Facture finale créée depuis le devis",
+      quote.number ?? undefined,
+    ),
+  );
   await insertDocument(doc);
-  await logOnQuote(quoteId, "Facture finale créée (brouillon)");
+  await logOnQuote(
+    quoteId,
+    fullPayment ? "Facture totale créée (brouillon) — paiement en une fois, sans acompte" : "Facture finale créée (brouillon)",
+  );
   return doc;
 }
 

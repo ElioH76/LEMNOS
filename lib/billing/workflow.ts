@@ -46,7 +46,8 @@ export function quoteWorkflow(quote: CommercialDocument, all: CommercialDocument
     { key: "envoye", label: "Envoyé", done: accepted || status === "envoye" || !!quote.sentAt },
     { key: "accepte", label: "Accepté", done: accepted },
   ];
-  if (hasDeposit) {
+  // Acompte prévu mais facturation en une fois (facture totale sans acompte) : étape retirée.
+  if (hasDeposit && !(final && !deposit)) {
     steps.push({
       key: "acompte",
       label: "Facture d'acompte",

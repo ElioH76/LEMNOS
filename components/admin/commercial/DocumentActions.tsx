@@ -131,6 +131,23 @@ export function DocumentActions({
             <FilePlus2 size={15} /> {next === "acompte" ? "Générer la facture d'acompte" : "Générer la facture finale"}
           </button>
         )}
+        {isQuote && qs === "accepte" && next === "acompte" && (
+          <button
+            type="button"
+            disabled={busy}
+            className={BTN}
+            title="Le client règle la totalité en une fois : une seule facture, sans facture d'acompte."
+            onClick={() =>
+              act(() => generateFinalAction(doc.id), {
+                confirm:
+                  "Facturer la totalité en une seule fois, sans facture d'acompte ?\n\nUtile si le client préfère tout payer dès maintenant. Le montant total du devis sera facturé.",
+                goTo: (id) => `/admin/factures/${id}`,
+              })
+            }
+          >
+            <FilePlus2 size={15} /> Facturer la totalité
+          </button>
+        )}
         {!isQuote && draft && (
           <button type="button" disabled={busy} className={BTN_PRIMARY} onClick={() => setDialog("issue")}>
             <Stamp size={15} /> Émettre {doc.type === "avoir" ? "l'avoir" : "la facture"}
