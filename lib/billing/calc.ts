@@ -19,7 +19,12 @@ export function round2(n: number): number {
 }
 
 export function formatEuro(n: number): string {
-  return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n || 0);
+  // Le séparateur de milliers fr-FR est l'espace fine insécable (U+202F), absente
+  // des polices embarquées dans les PDF : on la remplace par l'espace insécable
+  // classique (U+00A0) pour que « 2 240,00 € » ne se chevauche pas.
+  return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" })
+    .format(n || 0)
+    .replace(/ /g, " ");
 }
 
 /** « 20 % » ou « 12,50 € ». */

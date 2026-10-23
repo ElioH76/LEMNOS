@@ -26,7 +26,7 @@ import {
   type ProductTemplate,
 } from "@/lib/billing/types";
 import { isEmailConfigured, sendEmail } from "@/lib/email/send";
-import { archivePdf, documentPdf } from "@/lib/pdf/archive";
+import { PDF_LAYOUT_VERSION, archivePdf, documentPdf } from "@/lib/pdf/archive";
 import { pdfFileName } from "@/lib/pdf/render";
 
 /**
@@ -118,7 +118,7 @@ export async function issueAction(id: string) {
   return run(async () => {
     const doc = await service.issueDocument(id);
     const url = await archivePdf(doc);
-    if (url) await service.setAdminPdf(doc.id, url);
+    if (url) await service.setAdminPdf(doc.id, url, PDF_LAYOUT_VERSION);
     return doc.id;
   }, "Document émis.");
 }

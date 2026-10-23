@@ -203,6 +203,7 @@ function blankDocument(type: DocumentType, input: DocumentInput, client: ClientS
     issuedAt: null,
     sentAt: null,
     pdfUrl: null,
+    pdfLayoutVersion: 0,
     archived: false,
     history: [],
     createdAt: now,
@@ -742,9 +743,10 @@ export async function deleteDraft(id: string) {
   return doc;
 }
 
-export async function setAdminPdf(id: string, pdfUrl: string) {
+export async function setAdminPdf(id: string, pdfUrl: string, layoutVersion: number) {
   const doc = await load(id);
   doc.pdfUrl = pdfUrl;
+  doc.pdfLayoutVersion = layoutVersion;
   return writeDocument(doc);
 }
 

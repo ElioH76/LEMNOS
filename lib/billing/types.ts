@@ -378,6 +378,8 @@ export interface CommercialDocument extends DocumentInput {
   sentAt: string | null;
   /** PDF archivé (Blob privé) à l'émission. */
   pdfUrl: string | null;
+  /** Version de mise en page de l'archive PDF (voir PDF_LAYOUT_VERSION). */
+  pdfLayoutVersion: number;
   archived: boolean;
   history: HistoryEvent[];
   createdAt: string;

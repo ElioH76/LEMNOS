@@ -5,6 +5,15 @@ import type { CommercialDocument } from "@/lib/billing/types";
 import { pdfFileName, renderDocumentPdf } from "./render";
 
 /**
+ * Version de la mise en page PDF. À incrémenter quand un correctif d'affichage
+ * doit s'appliquer aussi aux documents déjà émis : leur archive, produite par
+ * une version antérieure, est alors ignorée et le PDF est régénéré à partir
+ * des données figées du document (contenu identique, rendu corrigé).
+ * v2 : séparateur de milliers (« 2 240,00 € » se chevauchait).
+ */
+export const PDF_LAYOUT_VERSION = 2;
+
+/**
  * Archivage du PDF d'un document émis dans le Blob PRIVÉ (même store que les
  * médias, jamais public). Le PDF archivé fait foi : c'est lui qui est servi
  * ensuite, même si la mise en page ou les paramètres évoluent.
@@ -31,7 +40,7 @@ export async function archivePdf(doc: CommercialDocument): Promise<string | null
 
 /** PDF d'un document : l'archive s'il existe, sinon rendu à la volée. */
 export async function documentPdf(doc: CommercialDocument): Promise<Buffer> {
-  if (doc.pdfUrl && isBlobConfigured()) {
+  if (doc.pdfUrl && doc.pdfLayoutVersion === PDF_LAYOUT_VERSION && isBlobConfigured()) {
     try {
       const res = await get(doc.pdfUrl, { access: "private" });
       if (res && res.statusCode === 200) return Buffer.from(await new Response(res.stream).arrayBuffer());

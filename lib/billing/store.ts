@@ -465,6 +465,7 @@ export function normalizeDocument(raw: any): CommercialDocument {
     issuedAt: raw.issuedAt ?? (legacy && lifecycle !== "brouillon" ? createdAt : null),
     sentAt: raw.sentAt ?? null,
     pdfUrl: raw.pdfUrl ?? null,
+    pdfLayoutVersion: typeof raw.pdfLayoutVersion === "number" ? raw.pdfLayoutVersion : 1,
     archived: raw.archived === true,
     history: Array.isArray(raw.history) ? raw.history : [],
     createdAt,
