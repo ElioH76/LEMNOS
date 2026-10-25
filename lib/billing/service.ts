@@ -775,12 +775,25 @@ export async function linkedDocuments(doc: CommercialDocument): Promise<Commerci
     for (const d of all) if (d.quoteId === rootQuoteId) ids.add(d.id);
   }
   ids.add(doc.id);
-  for (const d of all) {
-    if (d.invoiceId && ids.has(d.invoiceId)) ids.add(d.id);
-    if (d.correctsId && ids.has(d.correctsId)) ids.add(d.id);
+  // Chaîne de corrections complète (facture ↔ avoir ↔ rectificative, sur
+  // plusieurs niveaux) : on suit les liens dans les deux sens jusqu'à stabilité.
+  let grew = true;
+  while (grew) {
+    grew = false;
+    for (const d of all) {
+      const linked =
+        ids.has(d.id) ||
+        (d.invoiceId !== null && ids.has(d.invoiceId)) ||
+        (d.correctsId !== null && ids.has(d.correctsId));
+      if (!linked) continue;
+      for (const id of [d.id, d.invoiceId, d.correctsId]) {
+        if (id && !ids.has(id)) {
+          ids.add(id);
+          grew = true;
+        }
+      }
+    }
   }
-  if (doc.invoiceId) ids.add(doc.invoiceId);
-  if (doc.correctsId) ids.add(doc.correctsId);
 
   return [...ids]
     .map((i) => byId.get(i))

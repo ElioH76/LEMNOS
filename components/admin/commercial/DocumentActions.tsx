@@ -60,6 +60,7 @@ export function DocumentActions({
   issueWarnings,
   hasCorrective,
   hasLinkedInvoices,
+  creditTarget = null,
 }: {
   doc: CommercialDocument;
   next: "acompte" | "finale" | null;
@@ -68,6 +69,8 @@ export function DocumentActions({
   hasCorrective: boolean;
   /** Au moins une facture (même brouillon) liée au devis. */
   hasLinkedInvoices: boolean;
+  /** Sur un avoir émis : facture annulée qui attend encore sa rectificative. */
+  creditTarget?: string | null;
 }) {
   const router = useRouter();
   const [dialog, setDialog] = useState<Dialog>(null);
@@ -146,6 +149,20 @@ export function DocumentActions({
             }
           >
             <FilePlus2 size={15} /> Facturer la totalité
+          </button>
+        )}
+        {/* Correction : la rectificative est l'étape suivante, mise en avant
+            sur la facture annulée comme sur l'avoir qui l'annule. */}
+        {((isInvoice && doc.lifecycle === "annulee" && !hasCorrective) || creditTarget) && (
+          <button
+            type="button"
+            disabled={busy}
+            className={BTN_PRIMARY}
+            onClick={() =>
+              act(() => createCorrectiveAction(creditTarget ?? doc.id), { goTo: (id) => `/admin/factures/${id}/modifier` })
+            }
+          >
+            <RotateCcw size={15} /> Créer la facture rectificative
           </button>
         )}
         {!isQuote && draft && (
@@ -247,16 +264,6 @@ export function DocumentActions({
         {isInvoice && doc.lifecycle === "emise" && (
           <button type="button" disabled={busy} className={BTN_DANGER} onClick={() => setDialog("credit")}>
             <FileX2 size={15} /> Annuler par un avoir
-          </button>
-        )}
-        {isInvoice && doc.lifecycle === "annulee" && !hasCorrective && (
-          <button
-            type="button"
-            disabled={busy}
-            className={BTN_DANGER}
-            onClick={() => act(() => createCorrectiveAction(doc.id), { goTo: (id) => `/admin/factures/${id}/modifier` })}
-          >
-            <RotateCcw size={15} /> Créer la facture rectificative
           </button>
         )}
         {!draft && (

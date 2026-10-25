@@ -19,6 +19,11 @@ export async function DocumentDetail({ doc }: { doc: CommercialDocument }) {
   const quoteId = isQuote ? doc.id : doc.quoteId;
   const hasIssuedInvoices = isQuote && all.some((d) => d.quoteId === doc.id && d.type === "facture" && d.lifecycle === "emise");
   const hasCorrective = all.some((d) => d.correctsId === doc.id);
+  // Avoir émis : la facture qu'il annule a-t-elle déjà sa rectificative ?
+  const creditTarget =
+    doc.type === "avoir" && doc.lifecycle === "emise" && doc.invoiceId && !all.some((d) => d.correctsId === doc.invoiceId)
+      ? doc.invoiceId
+      : null;
   const hasLinkedInvoices = isQuote && all.some((d) => d.quoteId === doc.id && d.type === "facture");
   const quote = quoteId ? all.find((d) => d.id === quoteId) : undefined;
   const linkedAmounts = Object.fromEntries(linked.map((d) => [d.id, documentAmounts(d).amountDue]));
@@ -53,7 +58,7 @@ export async function DocumentDetail({ doc }: { doc: CommercialDocument }) {
         )}
       </div>
 
-      <DocumentActions doc={doc} next={next} hasIssuedInvoices={hasIssuedInvoices} issueWarnings={warnings} hasCorrective={hasCorrective} hasLinkedInvoices={hasLinkedInvoices} />
+      <DocumentActions doc={doc} next={next} hasIssuedInvoices={hasIssuedInvoices} issueWarnings={warnings} hasCorrective={hasCorrective} hasLinkedInvoices={hasLinkedInvoices} creditTarget={creditTarget} />
 
       {isQuote && doc.quoteStatus !== "brouillon" && doc.quoteStatus !== "annule" && doc.quoteStatus !== "refuse" && (
         <div className="mt-6 rounded-2xl border border-line bg-white p-4 sm:p-5">
