@@ -30,6 +30,21 @@ export interface Demand {
   /** Noms des fichiers déposés (l'upload réel des blobs est à venir). */
   files: string[];
   status: DemandStatus;
+  /** Design issu du configurateur 3D (absent pour le formulaire classique). */
+  design?: DemandDesign | null;
+}
+
+/**
+ * Création transmise depuis le configurateur 3D. Les images (aperçus, logos
+ * du client) sont des URL Blob privées — ou des data URL si Blob n'est pas
+ * configuré.
+ */
+export interface DemandDesign {
+  designId: string;
+  contactName: string;
+  previews: { front: string; back: string };
+  /** Configuration validée (DesignConfig), logos pointant vers leur stockage. */
+  config: unknown;
 }
 
 /** Données reçues du formulaire public. */
@@ -42,4 +57,5 @@ export interface NewDemand {
   phone: string;
   brief: string;
   files: string[];
+  design?: DemandDesign | null;
 }

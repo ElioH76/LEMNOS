@@ -6,6 +6,20 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "port": 3000
+    },
+    {
+      "name": "lemnos-dev-noblob",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "env": { "BLOB_READ_WRITE_TOKEN": "" },
+      "port": 3000
+    },
+    {
+      "name": "lemnos-prod-local",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start"],
+      "env": { "BLOB_READ_WRITE_TOKEN": "" },
+      "port": 3000
     }
   ]
 }
