@@ -239,7 +239,7 @@ export const structureTypes = [
 ];
 
 /** URL publique du site (canoniques, sitemap, Open Graph). */
-export const siteUrl = "https://lemnos-sportswear.fr";
+export const siteUrl = "https://www.lemnos-sportswear.fr";
 
 export const contactEmail = "contact@lemnos-sportswear.fr";
 
