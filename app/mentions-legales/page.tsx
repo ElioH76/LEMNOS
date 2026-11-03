@@ -3,6 +3,9 @@ import { LegalH2, LegalLayout, LegalP } from "@/components/site/LegalLayout";
 
 export const metadata: Metadata = {
   title: "Mentions légales — Lemnos",
+  description:
+    "Mentions légales du site Lemnos : éditeur, hébergeur et propriété intellectuelle.",
+  alternates: { canonical: "/mentions-legales" },
 };
 
 export default function MentionsLegalesPage() {

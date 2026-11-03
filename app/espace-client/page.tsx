@@ -12,6 +12,8 @@ import { account, activity, contact, navItems, projects } from "@/lib/mock-data"
 export const metadata: Metadata = {
   title: "Lemnos — Espace client",
   description: "Suivez vos projets de vêtements et équipements personnalisés Lemnos.",
+  // Espace privé (données de démonstration pour l'instant) : hors index.
+  robots: { index: false, follow: false },
 };
 
 /**

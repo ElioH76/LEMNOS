@@ -239,6 +239,9 @@ export const structureTypes = [
   "Association / collectivité",
 ];
 
+/** URL publique du site (canoniques, sitemap, Open Graph). */
+export const siteUrl = "https://lemnos-sportswear.fr";
+
 export const contactEmail = "contact@lemnos-sportswear.fr";
 
 /** Lien Instagram (footer + page d'attente), configurable via l'env Vercel. */

@@ -3,6 +3,9 @@ import { LegalH2, LegalLayout, LegalP } from "@/components/site/LegalLayout";
 
 export const metadata: Metadata = {
   title: "Conditions générales de vente — Lemnos",
+  description:
+    "Conditions générales de vente de Lemnos : devis, commandes, production, livraison et paiement des vêtements de sport personnalisés.",
+  alternates: { canonical: "/cgv" },
 };
 
 export default function CgvPage() {
