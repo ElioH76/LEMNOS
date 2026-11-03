@@ -1,7 +1,7 @@
 import "server-only";
 import { randomUUID } from "crypto";
 import { neon } from "@neondatabase/serverless";
-import type { Demand, DemandDesign, DemandStatus, NewDemand } from "./types";
+import type { Demand, DemandStatus, NewDemand } from "./types";
 
 /**
  * Stockage des demandes, à double implémentation :
@@ -54,8 +54,6 @@ function ensureSchema(): Promise<void> {
           status text NOT NULL DEFAULT 'nouveau'
         )
       `;
-      // Ajout du configurateur 3D : design associé à la demande (facultatif).
-      await sql`ALTER TABLE demands ADD COLUMN IF NOT EXISTS design jsonb`;
     })().catch((err) => {
       schemaReady = null;
       throw err;
@@ -78,18 +76,6 @@ function parseFiles(value: unknown): string[] {
   return [];
 }
 
-function parseDesign(value: unknown): DemandDesign | null {
-  if (!value) return null;
-  if (typeof value === "string") {
-    try {
-      return JSON.parse(value) as DemandDesign;
-    } catch {
-      return null;
-    }
-  }
-  return value as DemandDesign;
-}
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function rowToDemand(row: any): Demand {
   return {
@@ -104,7 +90,6 @@ function rowToDemand(row: any): Demand {
     brief: row.brief,
     files: parseFiles(row.files),
     status: row.status as DemandStatus,
-    design: parseDesign(row.design),
   };
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
@@ -120,12 +105,11 @@ export async function createDemand(input: NewDemand): Promise<Demand> {
   if (sql) {
     await ensureSchema();
     await sql`
-      INSERT INTO demands (id, created_at, structure, type, sport, quantity, email, phone, brief, files, status, design)
+      INSERT INTO demands (id, created_at, structure, type, sport, quantity, email, phone, brief, files, status)
       VALUES (
         ${demand.id}, ${demand.createdAt}, ${demand.structure}, ${demand.type}, ${demand.sport},
         ${demand.quantity}, ${demand.email}, ${demand.phone}, ${demand.brief},
-        ${JSON.stringify(demand.files)}::jsonb, ${demand.status},
-        ${demand.design ? JSON.stringify(demand.design) : null}::jsonb
+        ${JSON.stringify(demand.files)}::jsonb, ${demand.status}
       )
     `;
   } else {

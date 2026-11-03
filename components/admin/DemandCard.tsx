@@ -1,71 +1,11 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Box, CalendarClock, Download, FileText, Mail, Phone, Trash2 } from "lucide-react";
+import { CalendarClock, FileText, Mail, Phone, Trash2 } from "lucide-react";
 import { removeDemand, setDemandStatus } from "@/app/actions/demands";
-import { blobDisplaySrc } from "@/lib/blob/url";
 import { cn } from "@/lib/cn";
 import { DEMAND_STATUSES, STATUS_LABEL, type Demand } from "@/lib/demands/types";
 import { DemandStatusBadge } from "./DemandStatusBadge";
-
-/** Création issue du configurateur 3D : aperçus face / dos + configuration complète. */
-function DesignBlock({ design }: { design: NonNullable<Demand["design"]> }) {
-  const downloadConfig = () => {
-    const blob = new Blob([JSON.stringify(design.config, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `lemnos-${design.designId}.json`;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  };
-  const logos = Array.isArray((design.config as { customLogos?: unknown })?.customLogos)
-    ? ((design.config as { customLogos: { name: string; src: string; zone: string }[] }).customLogos)
-    : [];
-  return (
-    <div className="mt-3 rounded-field border border-line p-3">
-      <div className="mb-2.5 flex items-center justify-between gap-2">
-        <span className="flex items-center gap-1.5 text-[12px] font-semibold text-ink">
-          <Box size={13} aria-hidden className="text-green" />
-          Configurateur 3D · {design.designId}
-        </span>
-        <button
-          type="button"
-          onClick={downloadConfig}
-          className="flex items-center gap-1.5 rounded-sharp px-2 py-1 text-[12px] font-semibold text-green transition-colors hover:bg-paper"
-        >
-          <Download size={13} aria-hidden /> Configuration (JSON)
-        </button>
-      </div>
-      <div className="grid grid-cols-2 gap-2">
-        {(["front", "back"] as const).map((view) => (
-          <a key={view} href={blobDisplaySrc(design.previews[view])} target="_blank" rel="noreferrer" className="block overflow-hidden rounded-field bg-paper">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={blobDisplaySrc(design.previews[view])} alt={view === "front" ? "Aperçu face" : "Aperçu dos"} className="aspect-square w-full object-contain" />
-          </a>
-        ))}
-      </div>
-      {logos.length > 0 && (
-        <ul className="mt-2.5 flex flex-wrap gap-2">
-          {logos.map((logo, index) => (
-            <li key={`${logo.zone}-${index}`}>
-              <a
-                href={blobDisplaySrc(logo.src)}
-                target="_blank"
-                rel="noreferrer"
-                download={logo.name}
-                className="flex items-center gap-1.5 rounded-field bg-paper px-2.5 py-1.5 text-[12px] text-slate hover:text-green"
-              >
-                <FileText size={13} aria-hidden className="text-green" />
-                {logo.name}
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-}
 
 function formatDate(iso: string): string {
   return new Intl.DateTimeFormat("fr-FR", {
@@ -140,9 +80,7 @@ export function DemandCard({ demand }: { demand: Demand }) {
         {demand.brief}
       </p>
 
-      {demand.design && <DesignBlock design={demand.design} />}
-
-      {!demand.design && demand.files.length > 0 && (
+      {demand.files.length > 0 && (
         <ul className="mt-3 flex flex-wrap gap-2">
           {demand.files.map((name, index) => (
             <li

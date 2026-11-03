@@ -159,7 +159,6 @@ export const navLinks: NavLink[] = [
     ? [{ label: "Réalisations", href: "/#realisations" }]
     : []),
   { label: "Atelier", href: "/#atelier" },
-  { label: "Configurateur 3D", href: "/configurateur" },
 ];
 
 /** Techniques de personnalisation proposées à l'atelier. */
