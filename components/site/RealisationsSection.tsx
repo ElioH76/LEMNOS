@@ -1,3 +1,4 @@
+import Image from "next/image";
 import {
   littoralGallery,
   littoralKits,
@@ -45,10 +46,11 @@ export function RealisationsSection() {
               <div className="flex items-center gap-4">
                 {partnerClub.crest ? (
                   <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-white p-1.5 shadow-immersive">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={partnerClub.crest}
                       alt={`Blason ${partnerClub.name}`}
+                      width={64}
+                      height={64}
                       className="h-full w-full object-contain"
                     />
                   </span>

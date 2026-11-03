@@ -3,6 +3,9 @@ import { LegalH2, LegalLayout, LegalList, LegalP } from "@/components/site/Legal
 
 export const metadata: Metadata = {
   title: "Politique de confidentialité — Lemnos",
+  description:
+    "Politique de confidentialité de Lemnos : données collectées, finalités, durée de conservation et vos droits (RGPD).",
+  alternates: { canonical: "/confidentialite" },
 };
 
 export default function ConfidentialitePage() {

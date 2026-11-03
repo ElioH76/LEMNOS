@@ -8,6 +8,7 @@ import { RealisationsSection } from "@/components/site/RealisationsSection";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteNav } from "@/components/site/SiteNav";
 import { siteConfig } from "@/lib/site-config";
+import { contactEmail, siteUrl } from "@/lib/site-content";
 
 /**
  * En production, `COMING_SOON=true` (variable d'environnement Vercel) affiche la
@@ -17,14 +18,40 @@ import { siteConfig } from "@/lib/site-config";
 const comingSoon = process.env.COMING_SOON === "true";
 
 export const metadata: Metadata = comingSoon
-  ? { title: "Lemnos — Bientôt en ligne" }
-  : {};
+  ? { title: "Lemnos — Bientôt en ligne", alternates: { canonical: "/" } }
+  : { alternates: { canonical: "/" } };
+
+/** Données structurées : identité de la marque pour les moteurs de recherche. */
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Lemnos",
+  url: siteUrl,
+  logo: `${siteUrl}/apple-icon.png`,
+  email: contactEmail,
+  description: "Maillots et vêtements de sport personnalisés pour clubs et associations.",
+  ...(process.env.NEXT_PUBLIC_INSTAGRAM_URL ? { sameAs: [process.env.NEXT_PUBLIC_INSTAGRAM_URL] } : {}),
+};
 
 export default function HomePage() {
-  if (comingSoon) return <ComingSoon />;
+  const jsonLd = (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+    />
+  );
+
+  if (comingSoon)
+    return (
+      <>
+        {jsonLd}
+        <ComingSoon />
+      </>
+    );
 
   return (
     <>
+      {jsonLd}
       <SiteNav />
       <Hero />
       <MethodSection />
