@@ -8,6 +8,12 @@
       "port": 3000
     },
     {
+      "name": "lemnos-dev-3100",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["next", "dev", "-p", "3100"],
+      "port": 3100
+    },
+    {
       "name": "lemnos-dev-noblob",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],

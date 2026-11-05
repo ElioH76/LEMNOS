@@ -34,6 +34,10 @@ const config: Config = {
           soft: rgb("paper-soft"),
         },
         mist: rgb("mist"),
+        "night-line": rgb("night-line"),
+        "field-line": rgb("field-line"),
+        pearl: rgb("pearl"),
+        mint: rgb("mint"),
         line: {
           DEFAULT: rgb("line"),
           soft: rgb("line-soft"),

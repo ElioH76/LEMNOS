@@ -27,6 +27,12 @@
     --color-surface-dark: 36 40 42; /* #24282A — cartes sur fond sombre */
     --color-line-dark: 49 54 58; /* #31363A — traits sur fond sombre */
 
+    /* Site public « Lookbook » — fond nuit, traits, textes et accents */
+    --color-night-line: 44 49 52; /* #2C3134 — bordures de section */
+    --color-field-line: 58 63 60; /* #3A3F3C — bordures de champ */
+    --color-pearl: 225 228 226; /* #E1E4E2 — texte secondaire sur nuit */
+    --color-mint: 159 205 179; /* #9FCDB3 — surtitres sur nuit */
+
     /* Surfaces claires */
     --color-paper: 244 244 242; /* #F4F4F2 — sections alternées */
     --color-paper-soft: 240 241 238; /* #F0F1EE */
@@ -89,7 +95,29 @@
   }
 }
 
+@keyframes lookbook-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
 @layer components {
+  /*
+   * Barre de progression du carrousel Lookbook. Sa fin d'animation déclenche
+   * la slide suivante : mettre l'animation en pause met donc l'autoplay en pause.
+   */
+  .lookbook-progress {
+    transform-origin: left;
+    animation: lookbook-fill 6000ms linear forwards;
+  }
+  .lookbook-paused .lookbook-progress {
+    animation-play-state: paused;
+  }
+
+
   /* Entrée fondu + montée, jouée au chargement. */
   .reveal-in {
     animation: reveal-in 600ms cubic-bezier(0.22, 1, 0.36, 1) both;

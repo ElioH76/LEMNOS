@@ -25,7 +25,7 @@ France`}
       </LegalP>
       <LegalP>
         E-mail :{" "}
-        <a href="mailto:contact@lemnos-sportswear.fr" className="text-green hover:underline">
+        <a href="mailto:contact@lemnos-sportswear.fr" className="text-mint underline-offset-4 hover:underline">
           contact@lemnos-sportswear.fr
         </a>
       </LegalP>
@@ -62,7 +62,7 @@ Covina, CA 91723
       <LegalH2>Contact</LegalH2>
       <LegalP>
         Pour toute question :{" "}
-        <a href="mailto:contact@lemnos-sportswear.fr" className="text-green hover:underline">
+        <a href="mailto:contact@lemnos-sportswear.fr" className="text-mint underline-offset-4 hover:underline">
           contact@lemnos-sportswear.fr
         </a>
       </LegalP>

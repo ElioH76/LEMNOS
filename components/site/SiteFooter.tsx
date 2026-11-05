@@ -1,86 +1,46 @@
 import { LogoLockup } from "@/components/brand/LogoLockup";
-import { Mark } from "@/components/brand/Mark";
-import { contactEmail, instagramUrl, navLinks } from "@/lib/site-content";
-import { MythPattern } from "./MythPattern";
+import { contactEmail, instagramUrl } from "@/lib/site-content";
 import { Shell } from "./Shell";
 
-const LINK = "link-underline w-fit text-[14px] text-fog transition-colors hover:text-white";
+const LINK = "w-fit text-[14px] text-fog transition-colors hover:text-white";
+const META = "text-[12px] text-mute-ink transition-colors hover:text-white";
 
 export function SiteFooter() {
   return (
-    <footer>
-      {/* Bande de signature — Vert Littoral */}
-      <div className="bg-green py-7 text-white">
-        <Shell className="flex items-center justify-center gap-5">
-          <Mark className="w-[26px] text-white" />
-          <span className="text-[14px] font-medium uppercase tracking-band">Forger vos idées</span>
-        </Shell>
-      </div>
+    <footer className="border-t border-night-line bg-ink-deep text-white">
+      <Shell className="flex flex-col gap-10 py-14 md:flex-row md:items-start md:justify-between">
+        <div className="flex max-w-[34ch] flex-col gap-5">
+          <LogoLockup markClassName="w-[26px] text-white" wordmarkClassName="text-[18px]" className="gap-2.5" />
+          <p className="text-[14px] leading-[1.6] text-mute-ink">
+            Maillots et vêtements de sport personnalisés pour les clubs. Du croquis à la livraison.
+          </p>
+        </div>
 
-      <div className="relative overflow-hidden bg-ink text-white">
-        {/* écailles antiques — motif commun à toutes les sections sombres */}
-        <MythPattern
-          variant="scales"
-          id="scales-footer"
-          className="text-white/[0.06] [mask-image:linear-gradient(to_bottom,black,transparent)]"
-        />
-        <Shell className="relative pb-10 pt-16">
-          <div className="flex flex-wrap justify-between gap-10 border-b border-line-dark pb-12">
-            <div className="max-w-[32ch]">
-              <LogoLockup markClassName="w-[28px] text-white" wordmarkClassName="text-[20px]" />
-              <p className="mt-5 text-[14px] leading-[1.6] text-mute-ink">
-                Vêtements et équipements de sport personnalisés, forgés sur-mesure pour les collectifs
-                qui portent leur identité.
-              </p>
-            </div>
+        <div className="flex flex-col gap-3">
+          <span className="text-[12px] font-bold uppercase tracking-label text-mint">Contact</span>
+          <a href={`mailto:${contactEmail}`} className={LINK}>
+            {contactEmail}
+          </a>
+          <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className={LINK}>
+            Instagram
+          </a>
+        </div>
+      </Shell>
 
-            <div className="flex flex-wrap gap-x-16 gap-y-8">
-              <div className="flex flex-col gap-3">
-                <span className="text-[11px] font-semibold uppercase tracking-caps text-stone">
-                  Navigation
-                </span>
-                {navLinks.map((link) => (
-                  <a key={link.href} href={link.href} className={LINK}>
-                    {link.label}
-                  </a>
-                ))}
-              </div>
-
-              <div className="flex flex-col gap-3">
-                <span className="text-[11px] font-semibold uppercase tracking-caps text-stone">
-                  Contact
-                </span>
-                <a href={`mailto:${contactEmail}`} className={LINK}>
-                  {contactEmail}
-                </a>
-                <a
-                  href={instagramUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={LINK}
-                >
-                  Instagram
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 pt-8">
-            <span className="text-[12px] text-stone">© 2026 Lemnos — Forger vos idées.</span>
-            <nav className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-stone">
-              <a href="/mentions-legales" className="transition-colors hover:text-white">
-                Mentions légales
-              </a>
-              <span aria-hidden>·</span>
-              <a href="/confidentialite" className="transition-colors hover:text-white">
-                Confidentialité
-              </a>
-              <span aria-hidden>·</span>
-              <a href="/cgv" className="transition-colors hover:text-white">
-                CGV
-              </a>
-            </nav>
-          </div>
+      <div className="border-t border-night-line">
+        <Shell className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-6">
+          <span className="text-[12px] text-mute-ink">© 2026 Lemnos</span>
+          <nav aria-label="Informations légales" className="flex flex-wrap items-center gap-x-5 gap-y-1">
+            <a href="/mentions-legales" className={META}>
+              Mentions légales
+            </a>
+            <a href="/confidentialite" className={META}>
+              Confidentialité
+            </a>
+            <a href="/cgv" className={META}>
+              CGV
+            </a>
+          </nav>
         </Shell>
       </div>
     </footer>

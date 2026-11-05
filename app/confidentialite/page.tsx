@@ -20,7 +20,7 @@ LEMNOS
 76600 Le Havre`}
       </LegalP>
       <LegalP>
-        <a href="mailto:contact@lemnos-sportswear.fr" className="text-green hover:underline">
+        <a href="mailto:contact@lemnos-sportswear.fr" className="text-mint underline-offset-4 hover:underline">
           contact@lemnos-sportswear.fr
         </a>
       </LegalP>
@@ -72,7 +72,7 @@ LEMNOS
       />
       <LegalP>
         Toute demande peut être adressée à :{" "}
-        <a href="mailto:contact@lemnos-sportswear.fr" className="text-green hover:underline">
+        <a href="mailto:contact@lemnos-sportswear.fr" className="text-mint underline-offset-4 hover:underline">
           contact@lemnos-sportswear.fr
         </a>
       </LegalP>

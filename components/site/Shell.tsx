@@ -1,30 +1,16 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
-/** Conteneur centré 1200px, gouttières responsives. */
+/** Conteneur centré 1280px, gouttières 20px (mobile) → 56px (desktop). */
 export function Shell({ className, children }: { className?: string; children: ReactNode }) {
-  return <div className={cn("mx-auto w-full max-w-shell px-6 md:px-10", className)}>{children}</div>;
+  return <div className={cn("mx-auto w-full max-w-[1280px] px-5 sm:px-6 lg:px-14", className)}>{children}</div>;
 }
 
-/** Surtitre label : vert sur fond clair, vert clair sur fond sombre. */
-export function Eyebrow({
-  children,
-  tone = "light",
-  className,
-}: {
-  children: ReactNode;
-  tone?: "light" | "dark";
-  className?: string;
-}) {
+/** Surtitre du site public : capitales vert clair sur fond nuit. */
+export function Eyebrow({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div
-      className={cn(
-        "text-label font-semibold uppercase",
-        tone === "dark" ? "text-green-light" : "text-green",
-        className,
-      )}
-    >
+    <span className={cn("block text-[13px] font-bold uppercase tracking-brand text-mint", className)}>
       {children}
-    </div>
+    </span>
   );
 }

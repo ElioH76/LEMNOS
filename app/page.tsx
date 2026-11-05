@@ -1,13 +1,9 @@
 import type { Metadata } from "next";
 import { ComingSoon } from "@/components/site/ComingSoon";
-import { AtelierSection } from "@/components/site/AtelierSection";
-import { Hero } from "@/components/site/Hero";
-import { MethodSection } from "@/components/site/MethodSection";
-import { ProjectForm } from "@/components/site/ProjectForm";
-import { RealisationsSection } from "@/components/site/RealisationsSection";
+import { DemandSection } from "@/components/site/DemandSection";
+import { Lookbook } from "@/components/site/Lookbook";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteNav } from "@/components/site/SiteNav";
-import { siteConfig } from "@/lib/site-config";
 import { contactEmail, siteUrl } from "@/lib/site-content";
 
 /**
@@ -50,15 +46,14 @@ export default function HomePage() {
     );
 
   return (
-    <>
+    <div className="bg-ink-deep text-white">
       {jsonLd}
       <SiteNav />
-      <Hero />
-      <MethodSection />
-      {siteConfig.showRealisations && <RealisationsSection />}
-      <AtelierSection />
-      <ProjectForm />
+      <main>
+        <Lookbook />
+        <DemandSection />
+      </main>
       <SiteFooter />
-    </>
+    </div>
   );
 }

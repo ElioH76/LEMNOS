@@ -58,13 +58,15 @@ export function DemandCard({ demand }: { demand: Demand }) {
       </div>
 
       <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1.5 text-[13px]">
-        <a
-          href={`mailto:${demand.email}`}
-          className="flex items-center gap-1.5 font-medium text-green transition-colors hover:text-green-dark"
-        >
-          <Mail size={13} aria-hidden />
-          {demand.email}
-        </a>
+        {demand.email && (
+          <a
+            href={`mailto:${demand.email}`}
+            className="flex items-center gap-1.5 font-medium text-green transition-colors hover:text-green-dark"
+          >
+            <Mail size={13} aria-hidden />
+            {demand.email}
+          </a>
+        )}
         {demand.phone && (
           <a
             href={`tel:${demand.phone.replace(/\s+/g, "")}`}
@@ -76,9 +78,11 @@ export function DemandCard({ demand }: { demand: Demand }) {
         )}
       </div>
 
-      <p className="mt-4 whitespace-pre-wrap rounded-field bg-paper px-4 py-3 text-[14px] leading-[1.6] text-prose">
-        {demand.brief}
-      </p>
+      {demand.brief && (
+        <p className="mt-4 whitespace-pre-wrap rounded-field bg-paper px-4 py-3 text-[14px] leading-[1.6] text-prose">
+          {demand.brief}
+        </p>
+      )}
 
       {demand.files.length > 0 && (
         <ul className="mt-3 flex flex-wrap gap-2">
