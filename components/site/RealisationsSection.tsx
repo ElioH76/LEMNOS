@@ -1,10 +1,12 @@
 import Image from "next/image";
 import {
-  littoralGallery,
-  littoralKits,
+  littoralCollections,
   otherRealisations,
   partnerClub,
+  type KitCollection,
 } from "@/lib/site-content";
+import { CollectionTabs } from "./CollectionTabs";
+import { cn } from "@/lib/cn";
 import { Eyebrow, Shell } from "./Shell";
 import { MythPattern } from "./MythPattern";
 import { Reveal } from "./Reveal";
@@ -30,7 +32,7 @@ export function RealisationsSection() {
             <div>
               <Eyebrow tone="dark">Réalisations</Eyebrow>
               <h2 className="mt-5 max-w-[18ch] text-balance text-[30px] font-extrabold leading-[1.05] tracking-tight md:text-h2">
-                Un club, deux tenues, une signature.
+                Un club, trois tenues, une signature.
               </h2>
             </div>
             <p className="max-w-[40ch] text-[15px] leading-[1.6] text-fog">
@@ -72,73 +74,15 @@ export function RealisationsSection() {
           </div>
         </Reveal>
 
-        {/* Les tenues — packshots face / dos, cœur de la vitrine */}
-        <Reveal className="mt-14 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <div className="text-[11px] font-semibold uppercase tracking-label text-green-light">
-              {partnerClub.season}
-            </div>
-            <h3 className="mt-2 text-[24px] font-extrabold tracking-tight">Les tenues</h3>
-          </div>
-          <p className="max-w-[42ch] text-[14px] leading-[1.6] text-mute-ink">{partnerClub.intro}</p>
+        {/* Les collections du club — un onglet par collection (extérieur, domicile…) */}
+        <Reveal className="mt-14">
+          <CollectionTabs
+            tabs={littoralCollections.map(({ id, label, isNew }) => ({ id, label, isNew }))}
+            panels={littoralCollections.map((collection) => (
+              <CollectionPanel key={collection.id} collection={collection} />
+            ))}
+          />
         </Reveal>
-
-        <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
-          {littoralKits.map((kit, kitIndex) => (
-            <Reveal
-              as="article"
-              key={kit.id}
-              delay={kitIndex * 100}
-              className="rounded-2xl border border-line-dark bg-surface-dark/40 p-4 md:p-5"
-            >
-              <div className="grid grid-cols-2 gap-3">
-                {kit.views.map((view) => (
-                  <figure key={view.id} className="m-0">
-                    <ZoomableImage
-                      src={view.image}
-                      alt={view.alt}
-                      sizes="(max-width: 1024px) 50vw, 25vw"
-                      className="aspect-[3/4] rounded-xl border border-line-dark bg-black transition-colors duration-200 hover:border-green/50"
-                    >
-                      <span className="absolute bottom-3 left-3 rounded-pill bg-ink/80 px-3 py-1 text-[11px] font-bold tracking-tight text-white backdrop-blur-sm">
-                        {view.label}
-                      </span>
-                    </ZoomableImage>
-                  </figure>
-                ))}
-              </div>
-              <div className="mt-4 flex items-start justify-between gap-4 px-1">
-                <div>
-                  <h4 className="text-[16px] font-bold tracking-tight">{kit.name}</h4>
-                  <p className="mt-1.5 max-w-[38ch] text-[13px] leading-[1.6] text-mute-ink">{kit.blurb}</p>
-                </div>
-                <span className="shrink-0 rounded-pill border border-green/40 px-3 py-1 text-[11px] font-semibold tracking-link text-green-light">
-                  {kit.role}
-                </span>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-
-        {/* En conditions réelles — galerie secondaire */}
-        <Reveal className="mt-20">
-          <h3 className="text-[11px] font-semibold uppercase tracking-label text-mute-ink">
-            En conditions réelles
-          </h3>
-        </Reveal>
-
-        <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {littoralGallery.map((shot, index) => (
-            <Reveal as="figure" key={shot.id} delay={(index % 4) * 80} className="m-0">
-              <ZoomableImage
-                src={shot.image}
-                alt={shot.alt}
-                sizes="(max-width: 1024px) 50vw, 25vw"
-                className="aspect-[4/5] rounded-xl border border-line-dark bg-black transition-colors duration-200 hover:border-green/50"
-              />
-            </Reveal>
-          ))}
-        </div>
 
         {/* Autres réalisations — clubs équipés par Lemnos (masqué si la liste est vide) */}
         {otherRealisations.length > 0 && (
@@ -179,5 +123,98 @@ export function RealisationsSection() {
         )}
       </Shell>
     </section>
+  );
+}
+
+/** Une collection : en-tête, tenues face / dos, puis galerie en conditions réelles. */
+function CollectionPanel({ collection }: { collection: KitCollection }) {
+  const { kits, cover, gallery } = collection;
+  const showCover = cover && kits.length % 2 === 1;
+  const oddGallery = gallery.length % 2 === 1;
+
+  return (
+    <>
+      <div className="mt-8 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <div className="text-[11px] font-semibold uppercase tracking-label text-green-light">
+            {collection.season}
+          </div>
+          <h3 className="mt-2 text-[24px] font-extrabold tracking-tight">Les tenues</h3>
+        </div>
+        <p className="max-w-[42ch] text-[14px] leading-[1.6] text-mute-ink">{collection.intro}</p>
+      </div>
+
+      <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
+        {kits.map((kit) => (
+          <article
+            key={kit.id}
+            className="rounded-2xl border border-line-dark bg-surface-dark/40 p-4 md:p-5"
+          >
+            <div className="grid grid-cols-2 gap-3">
+              {kit.views.map((view) => (
+                <figure key={view.id} className="m-0">
+                  <ZoomableImage
+                    src={view.image}
+                    alt={view.alt}
+                    sizes="(max-width: 1024px) 50vw, 25vw"
+                    className="aspect-[3/4] rounded-xl border border-line-dark bg-black transition-colors duration-200 hover:border-green/50"
+                  >
+                    <span className="absolute bottom-3 left-3 rounded-pill bg-ink/80 px-3 py-1 text-[11px] font-bold tracking-tight text-white backdrop-blur-sm">
+                      {view.label}
+                    </span>
+                  </ZoomableImage>
+                </figure>
+              ))}
+            </div>
+            <div className="mt-4 flex items-start justify-between gap-4 px-1">
+              <div>
+                <h4 className="text-[16px] font-bold tracking-tight">{kit.name}</h4>
+                <p className="mt-1.5 max-w-[38ch] text-[13px] leading-[1.6] text-mute-ink">{kit.blurb}</p>
+              </div>
+              <span className="shrink-0 rounded-pill border border-green/40 px-3 py-1 text-[11px] font-semibold tracking-link text-green-light">
+                {kit.role}
+              </span>
+            </div>
+          </article>
+        ))}
+
+        {showCover ? (
+          <figure className="m-0">
+            <ZoomableImage
+              src={cover.image}
+              alt={cover.alt}
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="aspect-[4/5] rounded-2xl border border-line-dark bg-black transition-colors duration-200 hover:border-green/50 lg:aspect-auto lg:h-full"
+            />
+          </figure>
+        ) : null}
+      </div>
+
+      {/* En conditions réelles — galerie secondaire */}
+      <h3 className="mt-20 text-[11px] font-semibold uppercase tracking-label text-mute-ink">
+        En conditions réelles
+      </h3>
+
+      <div
+        className={cn(
+          "mt-6 grid grid-cols-2 gap-4",
+          gallery.length % 4 === 0 ? "lg:grid-cols-4" : "lg:grid-cols-3",
+        )}
+      >
+        {gallery.map((shot, index) => (
+          <figure
+            key={shot.id}
+            className={cn("m-0", oddGallery && index === 0 && "col-span-2 lg:col-span-1")}
+          >
+            <ZoomableImage
+              src={shot.image}
+              alt={shot.alt}
+              sizes="(max-width: 1024px) 50vw, 25vw"
+              className="aspect-[4/5] rounded-xl border border-line-dark bg-black transition-colors duration-200 hover:border-green/50"
+            />
+          </figure>
+        ))}
+      </div>
+    </>
   );
 }

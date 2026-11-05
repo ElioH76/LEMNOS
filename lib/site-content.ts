@@ -38,6 +38,34 @@ export interface Kit {
   views: KitView[];
 }
 
+export interface GalleryShot {
+  id: string;
+  image: string;
+  alt: string;
+}
+
+/**
+ * Une collection du club partenaire (domicile, extérieur…) : ses tenues en
+ * face / dos + sa galerie « en conditions réelles ». Une collection = un onglet
+ * dans la section Réalisations.
+ */
+export interface KitCollection {
+  id: string;
+  /** Libellé de l'onglet. */
+  label: string;
+  season: string;
+  intro: string;
+  /** Badge « Nouveau » sur l'onglet. */
+  isNew?: boolean;
+  kits: Kit[];
+  /**
+   * Photo d'ambiance affichée en grand à côté des tenues quand leur nombre est
+   * impair (évite une carte seule sur sa ligne).
+   */
+  cover?: GalleryShot;
+  gallery: GalleryShot[];
+}
+
 /**
  * Club partenaire mis en avant dans les réalisations. Lemnos équipe le club
  * (tenues offertes contre visibilité) : c'est notre première vitrine réelle.
@@ -46,9 +74,6 @@ export const partnerClub = {
   name: "F.C. Littoral",
   since: "2002",
   role: "Équipementier officiel",
-  season: "Collection 2026 · Domicile",
-  intro:
-    "Notre premier club partenaire. Lemnos signe l'intégralité de ses tenues 2026 — du maillot joueur au maillot gardien.",
   partnership:
     "Lemnos équipe le F.C. Littoral : maillots dessinés, prototypés et produits sur-mesure, portés sur le terrain toute la saison.",
   /**
@@ -58,8 +83,8 @@ export const partnerClub = {
   crest: "/images/creations/fc-littoral/blason-fc-littoral.png" as string | null,
 };
 
-/** Les tenues du F.C. Littoral — le cœur de la vitrine, en packshots. */
-export const littoralKits: Kit[] = [
+/** Collection domicile — packshots studio. */
+const domicileKits: Kit[] = [
   {
     id: "domicile",
     name: "Maillot domicile",
@@ -70,13 +95,13 @@ export const littoralKits: Kit[] = [
       {
         id: "face",
         label: "Face",
-        image: "/images/creations/fc-littoral/domicile-face.jpg",
+        image: "/images/creations/fc-littoral/domicile/domicile-face.jpg",
         alt: "Maillot domicile joueur du F.C. Littoral par Lemnos — jaune à liserés verts, emblème Lemnos et blason du club, vue de face",
       },
       {
         id: "dos",
         label: "Dos",
-        image: "/images/creations/fc-littoral/domicile-dos.jpg",
+        image: "/images/creations/fc-littoral/domicile/domicile-dos.jpg",
         alt: "Dos du maillot domicile F.C. Littoral par Lemnos — flocage « FC LITTORAL » et numéro 10 vert",
       },
     ],
@@ -91,13 +116,13 @@ export const littoralKits: Kit[] = [
       {
         id: "face",
         label: "Face",
-        image: "/images/creations/fc-littoral/gardien-face.jpg",
+        image: "/images/creations/fc-littoral/domicile/gardien-face.jpg",
         alt: "Maillot gardien du F.C. Littoral par Lemnos — camouflage violet, emblème Lemnos et blason du club, vue de face",
       },
       {
         id: "dos",
         label: "Dos",
-        image: "/images/creations/fc-littoral/gardien-dos.jpg",
+        image: "/images/creations/fc-littoral/domicile/gardien-dos.jpg",
         alt: "Dos du maillot gardien F.C. Littoral par Lemnos — camouflage violet, « FC LITTORAL » et numéro 1 blancs",
       },
     ],
@@ -126,27 +151,97 @@ export const otherRealisations: Realisation[] = [
   // Tant que la liste est vide, le bloc « Ils nous ont fait confiance » est masqué.
 ];
 
-/** Le partenariat en conditions réelles — galerie secondaire. */
-export const littoralGallery: { id: string; image: string; alt: string }[] = [
+const domicileGallery: GalleryShot[] = [
   {
     id: "equipe",
-    image: "/images/creations/fc-littoral/equipe.jpg",
+    image: "/images/creations/fc-littoral/domicile/equipe.jpg",
     alt: "L'équipe du F.C. Littoral en tenue Lemnos, devant les buts",
   },
   {
     id: "signature",
-    image: "/images/creations/fc-littoral/signature-dos.jpg",
+    image: "/images/creations/fc-littoral/domicile/signature-dos.jpg",
     alt: "Signature Lemnos au bas du dos des maillots F.C. Littoral",
   },
   {
     id: "detail",
-    image: "/images/creations/fc-littoral/porte-detail.jpg",
+    image: "/images/creations/fc-littoral/domicile/porte-detail.jpg",
     alt: "Détail du maillot domicile F.C. Littoral porté — blason du club et emblème Lemnos",
   },
   {
     id: "soleil",
-    image: "/images/creations/fc-littoral/porte-soleil.jpg",
+    image: "/images/creations/fc-littoral/domicile/porte-soleil.jpg",
     alt: "Dos d'un maillot F.C. Littoral porté à contre-jour — flocage numéro 4",
+  },
+];
+
+const EXT = "/images/creations/fc-littoral/exterieur";
+
+/** Collection extérieur — shooting en bord de mer, pas de packshots studio. */
+const exterieurKits: Kit[] = [
+  {
+    id: "exterieur",
+    name: "Maillot extérieur",
+    role: "Joueur",
+    blurb:
+      "Noir profond à motif ton sur ton, manches longues, col polo liseré blanc. Emblème Lemnos et blason du club en blanc, flocage blanc.",
+    views: [
+      {
+        id: "face",
+        label: "Face",
+        image: `${EXT}/exterieur-face.jpeg`,
+        alt: "Maillot extérieur du F.C. Littoral par Lemnos porté face à la mer — noir, col polo liseré blanc, emblème Lemnos et blason du club",
+      },
+      {
+        id: "dos",
+        label: "Dos",
+        image: `${EXT}/exterieur-dos.jpeg`,
+        alt: "Dos du maillot extérieur F.C. Littoral par Lemnos posé sur les galets — « FC LITTORAL », numéro 10 blanc et signature Lemnos",
+      },
+    ],
+  },
+];
+
+/** Les collections du F.C. Littoral — la plus récente en premier (onglet par défaut). */
+export const littoralCollections: KitCollection[] = [
+  {
+    id: "exterieur",
+    label: "Extérieur",
+    season: "Collection 2026 · Extérieur",
+    intro:
+      "La deuxième tenue du club : un maillot noir pensé pour les déplacements, shooté sur les falaises du littoral.",
+    isNew: true,
+    kits: exterieurKits,
+    cover: {
+      id: "grotte",
+      image: `${EXT}/equipe-grotte.jpeg`,
+      alt: "Les joueurs du F.C. Littoral en maillot extérieur Lemnos, réunis sous une falaise",
+    },
+    gallery: [
+      {
+        id: "falaise",
+        image: `${EXT}/equipe-falaise.jpeg`,
+        alt: "L'équipe du F.C. Littoral en maillot extérieur Lemnos, perchée sur un rocher face à la mer",
+      },
+      {
+        id: "rocher",
+        image: `${EXT}/portrait-rocher.jpeg`,
+        alt: "Joueur du F.C. Littoral assis sur un rocher en maillot extérieur Lemnos",
+      },
+      {
+        id: "duo",
+        image: `${EXT}/duo-ciel.jpeg`,
+        alt: "Deux joueurs du F.C. Littoral en tenue Lemnos sur un rocher, ciel bleu en fond",
+      },
+    ],
+  },
+  {
+    id: "domicile",
+    label: "Domicile",
+    season: "Collection 2026 · Domicile",
+    intro:
+      "Notre premier club partenaire. Lemnos signe l'intégralité de ses tenues 2026 — du maillot joueur au maillot gardien.",
+    kits: domicileKits,
+    gallery: domicileGallery,
   },
 ];
 
