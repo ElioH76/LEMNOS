@@ -23,6 +23,8 @@ export interface LookbookKit {
   id: KitId;
   name: string;
   desc: string;
+  /** Planche de design à plat (face / dos), dessinée avant la production. */
+  mockup: LookbookShot & { width: number; height: number };
   gallery: [LookbookShot, LookbookShot, LookbookShot];
   specs: LookbookSpec[];
 }
@@ -41,6 +43,7 @@ export interface LookbookSlide {
 
 const DOM = "/images/creations/fc-littoral/domicile";
 const EXT = "/images/creations/fc-littoral/exterieur";
+const MAQ = "/images/creations/fc-littoral/maquettes-web";
 
 /** Hero : Lemnos est le sujet ; les photos (F.C. Littoral) en sont la preuve. */
 export const heroContent = {
@@ -92,6 +95,12 @@ export const lookbookKits: Record<KitId, LookbookKit> = {
     id: "dom",
     name: "Domicile",
     desc: "Jaune héron et vert bouteille, emblème Lemnos au cœur, blason du club en poitrine.",
+    mockup: {
+      image: `${MAQ}/maquette-domicile.jpg`,
+      alt: "Maquette du maillot domicile F.C. Littoral par Lemnos — jaune à liserés verts, face et dos, avec le short",
+      width: 1038,
+      height: 446,
+    },
     gallery: [
       {
         image: `${DOM}/domicile-face.jpg`,
@@ -117,6 +126,12 @@ export const lookbookKits: Record<KitId, LookbookKit> = {
     id: "ext",
     name: "Extérieur",
     desc: "Col polo, manches longues, maille ajourée ton sur ton, blason au trait.",
+    mockup: {
+      image: `${MAQ}/maquette-exterieur.jpg`,
+      alt: "Maquette du maillot extérieur F.C. Littoral par Lemnos — noir à motif de vagues ton sur ton, col polo, face et dos",
+      width: 1555,
+      height: 630,
+    },
     gallery: [
       {
         image: `${EXT}/exterieur-face.jpeg`,
@@ -142,6 +157,12 @@ export const lookbookKits: Record<KitId, LookbookKit> = {
     id: "gar",
     name: "Gardien",
     desc: "Camouflage violet, manches longues, pour se démarquer dans la cage.",
+    mockup: {
+      image: `${MAQ}/maquette-gardien.jpg`,
+      alt: "Maquette du maillot gardien F.C. Littoral par Lemnos — camouflage violet, face et dos, avec le short",
+      width: 1111,
+      height: 648,
+    },
     gallery: [
       {
         image: `${DOM}/gardien-face.jpg`,

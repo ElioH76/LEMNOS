@@ -48,10 +48,24 @@ export function CaseStudy() {
         </div>
       </Shell>
 
-      <div
-        key={kit.id}
-        className="reveal-in flex snap-x snap-mandatory gap-1 overflow-x-auto md:grid md:grid-cols-3 md:overflow-visible"
-      >
+      <div key={kit.id} className="reveal-in">
+      <Shell className="pb-1">
+        <figure className="relative bg-white px-5 pb-6 pt-12 md:px-12 md:pb-10 md:pt-14">
+          <figcaption className="absolute left-4 top-4 rounded-sharp bg-ink-deep px-2.5 py-1 text-[11px] font-bold uppercase tracking-label text-white">
+            Maquette · {kit.name}
+          </figcaption>
+          <Image
+            src={kit.mockup.image}
+            alt={kit.mockup.alt}
+            width={kit.mockup.width}
+            height={kit.mockup.height}
+            sizes="(min-width: 1280px) 1168px, 100vw"
+            className="mx-auto h-auto max-h-[420px] w-auto max-w-full"
+          />
+        </figure>
+      </Shell>
+
+      <div className="flex snap-x snap-mandatory gap-1 overflow-x-auto md:grid md:grid-cols-3 md:overflow-visible">
         {kit.gallery.map((shot) => (
           <div
             key={shot.image}
@@ -60,6 +74,7 @@ export function CaseStudy() {
             <Image src={shot.image} alt={shot.alt} fill sizes="(min-width: 768px) 33vw, 82vw" className="object-cover" />
           </div>
         ))}
+      </div>
       </div>
 
       <div className="border-b border-night-line">
