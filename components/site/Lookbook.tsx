@@ -75,6 +75,9 @@ export function Lookbook() {
           Lemnos — maillots de sport personnalisés. Réalisation : collection F.C. Littoral 2026.
         </h1>
 
+        {/* Mobile : la photo occupe le haut, le texte se pose sur fond nuit en dessous
+            (sinon le titre masque le maillot). Desktop : photo plein cadre. */}
+        <div className="absolute inset-x-0 top-0 bottom-[36%] md:bottom-0">
         {lookbookSlides.map((s, i) => {
           const active = i === slide;
           return (
@@ -101,11 +104,12 @@ export function Lookbook() {
             </div>
           );
         })}
+        </div>
 
-        {/* Lisibilité : dégradé latéral en desktop, par le bas en mobile (texte en pied). */}
+        {/* Lisibilité : dégradé latéral en desktop ; en mobile, fondu de la photo vers le fond nuit. */}
         <div
           aria-hidden
-          className="absolute inset-0 bg-[linear-gradient(0deg,rgba(17,20,22,0.92)_0%,rgba(17,20,22,0.45)_50%,rgba(17,20,22,0.1)_100%)] md:bg-[linear-gradient(90deg,rgba(17,20,22,0.88)_0%,rgba(17,20,22,0.3)_55%,rgba(17,20,22,0)_100%)]"
+          className="absolute inset-0 bg-[linear-gradient(0deg,rgb(17,20,22)_0%,rgb(17,20,22)_36%,rgba(17,20,22,0.4)_52%,rgba(17,20,22,0)_72%)] md:bg-[linear-gradient(90deg,rgba(17,20,22,0.88)_0%,rgba(17,20,22,0.3)_55%,rgba(17,20,22,0)_100%)]"
         />
         <div
           aria-hidden

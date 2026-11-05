@@ -127,8 +127,8 @@ export const lookbookSlides: LookbookSlide[] = [
     kit: "ext",
     image: `${EXT}/exterieur-dos.jpeg`,
     alt: "Dos du maillot extérieur F.C. Littoral par Lemnos posé sur les galets au bord de la mer — « FC LITTORAL » et numéro 10 blancs",
-    // Cadrage paysage : l'écume en haut, « FC LITTORAL 10 » entier en bas.
-    position: "50% 50%",
+    // L'écume en haut, « FC LITTORAL 10 » entier en bas (paysage comme mobile).
+    position: "50% 55%",
   },
   {
     kit: "ext",
