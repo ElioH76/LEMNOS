@@ -121,18 +121,14 @@ export const lookbookKits: Record<KitId, LookbookKit> = {
 
 export const kitOrder: KitId[] = ["dom", "ext", "gar"];
 
+/** La première slide est l'image d'ouverture du site : le dos du maillot extérieur sur la plage. */
 export const lookbookSlides: LookbookSlide[] = [
   {
-    kit: "dom",
-    image: `${DOM}/equipe.jpg`,
-    alt: "L'équipe du F.C. Littoral en maillots domicile Lemnos, devant les buts",
-    position: "50% 30%",
-  },
-  {
-    kit: "dom",
-    image: `${DOM}/signature-dos.jpg`,
-    alt: "Signature Lemnos au bas du dos des maillots domicile F.C. Littoral",
-    position: "50% 35%",
+    kit: "ext",
+    image: `${EXT}/exterieur-dos.jpeg`,
+    alt: "Dos du maillot extérieur F.C. Littoral par Lemnos posé sur les galets au bord de la mer — « FC LITTORAL » et numéro 10 blancs",
+    // Cadrage paysage : l'écume en haut, « FC LITTORAL 10 » entier en bas.
+    position: "50% 50%",
   },
   {
     kit: "ext",
@@ -145,6 +141,18 @@ export const lookbookSlides: LookbookSlide[] = [
     image: `${EXT}/equipe-falaise.jpeg`,
     alt: "L'équipe du F.C. Littoral en maillot extérieur Lemnos, sur un rocher face à la mer",
     position: "50% 55%",
+  },
+  {
+    kit: "dom",
+    image: `${DOM}/equipe.jpg`,
+    alt: "L'équipe du F.C. Littoral en maillots domicile Lemnos, devant les buts",
+    position: "50% 30%",
+  },
+  {
+    kit: "dom",
+    image: `${DOM}/signature-dos.jpg`,
+    alt: "Signature Lemnos au bas du dos des maillots domicile F.C. Littoral",
+    position: "50% 35%",
   },
   {
     kit: "gar",
