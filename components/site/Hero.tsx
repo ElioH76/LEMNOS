@@ -132,7 +132,7 @@ export function Hero() {
     >
       {/* Mobile : photo puis texte, empilés (le titre ne masque jamais le maillot).
           Desktop : photo plein cadre, texte superposé. */}
-      <div className="relative h-[58svh] min-h-[380px] md:absolute md:inset-0 md:h-auto md:min-h-0">
+      <div className="relative h-[50svh] min-h-[320px] overflow-hidden md:absolute md:inset-0 md:h-auto md:min-h-0">
         {lookbookSlides.map((s, i) => {
           const active = i === slide;
           return (
@@ -172,36 +172,37 @@ export function Hero() {
         className="absolute inset-x-0 top-0 h-32 bg-[linear-gradient(180deg,rgba(17,20,22,0.55),transparent)]"
       />
 
-      <div className="relative -mt-10 pb-16 md:absolute md:inset-x-0 md:bottom-16 md:mt-0 md:pb-0">
-        <Shell className="flex flex-col gap-7 md:flex-row md:items-end md:justify-between md:gap-10">
+      <div className="relative -mt-8 pb-14 md:absolute md:inset-x-0 md:bottom-16 md:mt-0 md:pb-0">
+        <Shell className="flex flex-col gap-7 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
           <div className="flex max-w-[600px] flex-col gap-4 md:gap-5">
             <Eyebrow>{heroContent.eyebrow}</Eyebrow>
             <h1 className="text-balance font-serif text-[40px] font-bold leading-[1] text-white md:text-[56px] lg:text-[64px] lg:leading-[0.98]">
               {heroContent.title}
             </h1>
             <p className="max-w-[48ch] text-[15px] leading-[1.6] text-pearl md:text-[17px]">{heroContent.desc}</p>
-            <div className="mt-2 flex flex-wrap gap-3">
+            <div className="mt-2 flex flex-col gap-3 min-[480px]:flex-row">
               <a
                 href="#demande"
-                className="rounded-sharp bg-green px-5 py-3 text-[14px] font-bold text-white transition-colors hover:bg-green-dark"
+                className="rounded-sharp bg-green px-5 py-3 text-center text-[14px] font-bold text-white transition-colors hover:bg-green-dark"
               >
                 Demander mon maillot
               </a>
               <a
                 href="#realisation"
-                className="rounded-sharp border-[1.5px] border-white px-5 py-3 text-[14px] font-bold text-white transition-colors hover:bg-white hover:text-ink-deep"
+                className="rounded-sharp border-[1.5px] border-white px-5 py-3 text-center text-[14px] font-bold text-white transition-colors hover:bg-white hover:text-ink-deep"
               >
                 Voir la réalisation
               </a>
             </div>
           </div>
 
-          <div className="flex flex-none flex-col gap-3 md:items-end">
-            <span aria-live="polite" className="text-[12px] font-bold uppercase tracking-label text-mint">
+          {/* Mobile : légende à gauche, flèches à droite sur une seule ligne. */}
+          <div className="flex flex-none items-center justify-between gap-3 lg:flex-col lg:items-end lg:justify-start">
+            <span aria-live="polite" className="text-[11px] font-bold uppercase tracking-label text-mint md:text-[12px]">
               {caption}
             </span>
-            <div className="flex items-center gap-[18px]">
-              <span className="text-[13px] font-bold tracking-[0.12em] text-white tabular-nums">
+            <div className="flex items-center gap-2.5 md:gap-[18px]">
+              <span className="hidden text-[13px] font-bold tracking-[0.12em] text-white tabular-nums sm:inline">
                 {pad(slide + 1)} / {pad(SLIDE_COUNT)}
               </span>
               <button type="button" onClick={() => go(slide - 1)} aria-label="Photo précédente" className={ROUND_BTN}>

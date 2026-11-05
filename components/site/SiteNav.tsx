@@ -37,9 +37,11 @@ export function SiteNav() {
 
         <a
           href="/#demande"
-          className="rounded-sharp border-[1.5px] border-white px-4 py-2.5 text-[13px] font-bold text-white transition-colors hover:bg-white hover:text-ink-deep md:px-5 md:py-[11px] md:text-[14px]"
+          className="whitespace-nowrap rounded-sharp border-[1.5px] border-white px-3.5 py-2.5 text-[13px] font-bold text-white transition-colors hover:bg-white hover:text-ink-deep md:px-5 md:py-[11px] md:text-[14px]"
         >
-          Demander mon maillot
+          {/* Libellé court sur les petits écrans : le bouton tient sur une ligne à côté du logo. */}
+          <span className="min-[400px]:hidden">Mon maillot</span>
+          <span className="hidden min-[400px]:inline">Demander mon maillot</span>
         </a>
       </Shell>
     </nav>

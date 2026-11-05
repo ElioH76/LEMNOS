@@ -13,21 +13,21 @@ export function CaseStudy() {
 
   return (
     <section id="realisation" className="scroll-mt-20">
-      <Shell className="flex flex-col gap-8 pb-10 pt-20 md:flex-row md:items-end md:justify-between md:pt-24">
+      <Shell className="flex flex-col gap-8 pb-10 pt-20 md:pt-24 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex max-w-[640px] flex-col gap-[18px]">
           <Eyebrow>{caseStudy.eyebrow}</Eyebrow>
           <div className="flex items-center gap-4">
-            <span className="flex h-14 w-14 flex-none items-center justify-center rounded-full bg-white p-1.5">
+            <span className="flex h-12 w-12 flex-none md:h-14 md:w-14 items-center justify-center rounded-full bg-white p-1.5">
               <Image src={caseStudy.crest} alt="Blason du F.C. Littoral" width={44} height={44} className="h-auto w-full" />
             </span>
-            <h2 className="font-serif text-[40px] font-bold leading-none text-white md:text-[52px]">
+            <h2 className="font-serif text-[32px] font-bold leading-none text-white min-[400px]:text-[40px] md:text-[52px]">
               {caseStudy.club}
             </h2>
           </div>
           <p className="text-[16px] leading-[1.6] text-fog">{caseStudy.intro}</p>
         </div>
 
-        <div className="flex flex-none gap-2 overflow-x-auto">
+        <div className="grid flex-none grid-cols-3 gap-2 sm:flex">
           {kitOrder.map((id) => {
             const active = id === kitId;
             return (
@@ -37,7 +37,7 @@ export function CaseStudy() {
                 aria-pressed={active}
                 onClick={() => setKitId(id)}
                 className={cn(
-                  "flex-none rounded-sharp border-[1.5px] border-white px-3.5 py-2.5 text-[13px] font-bold uppercase tracking-caps transition-colors sm:px-[18px]",
+                  "rounded-sharp border-[1.5px] border-white px-2 py-2.5 text-[12px] font-bold uppercase tracking-caps transition-colors sm:px-[18px] sm:text-[13px]",
                   active ? "bg-white text-ink-deep" : "bg-transparent text-white hover:bg-white/10",
                 )}
               >
