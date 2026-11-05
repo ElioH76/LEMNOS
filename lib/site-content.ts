@@ -234,6 +234,15 @@ export const lookbookSlides: LookbookSlide[] = [
   },
 ];
 
+/** Choix « Type » du formulaire de demande. */
+export const structureTypes = [
+  "Club de sport",
+  "Entreprise",
+  "École / BDE",
+  "Équipe e-sport",
+  "Association / collectivité",
+];
+
 /** Packshot du prototype mis en avant dans l'espace client. */
 export const protoImage = "/images/proto.jpg";
 

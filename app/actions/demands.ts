@@ -5,41 +5,42 @@ import { revalidatePath } from "next/cache";
 import { SESSION_COOKIE, isValidSession } from "@/lib/auth/session";
 import { createDemand, deleteDemand, updateDemandStatus } from "@/lib/demands/store";
 import { DEMAND_STATUSES, type DemandStatus } from "@/lib/demands/types";
-import { isValidContact, splitContact } from "@/lib/demands/contact";
 
 export interface SubmitResult {
   ok: boolean;
   error?: string;
 }
 
-/** Envoi public d'une demande depuis le formulaire « La vôtre. » de l'accueil. */
+/** Envoi public d'une demande depuis le formulaire « Démarrer ». */
 export async function submitDemand(input: {
   structure: string;
+  type: string;
   sport: string;
   quantity: string;
-  deadline: string;
-  contact: string;
+  email: string;
+  phone: string;
+  brief: string;
+  files: string[];
 }): Promise<SubmitResult> {
-  const clip = (v: unknown, max = 200) => String(v ?? "").trim().slice(0, max);
-  const structure = clip(input.structure);
-  const sport = clip(input.sport);
-  const deadline = clip(input.deadline);
-  const contact = clip(input.contact);
+  const structure = input.structure?.trim() ?? "";
+  const email = input.email?.trim() ?? "";
+  const brief = input.brief?.trim() ?? "";
 
-  if (!structure) return { ok: false, error: "Le nom du club est requis." };
-  if (!sport) return { ok: false, error: "Le sport est requis." };
-  if (!isValidContact(contact))
-    return { ok: false, error: "Un e-mail ou un numéro de téléphone valide est requis." };
+  if (!structure) return { ok: false, error: "Le nom de la structure est requis." };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    return { ok: false, error: "Une adresse email valide est requise." };
+  if (brief.length < 10) return { ok: false, error: "Décrivez votre projet en quelques mots." };
 
   try {
     await createDemand({
       structure,
-      type: "Club de sport",
-      sport,
-      quantity: clip(input.quantity),
-      ...splitContact(contact),
-      brief: deadline ? `Pour quand : ${deadline}` : "",
-      files: [],
+      type: input.type?.trim() || "—",
+      sport: input.sport?.trim() ?? "",
+      quantity: input.quantity?.trim() ?? "",
+      email,
+      phone: input.phone?.trim() ?? "",
+      brief,
+      files: (input.files ?? []).slice(0, 20).map((f) => String(f).slice(0, 200)),
     });
     return { ok: true };
   } catch (err) {
