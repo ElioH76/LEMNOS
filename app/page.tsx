@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { ComingSoon } from "@/components/site/ComingSoon";
 import { DemandSection } from "@/components/site/DemandSection";
-import { Lookbook } from "@/components/site/Lookbook";
+import { CaseStudy } from "@/components/site/CaseStudy";
+import { Hero } from "@/components/site/Hero";
+import { MethodSection } from "@/components/site/MethodSection";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteNav } from "@/components/site/SiteNav";
 import { contactEmail, siteUrl } from "@/lib/site-content";
@@ -50,7 +52,9 @@ export default function HomePage() {
       {jsonLd}
       <SiteNav />
       <main>
-        <Lookbook />
+        <Hero />
+        <MethodSection />
+        <CaseStudy />
         <DemandSection />
       </main>
       <SiteFooter />

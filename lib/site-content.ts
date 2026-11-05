@@ -27,7 +27,7 @@ export interface LookbookKit {
   specs: LookbookSpec[];
 }
 
-/** Une slide du carrousel hero, rattachée à une tenue. */
+/** Une slide du carrousel hero, rattachée à une tenue (légende « F.C. Littoral · <tenue> »). */
 export interface LookbookSlide {
   kit: KitId;
   image: string;
@@ -42,7 +42,50 @@ export interface LookbookSlide {
 const DOM = "/images/creations/fc-littoral/domicile";
 const EXT = "/images/creations/fc-littoral/exterieur";
 
-export const collectionLabel = "Collection F.C. Littoral · 2026";
+/** Hero : Lemnos est le sujet ; les photos (F.C. Littoral) en sont la preuve. */
+export const heroContent = {
+  eyebrow: "Vêtements de sport personnalisés",
+  title: "Vos couleurs, forgées sur-mesure.",
+  desc: "Maillots de club dessinés, prototypés et produits pour vous. Un seul interlocuteur, du croquis à la livraison.",
+};
+
+export interface MethodStep {
+  n: string;
+  title: string;
+  desc: string;
+}
+
+export const methodSteps: MethodStep[] = [
+  {
+    n: "01",
+    title: "Design",
+    desc: "On part de vos couleurs, de votre blason et de vos envies. On dessine vos tenues jusqu'à validation.",
+  },
+  {
+    n: "02",
+    title: "Prototype",
+    desc: "Vous recevez une pièce réelle avant tout lancement. Ce que vous voyez est ce que vous recevez.",
+  },
+  {
+    n: "03",
+    title: "Production",
+    desc: "Fabrication contrôlée à chaque étape, noms et numéros personnalisés pour chaque joueur.",
+  },
+  {
+    n: "04",
+    title: "Livraison",
+    desc: "Vos tenues arrivent prêtes à porter, dans les délais convenus.",
+  },
+];
+
+/** Étude de cas : la réalisation F.C. Littoral, présentée comme une preuve. */
+export const caseStudy = {
+  eyebrow: "Réalisation · Saison 2026",
+  club: "F.C. Littoral",
+  intro:
+    "Premier club partenaire de Lemnos : trois tenues dessinées, prototypées et produites sur-mesure — domicile, extérieur et gardien — portées sur le terrain toute la saison.",
+  crest: "/images/creations/fc-littoral/blason-fc-littoral.png",
+};
 
 export const lookbookKits: Record<KitId, LookbookKit> = {
   dom: {
