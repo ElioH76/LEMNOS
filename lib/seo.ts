@@ -13,7 +13,7 @@ export const baseOpenGraph = {
       url: "/opengraph-image.jpg",
       width: 1200,
       height: 630,
-      alt: "Équipe du FC Littoral en maillots Lemnos personnalisés",
+      alt: "Équipe en maillots Lemnos personnalisés, vert et noir",
     },
   ],
 } satisfies Metadata["openGraph"];

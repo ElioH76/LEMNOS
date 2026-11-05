@@ -7,6 +7,7 @@ import {
 } from "@/lib/site-content";
 import { CollectionTabs } from "./CollectionTabs";
 import { cn } from "@/lib/cn";
+import { Button } from "@/components/ui/Button";
 import { Eyebrow, Shell } from "./Shell";
 import { MythPattern } from "./MythPattern";
 import { Reveal } from "./Reveal";
@@ -32,7 +33,7 @@ export function RealisationsSection() {
             <div>
               <Eyebrow tone="dark">Réalisations</Eyebrow>
               <h2 className="mt-5 max-w-[18ch] text-balance text-[30px] font-extrabold leading-[1.05] tracking-tight md:text-h2">
-                Un club, trois tenues, une signature.
+                Dessinés par Lemnos, portés sur le terrain.
               </h2>
             </div>
             <p className="max-w-[40ch] text-[15px] leading-[1.6] text-fog">
@@ -121,6 +122,24 @@ export function RealisationsSection() {
             </div>
           </>
         )}
+
+        {/* Retour à Lemnos : la vitrine se termine sur le projet du visiteur */}
+        <Reveal className="mt-20">
+          <div className="flex flex-wrap items-center justify-between gap-6 rounded-2xl border border-green/30 bg-green/10 p-6 md:p-8">
+            <div>
+              <h3 className="text-[22px] font-extrabold tracking-tight md:text-[26px]">
+                Votre club, vos couleurs.
+              </h3>
+              <p className="mt-2 max-w-[48ch] text-[14px] leading-[1.6] text-fog">
+                On dessine votre tenue sur-mesure, on vous envoie un prototype, puis on produit — vous validez à
+                chaque étape.
+              </p>
+            </div>
+            <a href="#projet">
+              <Button variant="light">Démarrer un projet</Button>
+            </a>
+          </div>
+        </Reveal>
       </Shell>
     </section>
   );
