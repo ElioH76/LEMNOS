@@ -1,10 +1,24 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type PointerEvent, type TouchEvent } from "react";
-import Image from "next/image";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type PointerEvent,
+  type TouchEvent,
+} from "react";
+import Image, { getImageProps } from "next/image";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { collectionLabel, kitOrder, lookbookKits, lookbookSlides } from "@/lib/site-content";
+import {
+  collectionLabel,
+  kitOrder,
+  lookbookKits,
+  lookbookSlides,
+  type LookbookSlide,
+} from "@/lib/site-content";
 import { Eyebrow, Shell } from "./Shell";
 
 const SLIDE_COUNT = lookbookSlides.length;
@@ -12,6 +26,52 @@ const pad = (n: number) => String(n).padStart(2, "0");
 
 const ROUND_BTN =
   "flex h-12 w-12 items-center justify-center rounded-full border-[1.5px] border-white/70 text-white transition-colors hover:border-white hover:bg-white hover:text-ink-deep focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
+
+/**
+ * Photo d'une slide. Si la slide a une version mobile (cadrage portrait), un
+ * <picture> sert l'une ou l'autre selon la largeur — une seule est téléchargée.
+ */
+function SlideImage({
+  slide,
+  priority,
+  className,
+}: {
+  slide: LookbookSlide;
+  priority: boolean;
+  className: string;
+}) {
+  const common = { alt: slide.alt, fill: true, priority, sizes: "100vw" } as const;
+  if (!slide.mobileImage)
+    return (
+      <Image src={slide.image} {...common} style={{ objectPosition: slide.position }} className={className} />
+    );
+
+  const {
+    props: { srcSet: desktopSrcSet },
+  } = getImageProps({ ...common, src: slide.image });
+  const {
+    props: { style, ...mobileProps },
+  } = getImageProps({ ...common, src: slide.mobileImage });
+
+  return (
+    <picture>
+      <source media="(min-width: 768px)" srcSet={desktopSrcSet} sizes="100vw" />
+      {/* alt fourni par getImageProps */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        {...mobileProps}
+        style={
+          {
+            ...style,
+            "--pos-mobile": slide.mobilePosition ?? slide.position,
+            "--pos-desktop": slide.position,
+          } as CSSProperties
+        }
+        className={cn(className, "[object-position:var(--pos-mobile)] md:[object-position:var(--pos-desktop)]")}
+      />
+    </picture>
+  );
+}
 
 /**
  * Accueil « Lookbook » : carrousel hero → sélecteur de tenue → galerie 3 photos
@@ -89,13 +149,9 @@ export function Lookbook() {
                 active ? "opacity-100" : "opacity-0",
               )}
             >
-              <Image
-                src={s.image}
-                alt={s.alt}
-                fill
+              <SlideImage
+                slide={s}
                 priority={i === 0}
-                sizes="100vw"
-                style={{ objectPosition: s.position }}
                 className={cn(
                   "object-cover transition-transform duration-[6500ms] ease-out motion-reduce:transition-none",
                   active ? "scale-[1.06] motion-reduce:scale-100" : "scale-100",

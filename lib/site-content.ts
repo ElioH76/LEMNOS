@@ -34,6 +34,9 @@ export interface LookbookSlide {
   alt: string;
   /** object-position du cadrage. */
   position: string;
+  /** Variante portrait servie sous 768 px (sinon `image` partout). */
+  mobileImage?: string;
+  mobilePosition?: string;
 }
 
 const DOM = "/images/creations/fc-littoral/domicile";
@@ -121,14 +124,19 @@ export const lookbookKits: Record<KitId, LookbookKit> = {
 
 export const kitOrder: KitId[] = ["dom", "ext", "gar"];
 
-/** La première slide est l'image d'ouverture du site : le dos du maillot extérieur sur la plage. */
+/**
+ * La première slide est l'image d'ouverture du site : le dos du maillot
+ * extérieur sur la plage — version paysage en desktop, portrait en mobile.
+ */
 export const lookbookSlides: LookbookSlide[] = [
   {
     kit: "ext",
-    image: `${EXT}/exterieur-dos.jpeg`,
+    image: `${EXT}/maillot-plage.jpeg`,
     alt: "Dos du maillot extérieur F.C. Littoral par Lemnos posé sur les galets au bord de la mer — « FC LITTORAL » et numéro 10 blancs",
-    // L'écume en haut, « FC LITTORAL 10 » entier en bas (paysage comme mobile).
-    position: "50% 55%",
+    position: "60% 50%",
+    mobileImage: `${EXT}/exterieur-dos.jpeg`,
+    // L'écume en haut, « FC LITTORAL 10 » entier en bas.
+    mobilePosition: "50% 55%",
   },
   {
     kit: "ext",
